@@ -1,0 +1,188 @@
+id: office
+name: "Pixel HQ Office"
+description: "Cozy ZEP/Gather-style engineering HQ with diverse developer rigs (ultrawide, triple-monitor, standing desks, hardware benches), ping-pong game room, and espresso bar."
+theme_badge: "🏢 Office"
+
+theme:
+  background: "#0d111a"
+  wall_color: "#252d3d"
+  wall_trim: "#3b4861"
+  floor_primary: "#4a3828"
+  floor_secondary: "#54402e"
+  floor_accent: "#253447"
+  grid_line: "rgba(255, 255, 255, 0.04)"
+  accent_color: "#38bdf8"
+  secondary_color: "#a855f7"
+  spawn_effect: "matrix"
+  spawn_color: "#22c55e"
+  particles: "dust"
+  working_verb: "Coding at workstation"
+  idle_verb: "Hanging out in rec room"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "north_coding_bay"
+    label: "CORE ENGINEERING BAY"
+    color: "#38bdf8"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "south_coding_bay"
+    label: "DEVOPS & HARDWARE LAB"
+    color: "#a855f7"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "east_ai_lab"
+    label: "AI DESIGN & STUDIO WING"
+    color: "#10b981"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "lounge"
+    label: "REC ROOM & ESPRESSO BAR"
+    color: "#f59e0b"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Coding Bay (Diverse setups: Triple Monitor, Ultrawide, Standing Desk, Laptop + Vertical, Mac Studio, Kanban Architect)
+  - { id: "desk-1",  label: "Triple-Monitor Command Rig", col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "office_triple",       glow_color: "#38bdf8" }
+  - { id: "desk-2",  label: "Curved Ultrawide & Laptop",  col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "office_ultrawide",    glow_color: "#f97316" }
+  - { id: "desk-3",  label: "Elevated Standing Desk",     col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "office_standing",     glow_color: "#22c55e" }
+  - { id: "desk-4",  label: "Creative Studio & Tablet",   col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "office_mac_studio",   glow_color: "#a855f7" }
+  - { id: "desk-5",  label: "System Architect Kanban",    col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "office_architect",    glow_color: "#ec4899" }
+  - { id: "desk-6",  label: "Dual-Screen Dev Station",    col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "desk_pc",             glow_color: "#eab308" }
+  # South DevOps & Hardware Bay
+  - { id: "desk-7",  label: "Hardware Oscilloscope Bench", col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "office_server_bench", glow_color: "#38bdf8" }
+  - { id: "desk-8",  label: "Triple-Monitor SRE Rig",      col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "office_triple",       glow_color: "#22c55e" }
+  - { id: "desk-9",  label: "Ultrawide Analytics Desk",    col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "office_ultrawide",    glow_color: "#f97316" }
+  - { id: "desk-10", label: "Standing Treadmill Desk",     col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "office_standing",     glow_color: "#a855f7" }
+  - { id: "desk-11", label: "Embedded Test Bench",         col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "office_server_bench", glow_color: "#06b6d4" }
+  - { id: "desk-12", label: "Dual-Screen Security Rig",    col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "desk_pc",             glow_color: "#10b981" }
+  # East AI & Studio Lab
+  - { id: "desk-13", label: "Pro Display & Mac Studio",    col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "office_mac_studio",   glow_color: "#38bdf8" }
+  - { id: "desk-14", label: "Ultrawide Training Console",  col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "office_ultrawide",    glow_color: "#f43f5e" }
+  - { id: "desk-15", label: "Product Kanban Station",      col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "office_architect",    glow_color: "#eab308" }
+  - { id: "desk-16", label: "Triple-Screen Model Lab",     col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "office_triple",       glow_color: "#10b981" }
+  - { id: "desk-17", label: "Standing Research Desk",      col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "office_standing",     glow_color: "#8b5cf6" }
+  - { id: "desk-18", label: "Hardware GPU Test Bench",     col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "office_server_bench", glow_color: "#06b6d4" }
+
+waypoints:
+  - { id: "wp-coffee",      col: 16, row: 2,  activity: "coffee",      bubble: "☕ Pulling a double espresso" }
+  - { id: "wp-watercooler", col: 18, row: 2,  activity: "watercooler", bubble: "💧 Watercooler chat" }
+  - { id: "wp-arcade",      col: 24, row: 2,  activity: "arcade",      bubble: "🕹️ High score on Pixel Quest" }
+  - { id: "wp-pingpong-1",  col: 21, row: 5,  activity: "lounge",      bubble: "🏓 Ping-pong rally!" }
+  - { id: "wp-pingpong-2",  col: 25, row: 5,  activity: "lounge",      bubble: "🏓 Top-spin serve!" }
+  - { id: "wp-sofa-1",      col: 16, row: 5,  activity: "lounge",      bubble: "💭 Pondering architecture" }
+  - { id: "wp-whiteboard",  col: 13, row: 8,  activity: "whiteboard",  bubble: "📐 Sketching system diagram" }
+  - { id: "wp-books",       col: 20, row: 2,  activity: "bookshelf",   bubble: "📚 Browsing design patterns" }
+  - { id: "wp-hall-1",      col: 6,  row: 8,  activity: "lounge",      bubble: "🚶 Stretching legs" }
+  - { id: "wp-hall-2",      col: 18, row: 8,  activity: "lounge",      bubble: "🎵 Vibing to lo-fi beats" }
+
+props:
+  - { id: "prop-coffee",      type: "coffee_machine", col: 15, row: 1,  w: 2, h: 1, label: "ESPRESSO", animated: true }
+  - { id: "prop-water",       type: "watercooler",    col: 18, row: 1,  w: 1, h: 1, animated: true }
+  - { id: "prop-books-1",     type: "bookshelf",      col: 20, row: 1,  w: 3, h: 1 }
+  - { id: "prop-arcade",      type: "arcade",         col: 24, row: 1,  w: 2, h: 1, label: "PIXEL QUEST", animated: true }
+  - { id: "prop-sofa-top",    type: "sofa",           col: 15, row: 4,  w: 4, h: 1, color: "#be123c" }
+  - { id: "prop-pingpong",    type: "ping_pong",      col: 21, row: 4,  w: 4, h: 2, label: "PING PONG", animated: true }
+  - { id: "prop-whiteboard",  type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "SPRINT" }
+  - { id: "prop-clock",       type: "clock",          col: 10, row: 0,  w: 1, h: 1, animated: true }
+  - { id: "prop-server-1",    type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "LLM CLUSTER", animated: true }
+  - { id: "prop-server-2",    type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "KV CACHE", animated: true }
+  - { id: "prop-plant-1",     type: "plant",          col: 1,  row: 1,  w: 1, h: 1 }
+  - { id: "prop-plant-2",     type: "plant",          col: 10, row: 1,  w: 1, h: 1 }
+  - { id: "prop-plant-3",     type: "plant",          col: 26, row: 1,  w: 1, h: 1 }
+  - { id: "prop-plant-4",     type: "plant",          col: 1,  row: 16, w: 1, h: 1 }
+  - { id: "prop-plant-5",     type: "plant",          col: 14, row: 16, w: 1, h: 1 }
+
+characters:
+  claude:
+    title: "Claude Engineer"
+    primary: "#ea580c"
+    secondary: "#1e293b"
+    skin: "#fdba74"
+    hair: "#573b26"
+    accessory: "headphones"
+    badge_color: "#f97316"
+  agy:
+    title: "Antigravity Navigator"
+    primary: "#0284c7"
+    secondary: "#0f172a"
+    skin: "#fde047"
+    hair: "#38bdf8"
+    accessory: "visor"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Codex Architect"
+    primary: "#059669"
+    secondary: "#111827"
+    skin: "#fed7aa"
+    hair: "#10b981"
+    accessory: "glasses"
+    badge_color: "#10b981"
+  grok:
+    title: "Grok Rebel"
+    primary: "#dc2626"
+    secondary: "#18181b"
+    skin: "#fecdd3"
+    hair: "#f43f5e"
+    accessory: "spiky"
+    badge_color: "#f43f5e"
+  opencode:
+    title: "OpenCode Artisan"
+    primary: "#7c3aed"
+    secondary: "#1e1b4b"
+    skin: "#fde68a"
+    hair: "#c084fc"
+    accessory: "beanie"
+    badge_color: "#a855f7"
+  kimi:
+    title: "Kimi Scholar"
+    primary: "#db2777"
+    secondary: "#1f2937"
+    skin: "#fbcfe8"
+    hair: "#f472b6"
+    accessory: "headphones"
+    badge_color: "#ec4899"
+  default:
+    title: "AI Agent"
+    primary: "#6366f1"
+    secondary: "#1e293b"
+    skin: "#fed7aa"
+    hair: "#818cf8"
+    accessory: "headphones"
+    badge_color: "#818cf8"
+
+companions:
+  - { id: "pet-cat",   name: "Pixel",  type: "cat",   color: "#f97316", home_col: 19, home_row: 6 }
+  - { id: "pet-corgi", name: "Kernel", type: "dog",   color: "#eab308", home_col: 12, home_row: 8 }

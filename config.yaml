@@ -1,0 +1,44 @@
+# Agents Animated Workspace Configuration
+# Hexagonal Architecture: swap data sources, auth, and scene templates cleanly via YAML.
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  poll_interval_ms: 2000
+  static_dir: "./web/dist"
+  # Optional token authentication (disabled by default for full-screen kiosk display)
+  auth:
+    enabled: false
+    token: "YOUR_API_KEY"
+
+source:
+  # Data origin adapter: "local" (Herdr + local session transcripts/quota caches) or "remote" (HTTP endpoint)
+  type: "local"
+  local:
+    herdr_bin: "herdr"
+    usage_plugin_dir: "/Users/alevsk/Development/herdr-plugins/herdr-agent-usage"
+    quota_ttl_seconds: 300
+  remote:
+    endpoint: "http://localhost:8080/api/snapshot"
+    token: "YOUR_API_KEY"
+    timeout_seconds: 10
+
+scene:
+  # Active template plugin directory inside templates_dir (e.g., "office", "cyberpunk", "medieval")
+  active_template: "office"
+  templates_dir: "./templates"
+
+  # Optional custom character overrides or additions applied on top of the active template
+  custom_characters:
+    devin:
+      title: "Devin Autonomous"
+      primary: "#06b6d4"
+      secondary: "#0f172a"
+      skin: "#bae6fd"
+      hair: "#22d3ee"
+      accessory: "visor"
+      badge_color: "#06b6d4"
+
+  # Optional extra props or companions injected into the scene
+  custom_props: []
+  custom_companions: []

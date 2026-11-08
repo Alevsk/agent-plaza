@@ -1,0 +1,171 @@
+id: cyberpunk
+name: "Neo-Tokyo Netrunner Lab"
+description: "High-tech cyberpunk enclave with neural dive chairs, ripperdoc cyberware benches, 3D holo-pillars, drone assembly rigs, and a neon street ramen bar & cryo lounge."
+theme_badge: "🌃 Cyberpunk"
+
+theme:
+  background: "#06040f"
+  wall_color: "#181030"
+  wall_trim: "#00f0ff"
+  floor_primary: "#0f0b1f"
+  floor_secondary: "#17112e"
+  floor_accent: "#281147"
+  grid_line: "rgba(0, 240, 255, 0.08)"
+  accent_color: "#00f0ff"
+  secondary_color: "#ff007f"
+  spawn_effect: "beam"
+  spawn_color: "#00f0ff"
+  particles: "neon"
+  working_verb: "Jacked into Cyberspace"
+  idle_verb: "Chilling at the Neon Ramen Bar"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "neural_bay_alpha"
+    label: "DEEP-DIVE NETRUNNER PODS"
+    color: "#00f0ff"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "ripperdoc_clinic"
+    label: "RIPPERDOC CYBERWARE CLINIC"
+    color: "#ff007f"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "drone_foundry"
+    label: "DRONE & HOLO-SYNTH FOUNDRY"
+    color: "#a855f7"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "neon_bar"
+    label: "NEON RAMEN STALL & BRAINDANCE"
+    color: "#facc15"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Netrunner Dive Pods
+  - { id: "deck-1",  label: "Neural Ice-Dive Recliner",      col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "cyber_netrunner_chair", glow_color: "#00f0ff" }
+  - { id: "deck-2",  label: "3D Holographic Globe Pillar",   col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "cyber_holo_pillar",     glow_color: "#ff007f" }
+  - { id: "deck-3",  label: "Triple-Visor Hacker Deck",      col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "cyber_deck_triple",     glow_color: "#a855f7" }
+  - { id: "deck-4",  label: "Blackwall Breach Chair",        col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "cyber_netrunner_chair", glow_color: "#facc15" }
+  - { id: "deck-5",  label: "Modular Synth Frequency Rack",  col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "cyber_synth_rack",      glow_color: "#00f0ff" }
+  - { id: "deck-6",  label: "Orbital Holo-Projector",        col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "cyber_holo_pillar",     glow_color: "#ff007f" }
+  # South Ripperdoc Cyberware Clinic
+  - { id: "deck-7",  label: "Ripperdoc Bionic Arm Bench",    col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "cyber_ripperdoc",       glow_color: "#00f0ff" }
+  - { id: "deck-8",  label: "Optical Implant Laser Rig",     col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "cyber_ripperdoc",       glow_color: "#22c55e" }
+  - { id: "deck-9",  label: "Cyber-Katana Calibration Deck", col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "cyber_deck_triple",     glow_color: "#ff007f" }
+  - { id: "deck-10", label: "Neural Cortex Splicer",         col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "cyber_netrunner_chair", glow_color: "#a855f7" }
+  - { id: "deck-11", label: "Chrome Prosthetics Workbench",  col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "cyber_ripperdoc",       glow_color: "#00f0ff" }
+  - { id: "deck-12", label: "Sub-dermal Armor Forge",        col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "cyber_synth_rack",      glow_color: "#facc15" }
+  # East Drone & Holo-Synth Foundry
+  - { id: "deck-13", label: "Combat Drone Assembly Rig",     col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "cyber_drone_rig",       glow_color: "#00f0ff" }
+  - { id: "deck-14", label: "Holo-Architecture Pillar",      col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "cyber_holo_pillar",     glow_color: "#ff007f" }
+  - { id: "deck-15", label: "Swarm Telemetry Rig",           col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "cyber_drone_rig",       glow_color: "#a855f7" }
+  - { id: "deck-16", label: "AI Signal Decryption Synth",    col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "cyber_synth_rack",      glow_color: "#22c55e" }
+  - { id: "deck-17", label: "Micro-Bot Soldering Station",   col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "cyber_drone_rig",       glow_color: "#00f0ff" }
+  - { id: "deck-18", label: "Overclocked Netrunner Deck",    col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "cyber_deck_triple",     glow_color: "#ff007f" }
+
+waypoints:
+  - { id: "wp-ramen",   col: 16, row: 2, activity: "coffee",      bubble: "🍜 Slurping neon cyber-ramen" }
+  - { id: "wp-cryo",    col: 20, row: 2, activity: "watercooler", bubble: "❄️ Checking cryo-pod vitals" }
+  - { id: "wp-bd",      col: 24, row: 2, activity: "arcade",      bubble: "⚡ Running Braindance VR sim" }
+  - { id: "wp-holo-1",  col: 17, row: 5, activity: "lounge",      bubble: "🌐 Scanning Night City grid" }
+  - { id: "wp-holo-2",  col: 22, row: 5, activity: "lounge",      bubble: "🔋 Recharging optical implants" }
+  - { id: "wp-bridge",  col: 13, row: 8, activity: "whiteboard",  bubble: "🛰️ Tracking orbital relay" }
+  - { id: "wp-hall-1",  col: 7,  row: 8, activity: "lounge",      bubble: "🦿 Calibrating reflex boosters" }
+  - { id: "wp-hall-2",  col: 20, row: 8, activity: "lounge",      bubble: "🎧 Tuning synthwave radio" }
+
+props:
+  - { id: "prop-ramen",  type: "ramen_stall", col: 15, row: 1,  w: 3, h: 1, label: "NEON RAMEN", animated: true }
+  - { id: "prop-cryo",   type: "cryo_tank",   col: 19, row: 1,  w: 2, h: 2, label: "CRYO", animated: true }
+  - { id: "prop-bd",     type: "holo_pod",    col: 23, row: 1,  w: 3, h: 1, label: "BRAINDANCE", animated: true }
+  - { id: "prop-sofa",   type: "sofa",        col: 15, row: 4,  w: 4, h: 1, color: "#7e22ce" }
+  - { id: "prop-holo",   type: "holo_table",  col: 20, row: 4,  w: 4, h: 2, animated: true }
+  - { id: "prop-srv-1",  type: "server_rack", col: 25, row: 11, w: 2, h: 2, label: "MAINFRAME", animated: true }
+  - { id: "prop-srv-2",  type: "server_rack", col: 25, row: 14, w: 2, h: 2, label: "ICE WALL", animated: true }
+  - { id: "prop-board",  type: "whiteboard",  col: 4,  row: 0,  w: 4, h: 1, label: "SUBNET MAP" }
+
+characters:
+  claude:
+    title: "Claude Netrunner"
+    primary: "#f97316"
+    secondary: "#090d16"
+    skin: "#fdba74"
+    hair: "#00f0ff"
+    accessory: "visor"
+    badge_color: "#f97316"
+  agy:
+    title: "Agy Cyber-Pilot"
+    primary: "#00f0ff"
+    secondary: "#0f172a"
+    skin: "#fde047"
+    hair: "#ff007f"
+    accessory: "visor"
+    badge_color: "#00f0ff"
+  codex:
+    title: "Codex Ripperdoc"
+    primary: "#10b981"
+    secondary: "#052e16"
+    skin: "#d1fae5"
+    hair: "#34d399"
+    accessory: "visor"
+    badge_color: "#10b981"
+  grok:
+    title: "Grok Edgerunner"
+    primary: "#ff007f"
+    secondary: "#18181b"
+    skin: "#fecdd3"
+    hair: "#facc15"
+    accessory: "spiky"
+    badge_color: "#ff007f"
+  opencode:
+    title: "OpenCode Techie"
+    primary: "#a855f7"
+    secondary: "#1e1b4b"
+    skin: "#e9d5ff"
+    hair: "#00f0ff"
+    accessory: "headphones"
+    badge_color: "#a855f7"
+  default:
+    title: "Cyber Operative"
+    primary: "#6366f1"
+    secondary: "#0f172a"
+    skin: "#e0e7ff"
+    hair: "#00f0ff"
+    accessory: "visor"
+    badge_color: "#818cf8"
+
+companions:
+  - { id: "pet-drone", name: "Tachikoma", type: "robot", color: "#00f0ff", home_col: 19, home_row: 6 }
+  - { id: "pet-cat",   name: "Stray",     type: "cat",   color: "#ff007f", home_col: 12, home_row: 8 }

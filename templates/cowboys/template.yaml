@@ -1,0 +1,175 @@
+id: cowboys
+name: "Wild West Frontier Ranch & Forge"
+description: "Frontier ranch where agents groom & saddle horses, hammer glowing iron at the blacksmith anvil, pan for gold, craft leather saddles, and relax around the campfire & saloon piano."
+theme_badge: "🤠 Cowboys"
+
+theme:
+  background: "#170e08"
+  wall_color: "#4a2c18"
+  wall_trim: "#b45309"
+  floor_primary: "#5c3820"
+  floor_secondary: "#6e4326"
+  floor_accent: "#7c2d12"
+  grid_line: "rgba(251, 191, 36, 0.05)"
+  accent_color: "#f59e0b"
+  secondary_color: "#ea580c"
+  spawn_effect: "smoke"
+  spawn_color: "#f59e0b"
+  particles: "dust"
+  working_verb: "Working the frontier ranch"
+  idle_verb: "Resting by the campfire & saloon"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "horse_stables"
+    label: "MUSTANG STABLES & SADDLERY"
+    color: "#f59e0b"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "blacksmith_yard"
+    label: "BLACKSMITH FORGE & WHEELWRIGHT"
+    color: "#ea580c"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "gold_assay"
+    label: "GOLD PANNING & TELEGRAPH POST"
+    color: "#eab308"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "campfire_saloon"
+    label: "CAMPFIRE CORRAL & SALOON"
+    color: "#ef4444"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Mustang Stables & Saddlery (Horses & Leatherwork)
+  - { id: "cw-1",  label: "Mustang Horse Stall (Chestnut)", col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "cowboy_horse_stall", glow_color: "#f59e0b" }
+  - { id: "cw-2",  label: "Saddlery & Leather Bench",       col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "cowboy_leatherwork", glow_color: "#ea580c" }
+  - { id: "cw-3",  label: "Stallion Hitching Stall (Palomino)", col: 8, row: 2, seat_col: 8, seat_row: 3, facing: "up", style: "cowboy_horse_stall", glow_color: "#eab308" }
+  - { id: "cw-4",  label: "Frontier Harness & Spur Bench",  col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "cowboy_leatherwork", glow_color: "#ef4444" }
+  - { id: "cw-5",  label: "Appaloosa Grooming Stall",       col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "cowboy_horse_stall", glow_color: "#f59e0b" }
+  - { id: "cw-6",  label: "Wagon Wheelwright Bench",        col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "cowboy_gunsmith",    glow_color: "#22c55e" }
+  # South Blacksmith Forge & Anvils
+  - { id: "cw-7",  label: "Blacksmith Anvil & Coal Forge",  col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "cowboy_blacksmith",  glow_color: "#f97316" }
+  - { id: "cw-8",  label: "Horseshoe Farrier Forge",        col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "cowboy_blacksmith",  glow_color: "#ef4444" }
+  - { id: "cw-9",  label: "Frontier Tinker & Gunsmith",     col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "cowboy_gunsmith",    glow_color: "#eab308" }
+  - { id: "cw-10", label: "Smelting Bellows & Anvil",       col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "cowboy_blacksmith",  glow_color: "#ea580c" }
+  - { id: "cw-11", label: "Stagecoach Ironworks",           col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "cowboy_gunsmith",    glow_color: "#f59e0b" }
+  - { id: "cw-12", label: "quarter Horse Care Stall",       col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "cowboy_horse_stall", glow_color: "#eab308" }
+  # East Gold Assay & Telegraph Post
+  - { id: "cw-13", label: "Gold Panning Sluice Box",        col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "cowboy_gold_panning", glow_color: "#facc15" }
+  - { id: "cw-14", label: "Western Union Telegraph Desk",   col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "cowboy_telegraph",    glow_color: "#f59e0b" }
+  - { id: "cw-15", label: "Prospector Ore Washing Trough",  col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "cowboy_gold_panning", glow_color: "#eab308" }
+  - { id: "cw-16", label: "Sheriff Bounty & Ledger Desk",   col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "cowboy_telegraph",    glow_color: "#22c55e" }
+  - { id: "cw-17", label: "Custom Saddle Carving Bench",    col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "cowboy_leatherwork",  glow_color: "#ef4444" }
+  - { id: "cw-18", label: "Assay Scales & Nugget Table",    col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "cowboy_gold_panning", glow_color: "#facc15" }
+
+waypoints:
+  - { id: "wp-sarsaparilla", col: 16, row: 2, activity: "coffee",      bubble: "🥃 Pouring cold sarsaparilla" }
+  - { id: "wp-piano",        col: 24, row: 2, activity: "arcade",      bubble: "🎹 Playing ragtime saloon piano" }
+  - { id: "wp-campfire-1",   col: 18, row: 5, activity: "lounge",      bubble: "🔥 Roasting campfire coffee" }
+  - { id: "wp-campfire-2",   col: 22, row: 5, activity: "lounge",      bubble: "🎸 Strumming acoustic folk" }
+  - { id: "wp-trough",       col: 25, row: 6, activity: "watercooler", bubble: "🪣 Checking windmill water trough" }
+  - { id: "wp-bounty",       col: 13, row: 8, activity: "whiteboard",  bubble: "🤠 Reading sheriff bounty notices" }
+  - { id: "wp-hall-1",       col: 7,  row: 8, activity: "lounge",      bubble: "🐎 Tending the corral" }
+  - { id: "wp-hall-2",       col: 18, row: 8, activity: "lounge",      bubble: "🌵 Watching tumbleweeds roll" }
+
+props:
+  - { id: "prop-bar",      type: "barrel",       col: 15, row: 1,  w: 3, h: 1, label: "SALOON BAR" }
+  - { id: "prop-piano",    type: "piano",        col: 23, row: 1,  w: 2, h: 1, label: "RAGTIME", animated: true }
+  - { id: "prop-campfire", type: "campfire",     col: 19, row: 4,  w: 2, h: 2, animated: true }
+  - { id: "prop-trough",   type: "water_trough", col: 23, row: 4,  w: 3, h: 1, animated: true }
+  - { id: "prop-safe-1",   type: "barrel",       col: 25, row: 11, w: 2, h: 2, label: "POWDER KEGS" }
+  - { id: "prop-safe-2",   type: "barrel",       col: 25, row: 14, w: 2, h: 2, label: "GOLD BULLION" }
+  - { id: "prop-wanted",   type: "whiteboard",   col: 4,  row: 0,  w: 4, h: 1, label: "WANTED" }
+  - { id: "prop-cactus-1", type: "plant",        col: 1,  row: 1,  w: 1, h: 1, sprite: "cactus.png" }
+  - { id: "prop-cactus-2", type: "plant",        col: 26, row: 1,  w: 1, h: 1, sprite: "cactus.png" }
+  - { id: "prop-cactus-3", type: "plant",        col: 1,  row: 16, w: 1, h: 1, sprite: "cactus.png" }
+  - { id: "prop-badge",    type: "clock",        col: 10, row: 0,  w: 1, h: 1, sprite: "sheriff_star.png" }
+
+characters:
+  claude:
+    title: "Sheriff Claude"
+    primary: "#b45309"
+    secondary: "#451a03"
+    skin: "#fdba74"
+    hair: "#78350f"
+    accessory: "cowboy_hat"
+    badge_color: "#f59e0b"
+    sprite: "ranger_claude.png"
+  agy:
+    title: "Marshal Agy"
+    primary: "#0284c7"
+    secondary: "#1e293b"
+    skin: "#fde047"
+    hair: "#92400e"
+    accessory: "cowboy_hat"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Blacksmith Codex"
+    primary: "#15803d"
+    secondary: "#14532d"
+    skin: "#fed7aa"
+    hair: "#451a03"
+    accessory: "cowboy_hat"
+    badge_color: "#10b981"
+  grok:
+    title: "Wrangler Grok"
+    primary: "#b91c1c"
+    secondary: "#18181b"
+    skin: "#fecdd3"
+    hair: "#1c1917"
+    accessory: "cowboy_hat"
+    badge_color: "#ef4444"
+  opencode:
+    title: "Prospector OpenCode"
+    primary: "#7c3aed"
+    secondary: "#2e1065"
+    skin: "#fde68a"
+    hair: "#78350f"
+    accessory: "cowboy_hat"
+    badge_color: "#a855f7"
+  default:
+    title: "Frontier Rancher"
+    primary: "#92400e"
+    secondary: "#292524"
+    skin: "#fed7aa"
+    hair: "#451a03"
+    accessory: "cowboy_hat"
+    badge_color: "#f59e0b"
+
+companions:
+  - { id: "pet-hound", name: "Buck",   type: "dog", color: "#d97706", home_col: 19, home_row: 6 }
+  - { id: "pet-cat",   name: "Bandit", type: "cat", color: "#78350f", home_col: 12, home_row: 8 }

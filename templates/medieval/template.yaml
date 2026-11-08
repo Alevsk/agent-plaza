@@ -1,0 +1,169 @@
+id: medieval
+name: "Arcane Citadel & Practice Courtyard"
+description: "Medieval castle keep where agents brew potions in bubbling cauldrons, hammer runeblades at the dwarven forge, enchant crystals, illuminate manuscripts, and train at the archery range & combat courtyard."
+theme_badge: "🏰 Medieval"
+
+theme:
+  background: "#0d0907"
+  wall_color: "#332922"
+  wall_trim: "#85684a"
+  floor_primary: "#2a221c"
+  floor_secondary: "#382d25"
+  floor_accent: "#5c1d24"
+  grid_line: "rgba(245, 158, 11, 0.05)"
+  accent_color: "#f59e0b"
+  secondary_color: "#ef4444"
+  spawn_effect: "portal"
+  spawn_color: "#f59e0b"
+  particles: "embers"
+  working_verb: "Crafting in the citadel"
+  idle_verb: "Training in the archery courtyard"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "alchemy_sanctum"
+    label: "ALCHEMY & APOTHECARY LAB"
+    color: "#10b981"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "runeforge"
+    label: "DWARVEN RUNEFORGE & ARMORY"
+    color: "#ef4444"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "astrolabe"
+    label: "SCRIPTORIUM & ASTROLABE TOWER"
+    color: "#38bdf8"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "archery_courtyard"
+    label: "ARCHERY RANGE & PRACTICE SQUARE"
+    color: "#f59e0b"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Alchemy & Apothecary Lab
+  - { id: "tome-1",  label: "Bubbling Alchemy Cauldron",    col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "medieval_alchemy",    glow_color: "#22c55e" }
+  - { id: "tome-2",  label: "Herbalist Mortar & Apothecary", col: 5, row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "medieval_apothecary", glow_color: "#10b981" }
+  - { id: "tome-3",  label: "Arcane Crystal Enchanting Pedestal", col: 8, row: 2, seat_col: 8, seat_row: 3, facing: "up", style: "medieval_enchanting", glow_color: "#a855f7" }
+  - { id: "tome-4",  label: "Elixir Distillation Alembic",  col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "medieval_alchemy",    glow_color: "#38bdf8" }
+  - { id: "tome-5",  label: "Soul-Gem Infusion Altar",      col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "medieval_enchanting", glow_color: "#ec4899" }
+  - { id: "tome-6",  label: "Mandrake & Potion Rack Bench", col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "medieval_apothecary", glow_color: "#eab308" }
+  # South Dwarven Runeforge & Armory
+  - { id: "tome-7",  label: "Dwarven Anvil & Smelting Forge", col: 2, row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "medieval_blacksmith", glow_color: "#f97316" }
+  - { id: "tome-8",  label: "Mythril Blade Quenching Trough", col: 5, row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "medieval_blacksmith", glow_color: "#ef4444" }
+  - { id: "tome-9",  label: "Runic Armor Engraving Bench",    col: 8, row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "medieval_enchanting", glow_color: "#f59e0b" }
+  - { id: "tome-10", label: "Dragonfire Bellows & Anvil",     col: 2, row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "medieval_blacksmith", glow_color: "#ef4444" }
+  - { id: "tome-11", label: "Crossbow & Siege Tinker Table",  col: 5, row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "medieval_apothecary", glow_color: "#38bdf8" }
+  - { id: "tome-12", label: "Paladin Shield Gilding Forge",   col: 8, row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "medieval_blacksmith", glow_color: "#facc15" }
+  # East Scriptorium & Astrolabe Tower
+  - { id: "tome-13", label: "Celestial Brass Astrolabe",      col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "medieval_astrolabe",  glow_color: "#38bdf8" }
+  - { id: "tome-14", label: "Illuminated Manuscript Lectern", col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "medieval_scribe",     glow_color: "#f59e0b" }
+  - { id: "tome-15", label: "Star-Chart Telescope Desk",      col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "medieval_astrolabe",  glow_color: "#a855f7" }
+  - { id: "tome-16", label: "Elder Scroll Quill & Candle",    col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "medieval_scribe",     glow_color: "#10b981" }
+  - { id: "tome-17", label: "Planetary Orrery Mechanism",     col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "medieval_astrolabe",  glow_color: "#ef4444" }
+  - { id: "tome-18", label: "Royal Charter Sealing Desk",     col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "medieval_scribe",     glow_color: "#eab308" }
+
+waypoints:
+  - { id: "wp-archery-1", col: 16, row: 4, activity: "arcade",      bubble: "🏹 Bullseye on the archery target!" }
+  - { id: "wp-archery-2", col: 19, row: 4, activity: "arcade",      bubble: "🏹 Drawing longbow string" }
+  - { id: "wp-sword",     col: 23, row: 5, activity: "lounge",      bubble: "⚔️ Sparring with the pells dummy" }
+  - { id: "wp-mead",      col: 25, row: 3, activity: "coffee",      bubble: "🍺 Raising a tankard of mead" }
+  - { id: "wp-hearth",    col: 19, row: 6, activity: "lounge",      bubble: "🔥 Warming gauntlets by the fire" }
+  - { id: "wp-hall-1",    col: 8,  row: 8, activity: "lounge",      bubble: "🪄 Reciting incantations" }
+  - { id: "wp-hall-2",    col: 15, row: 8, activity: "lounge",      bubble: "🛡️ Inspecting courtyard banners" }
+
+props:
+  - { id: "prop-archery",  type: "archery_target", col: 15, row: 1,  w: 6, h: 2, label: "ARCHERY RANGE", animated: true }
+  - { id: "prop-dummy",    type: "sword_dummy",    col: 22, row: 1,  w: 2, h: 2, label: "PELLS", animated: true }
+  - { id: "prop-barrel",   type: "barrel",         col: 25, row: 1,  w: 2, h: 1, label: "MEAD CASK" }
+  - { id: "prop-fire",     type: "campfire",       col: 18, row: 4,  w: 2, h: 2, animated: true }
+  - { id: "prop-obelisk1", type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "MANA OBELISK", animated: true }
+  - { id: "prop-obelisk2", type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "GRIMOIRE VAULT", animated: true }
+  - { id: "prop-board",    type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "QUEST BOARD" }
+
+characters:
+  claude:
+    title: "Archmage Claude"
+    primary: "#b45309"
+    secondary: "#451a03"
+    skin: "#fdba74"
+    hair: "#e5e7eb"
+    accessory: "wizard_hat"
+    badge_color: "#f59e0b"
+  agy:
+    title: "Astral Seer Agy"
+    primary: "#1d4ed8"
+    secondary: "#1e1b4b"
+    skin: "#fde047"
+    hair: "#93c5fd"
+    accessory: "wizard_hat"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Runesmith Codex"
+    primary: "#15803d"
+    secondary: "#052e16"
+    skin: "#fed7aa"
+    hair: "#86efac"
+    accessory: "crown"
+    badge_color: "#10b981"
+  grok:
+    title: "Pyromancer Grok"
+    primary: "#b91c1c"
+    secondary: "#27272a"
+    skin: "#fecdd3"
+    hair: "#fca5a5"
+    accessory: "crown"
+    badge_color: "#ef4444"
+  opencode:
+    title: "Alchemist OpenCode"
+    primary: "#6d28d9"
+    secondary: "#2e1065"
+    skin: "#fde68a"
+    hair: "#d8b4fe"
+    accessory: "wizard_hat"
+    badge_color: "#a855f7"
+  default:
+    title: "Guild Knight"
+    primary: "#4338ca"
+    secondary: "#1e1b4b"
+    skin: "#fed7aa"
+    hair: "#a5b4fc"
+    accessory: "wizard_hat"
+    badge_color: "#818cf8"
+
+companions:
+  - { id: "pet-owl",   name: "Archimedes", type: "cat", color: "#d97706", home_col: 19, home_row: 6 }
+  - { id: "pet-hound", name: "Fenrir",     type: "dog", color: "#9ca3af", home_col: 12, home_row: 8 }

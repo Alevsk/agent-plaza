@@ -1,0 +1,169 @@
+id: ww2
+name: "Allied Cipher Bunker & Motor Pool"
+description: "WW2 command complex with Enigma rotor desks, spinning Turing Bombe drums, rotating PPI radar scopes, shortwave Morse rigs, engine repair benches, and a sandbagged observation post."
+theme_badge: "🎖️ WW2 Bunker"
+
+theme:
+  background: "#0b0f0c"
+  wall_color: "#263028"
+  wall_trim: "#4d5e4f"
+  floor_primary: "#1e2420"
+  floor_secondary: "#242b26"
+  floor_accent: "#2d3830"
+  grid_line: "rgba(132, 204, 22, 0.05)"
+  accent_color: "#84cc16"
+  secondary_color: "#eab308"
+  spawn_effect: "beam"
+  spawn_color: "#84cc16"
+  particles: "dust"
+  working_verb: "Operating bunker station"
+  idle_verb: "On watch at the command post"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "hut_8"
+    label: "HUT 8 ENIGMA & BOMBE HALL"
+    color: "#84cc16"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "signals_corps"
+    label: "RADAR & SHORTWAVE INTERCEPT"
+    color: "#eab308"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "motor_pool"
+    label: "MOTOR POOL & AIR PLOTTERS"
+    color: "#22c55e"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "command_post"
+    label: "SANDBAG BASTION & WAR ROOM"
+    color: "#f97316"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Hut 8 Enigma & Turing Bombe Hall
+  - { id: "radio-1",  label: "Enigma M4 Rotor Cipher Desk",  col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "ww2_enigma",         glow_color: "#84cc16" }
+  - { id: "radio-2",  label: "Turing Bombe Spinning Drums",  col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "ww2_bombe_drum",     glow_color: "#eab308" }
+  - { id: "radio-3",  label: "Naval Lorenz Cipher Teletype", col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "ww2_enigma",         glow_color: "#22c55e" }
+  - { id: "radio-4",  label: "Bombe Bank B Rotor Rack",      col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "ww2_bombe_drum",     glow_color: "#84cc16" }
+  - { id: "radio-5",  label: "Codebook Crib Analysis Desk",  col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "ww2_enigma",         glow_color: "#f97316" }
+  - { id: "radio-6",  label: "Colossus Paper-Tape Reader",   col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "ww2_bombe_drum",     glow_color: "#eab308" }
+  # South Radar & Shortwave Intercept
+  - { id: "radio-7",  label: "Chain Home PPI Radar Scope",   col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "ww2_radar_scope",    glow_color: "#22c55e" }
+  - { id: "radio-8",  label: "Shortwave Morse Transceiver",  col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "ww2_radio_morse",    glow_color: "#eab308" }
+  - { id: "radio-9",  label: "Coastal Defense Radar CRT",    col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "ww2_radar_scope",    glow_color: "#84cc16" }
+  - { id: "radio-10", label: "HF Direction-Finding Rig",     col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "ww2_radio_morse",    glow_color: "#f97316" }
+  - { id: "radio-11", label: "Night-Fighter Intercept CRT",  col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "ww2_radar_scope",    glow_color: "#22c55e" }
+  - { id: "radio-12", label: "Field Telegraph & Wire Reel",  col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "ww2_radio_morse",    glow_color: "#84cc16" }
+  # East Motor Pool & Air Defense Plotters
+  - { id: "radio-13", label: "Spitfire Merlin Engine Bench", col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "ww2_field_mechanic", glow_color: "#f97316" }
+  - { id: "radio-14", label: "Sector Operations Plot Table", col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "ww2_map_plotter",    glow_color: "#84cc16" }
+  - { id: "radio-15", label: "Willys Jeep Gearbox Bench",    col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "ww2_field_mechanic", glow_color: "#eab308" }
+  - { id: "radio-16", label: "Convoy Sonar & Chart Table",   col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "ww2_map_plotter",    glow_color: "#22c55e" }
+  - { id: "radio-17", label: "Avionics & Magneto Workbench", col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "ww2_field_mechanic", glow_color: "#84cc16" }
+  - { id: "radio-18", label: "Bomber Wing Recon Plotter",    col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "ww2_map_plotter",    glow_color: "#eab308" }
+
+waypoints:
+  - { id: "wp-sandbag", col: 16, row: 3, activity: "lounge",      bubble: "🔭 Scanning horizon with binoculars" }
+  - { id: "wp-radar",   col: 24, row: 3, activity: "arcade",      bubble: "📡 Checking rotating radar mast" }
+  - { id: "wp-map",     col: 19, row: 5, activity: "lounge",      bubble: "🗺️ Moving squadron markers on map" }
+  - { id: "wp-canteen", col: 25, row: 5, activity: "coffee",      bubble: "☕ Pouring tin-cup ration coffee" }
+  - { id: "wp-brief",   col: 13, row: 8, activity: "whiteboard",  bubble: "📋 Briefing daily rotor settings" }
+  - { id: "wp-hall-1",  col: 7,  row: 8, activity: "lounge",      bubble: "🎖️ Inspecting bunker perimeter" }
+  - { id: "wp-hall-2",  col: 18, row: 8, activity: "lounge",      bubble: "📻 Listening to BBC dispatch" }
+
+props:
+  - { id: "prop-sandbag", type: "sandbag_post",   col: 15, row: 1,  w: 4, h: 2, label: "WATCH POST", animated: true }
+  - { id: "prop-mast",    type: "radar_dish",     col: 23, row: 1,  w: 3, h: 2, label: "RADAR ARRAY", animated: true }
+  - { id: "prop-map",     type: "holo_table",     col: 17, row: 4,  w: 3, h: 1, sprite: "war_map.png" }
+  - { id: "prop-crates",  type: "ammo_crates",    col: 22, row: 4,  w: 3, h: 1 }
+  - { id: "prop-bombe-1", type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "BOMBE MK1", animated: true }
+  - { id: "prop-bombe-2", type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "COLOSSUS", animated: true }
+  - { id: "prop-board",   type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "FRONT LINE" }
+
+characters:
+  claude:
+    title: "Commander Claude"
+    primary: "#4d7c0f"
+    secondary: "#1f2937"
+    skin: "#fdba74"
+    hair: "#451a03"
+    accessory: "helmet"
+    badge_color: "#84cc16"
+  agy:
+    title: "Cryptanalyst Agy"
+    primary: "#3f6212"
+    secondary: "#1e293b"
+    skin: "#fde047"
+    hair: "#365314"
+    accessory: "helmet"
+    badge_color: "#eab308"
+  codex:
+    title: "Codebreaker Codex"
+    primary: "#15803d"
+    secondary: "#14532d"
+    skin: "#fed7aa"
+    hair: "#166534"
+    accessory: "helmet"
+    badge_color: "#22c55e"
+  grok:
+    title: "Signal Officer Grok"
+    primary: "#b45309"
+    secondary: "#18181b"
+    skin: "#fecdd3"
+    hair: "#78350f"
+    accessory: "helmet"
+    badge_color: "#f97316"
+  opencode:
+    title: "Flight Engineer OpenCode"
+    primary: "#4d7c0f"
+    secondary: "#1e1b4b"
+    skin: "#fde68a"
+    hair: "#3f6212"
+    accessory: "helmet"
+    badge_color: "#84cc16"
+  default:
+    title: "Allied Operator"
+    primary: "#3f6212"
+    secondary: "#1f2937"
+    skin: "#fed7aa"
+    hair: "#365314"
+    accessory: "helmet"
+    badge_color: "#84cc16"
+
+companions:
+  - { id: "pet-k9",  name: "Sgt. Rex",  type: "dog", color: "#a16207", home_col: 19, home_row: 6 }
+  - { id: "pet-cat", name: "Bletchley", type: "cat", color: "#9ca3af", home_col: 12, home_row: 8 }

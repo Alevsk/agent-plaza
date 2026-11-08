@@ -1,0 +1,171 @@
+id: japanese
+name: "Edo Sakura Dojo & Zen Garden"
+description: "Traditional Japanese artisan sanctuary where agents forge katanas, paint shodo calligraphy, sculpt bonsai, whisk ceremonial matcha, carve ukiyo-e woodblocks, and meditate in the Zen rock garden & koi pond."
+theme_badge: "⛩️ Edo Dojo"
+
+theme:
+  background: "#0f0d12"
+  wall_color: "#2b211e"
+  wall_trim: "#d97706"
+  floor_primary: "#363b2a"
+  floor_secondary: "#424833"
+  floor_accent: "#4a2531"
+  grid_line: "rgba(244, 114, 182, 0.06)"
+  accent_color: "#f472b6"
+  secondary_color: "#fb923c"
+  spawn_effect: "smoke"
+  spawn_color: "#f472b6"
+  particles: "leaves"
+  working_verb: "Practicing artisan craft"
+  idle_verb: "Meditating in the Zen Garden"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "north_dojo"
+    label: "SHODO CALLIGRAPHY & BONSAI HALL"
+    color: "#f472b6"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "south_dojo"
+    label: "KATANA SWORDSMITH & UKIYO-E WING"
+    color: "#fb923c"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "east_sanctuary"
+    label: "TEA CEREMONY & SHOGUN STRATEGY"
+    color: "#38bdf8"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "zen_garden"
+    label: "KARESANSUI ZEN GARDEN & KOI POND"
+    color: "#4ade80"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Shodo Calligraphy & Bonsai Hall
+  - { id: "tatami-1",  label: "Shodo Calligraphy & Inkstone", col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "dojo_calligraphy",  glow_color: "#f472b6" }
+  - { id: "tatami-2",  label: "Sakura Bonsai Shaping Bench",  col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "dojo_bonsai",       glow_color: "#4ade80" }
+  - { id: "tatami-3",  label: "Haiku Scroll & Brush Table",   col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "dojo_calligraphy",  glow_color: "#fb923c" }
+  - { id: "tatami-4",  label: "Juniper Bonsai Artisan Table", col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "dojo_bonsai",       glow_color: "#38bdf8" }
+  - { id: "tatami-5",  label: "Imperial Seal & Scroll Desk",  col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "dojo_calligraphy",  glow_color: "#f472b6" }
+  - { id: "tatami-6",  label: "Ikebana Floral Arrangement",   col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "dojo_bonsai",       glow_color: "#facc15" }
+  # South Katana Swordsmith & Ukiyo-e Woodblock Wing
+  - { id: "tatami-7",  label: "Tamahagane Katana Forge",      col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "dojo_katana_forge", glow_color: "#fb923c" }
+  - { id: "tatami-8",  label: "Ukiyo-e Woodblock Carving",    col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "dojo_woodblock",    glow_color: "#38bdf8" }
+  - { id: "tatami-9",  label: "Blade Whetstone Polishing",    col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "dojo_katana_forge", glow_color: "#f472b6" }
+  - { id: "tatami-10", label: "Great Wave Woodblock Press",   col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "dojo_woodblock",    glow_color: "#a855f7" }
+  - { id: "tatami-11", label: "Wakizashi Hilt Wrapping",      col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "dojo_katana_forge", glow_color: "#fb923c" }
+  - { id: "tatami-12", label: "Indigo Textile Dyeing Table",  col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "dojo_woodblock",    glow_color: "#38bdf8" }
+  # East Tea Ceremony & Shogun Strategy
+  - { id: "tatami-13", label: "Chashitsu Matcha Ceremony",    col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "dojo_tea_ceremony", glow_color: "#4ade80" }
+  - { id: "tatami-14", label: "Shogun War-Fan Strategy Map",  col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "dojo_scroll_lectern", glow_color: "#f472b6" }
+  - { id: "tatami-15", label: "Tetsubin Iron Kettle Mat",     col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "dojo_tea_ceremony", glow_color: "#facc15" }
+  - { id: "tatami-16", label: "Go Board & Tactics Table",     col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "dojo_scroll_lectern", glow_color: "#38bdf8" }
+  - { id: "tatami-17", label: "Sencha Steep & Whisk Mat",     col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "dojo_tea_ceremony", glow_color: "#4ade80" }
+  - { id: "tatami-18", label: "Koto Zither & Poetry Desk",    col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "dojo_calligraphy",  glow_color: "#a855f7" }
+
+waypoints:
+  - { id: "wp-zen-1",   col: 16, row: 3, activity: "lounge",      bubble: "🪨 Raking karesansui Zen gravel" }
+  - { id: "wp-zen-2",   col: 19, row: 3, activity: "lounge",      bubble: "🧘 Zazen breath meditation" }
+  - { id: "wp-koi",     col: 22, row: 6, activity: "watercooler", bubble: "🐟 Feeding golden Nishikigoi" }
+  - { id: "wp-torii",   col: 25, row: 3, activity: "lounge",      bubble: "⛩️ Bowing at the Torii shrine" }
+  - { id: "wp-dummy",   col: 15, row: 6, activity: "arcade",      bubble: "🎋 Striking makiwara dummy" }
+  - { id: "wp-hall-1",  col: 9,  row: 8, activity: "lounge",      bubble: "⚔️ Practicing iaido kata" }
+  - { id: "wp-hall-2",  col: 17, row: 8, activity: "lounge",      bubble: "🌸 Catching falling sakura petals" }
+
+props:
+  - { id: "prop-zengarden", type: "zen_garden",     col: 15, row: 1,  w: 5, h: 2, label: "ZEN ROCK GARDEN", animated: true }
+  - { id: "prop-torii",     type: "torii_gate",     col: 24, row: 1,  w: 2, h: 2, label: "TORII", animated: true }
+  - { id: "prop-koipond",   type: "koi_pond",       col: 20, row: 4,  w: 5, h: 2, label: "KOI POND", animated: true }
+  - { id: "prop-dummy",     type: "training_dummy", col: 15, row: 4,  w: 2, h: 2, animated: true }
+  - { id: "prop-shrine1",   type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "SCROLL ARCHIVE", animated: true }
+  - { id: "prop-shrine2",   type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "KATANA RACK", animated: true }
+  - { id: "prop-board",     type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "BUSHIDO CODE" }
+  - { id: "prop-plant-1",   type: "plant",          col: 1,  row: 1,  w: 1, h: 1 }
+  - { id: "prop-plant-2",   type: "plant",          col: 26, row: 1,  w: 1, h: 1 }
+
+characters:
+  claude:
+    title: "Sensei Claude"
+    primary: "#c2410c"
+    secondary: "#1c1917"
+    skin: "#fdba74"
+    hair: "#292524"
+    accessory: "samurai"
+    badge_color: "#f97316"
+  agy:
+    title: "Ronin Agy"
+    primary: "#0369a1"
+    secondary: "#0f172a"
+    skin: "#fde047"
+    hair: "#38bdf8"
+    accessory: "samurai"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Swordsmith Codex"
+    primary: "#047857"
+    secondary: "#064e3b"
+    skin: "#fed7aa"
+    hair: "#34d399"
+    accessory: "samurai"
+    badge_color: "#10b981"
+  grok:
+    title: "Shogun Grok"
+    primary: "#be123c"
+    secondary: "#18181b"
+    skin: "#fecdd3"
+    hair: "#fb7185"
+    accessory: "samurai"
+    badge_color: "#f43f5e"
+  opencode:
+    title: "Artisan OpenCode"
+    primary: "#6d28d9"
+    secondary: "#2e1065"
+    skin: "#fde68a"
+    hair: "#c084fc"
+    accessory: "samurai"
+    badge_color: "#a855f7"
+  default:
+    title: "Dojo Disciple"
+    primary: "#4338ca"
+    secondary: "#1e1b4b"
+    skin: "#fed7aa"
+    hair: "#818cf8"
+    accessory: "samurai"
+    badge_color: "#818cf8"
+
+companions:
+  - { id: "pet-neko",  name: "Maneki",   type: "cat", color: "#f472b6", home_col: 19, home_row: 6 }
+  - { id: "pet-shiba", name: "Hachiko",  type: "dog", color: "#fb923c", home_col: 12, home_row: 8 }
