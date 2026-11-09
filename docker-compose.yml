@@ -25,5 +25,6 @@ services:
       - ${HOME}/.local/share/opencode:/home/workspace/.local/share/opencode:ro
       - ${HOME}/.config/opencode:/home/workspace/.config/opencode:ro
       - ${HOME}/.grok:/home/workspace/.grok:ro
-      # Optional Herdr usage quota cache mount
-      - /tmp/herdr-agent-usage:/tmp/herdr-agent-usage:ro
+      - ${HOME}/.config/herdr:/home/workspace/.config/herdr:ro
+      # Host Herdr usage quota cache mount (supports macOS $$TMPDIR and Linux /tmp)
+      - ${TMPDIR:-/tmp/}herdr-agent-usage:/tmp/herdr-agent-usage:ro

@@ -50,11 +50,29 @@ func NewAdapter(cfg config.LocalConfig) *Adapter {
 		candidates := []string{
 			filepath.Join(home, ".config", "herdr", "plugins", "herdr-agent-usage"),
 			filepath.Join(home, "Development", "herdr-plugins", "herdr-agent-usage"),
+			"/home/workspace/.config/herdr/plugins/herdr-agent-usage",
 		}
 		for _, candidate := range candidates {
 			if info, err := os.Stat(candidate); err == nil && info.IsDir() {
 				cfg.UsagePluginDir = candidate
 				break
+			}
+		}
+		if cfg.UsagePluginDir == "" {
+			for _, baseDir := range []string{
+				filepath.Join(home, ".config", "herdr", "plugins"),
+				"/home/workspace/.config/herdr/plugins",
+			} {
+				globs, _ := filepath.Glob(filepath.Join(baseDir, "*", "*agent-usage*"))
+				for _, g := range globs {
+					if info, err := os.Stat(g); err == nil && info.IsDir() {
+						cfg.UsagePluginDir = g
+						break
+					}
+				}
+				if cfg.UsagePluginDir != "" {
+					break
+				}
 			}
 		}
 	}
@@ -658,6 +676,57 @@ func (a *Adapter) discoverAccounts(ctx context.Context) []accountRecord {
 		res = append(res, accountRecord{Agent: "claude", ID: base, Label: label, Email: email, Plan: plan, Home: dir})
 	}
 
+	// Also discover/enrich Claude accounts from identity cache (e.g. from herdr-agent-usage)
+	identDir := filepath.Join(a.identityRoot, "claude")
+	if entries, err := os.ReadDir(identDir); err == nil {
+		for _, e := range entries {
+			if e.IsDir() || !strings.HasSuffix(e.Name(), ".json") {
+				continue
+			}
+			id := strings.TrimSuffix(e.Name(), ".json")
+			b, err := os.ReadFile(filepath.Join(identDir, e.Name()))
+			if err != nil {
+				continue
+			}
+			var parsed struct {
+				Email            string `json:"email"`
+				SubscriptionType string `json:"subscriptionType"`
+			}
+			if json.Unmarshal(b, &parsed) != nil {
+				continue
+			}
+			matched := false
+			for i := range res {
+				if res[i].Agent == "claude" && (res[i].ID == id || res[i].ID == strings.TrimPrefix(id, ".")) {
+					matched = true
+					if res[i].Email == "-" && parsed.Email != "" {
+						res[i].Email = parsed.Email
+					}
+					if res[i].Plan == "-" && parsed.SubscriptionType != "" {
+						res[i].Plan = parsed.SubscriptionType
+					}
+					break
+				}
+			}
+			if !matched {
+				label := "default"
+				if strings.HasPrefix(id, ".claude-") {
+					label = strings.TrimPrefix(id, ".claude-")
+				} else if strings.HasPrefix(id, "claude-") {
+					label = strings.TrimPrefix(id, "claude-")
+				}
+				res = append(res, accountRecord{
+					Agent: "claude",
+					ID:    id,
+					Label: label,
+					Email: defaultDash(parsed.Email),
+					Plan:  defaultDash(parsed.SubscriptionType),
+					Home:  "",
+				})
+			}
+		}
+	}
+
 	// Agy
 	agyFile := filepath.Join(a.homeDir, ".gemini", "google_accounts.json")
 	if b, err := os.ReadFile(agyFile); err == nil {
@@ -719,6 +788,24 @@ func (a *Adapter) discoverAccounts(ctx context.Context) []accountRecord {
 		if json.Unmarshal(b, &entries) == nil {
 			for k := range entries {
 				res = append(res, accountRecord{Agent: "opencode", ID: k, Label: k, Email: "-", Plan: "-", Home: filepath.Join(a.homeDir, ".config", "opencode")})
+			}
+		}
+	}
+	if ocEntries, err := os.ReadDir(filepath.Join(a.cacheRoot, "opencode")); err == nil {
+		for _, e := range ocEntries {
+			if e.IsDir() || !strings.HasSuffix(e.Name(), ".json") {
+				continue
+			}
+			id := strings.TrimSuffix(e.Name(), ".json")
+			found := false
+			for _, r := range res {
+				if r.Agent == "opencode" && r.ID == id {
+					found = true
+					break
+				}
+			}
+			if !found {
+				res = append(res, accountRecord{Agent: "opencode", ID: id, Label: id, Email: "-", Plan: "-", Home: filepath.Join(a.homeDir, ".config", "opencode")})
 			}
 		}
 	}
@@ -844,6 +931,24 @@ func (a *Adapter) discoverNativeClaudeSessions() []herdrAgent {
 	return agents
 }
 
+func cleanClaudePrompt(raw string) string {
+	s := strings.TrimSpace(raw)
+	if s == "" || strings.HasPrefix(s, "/") || strings.HasPrefix(s, "<") || strings.Contains(s, "</") {
+		return ""
+	}
+	if strings.HasPrefix(s, "This command") || strings.HasPrefix(s, "(Bash") || strings.HasPrefix(s, "This Bash") || strings.HasPrefix(s, "[Image:") {
+		return ""
+	}
+	lines := strings.Split(s, "\n")
+	for _, l := range lines {
+		l = strings.TrimSpace(l)
+		if l != "" && !strings.HasPrefix(l, "#") && !strings.HasPrefix(l, "<") && !strings.HasPrefix(l, "```") {
+			return l
+		}
+	}
+	return ""
+}
+
 func (a *Adapter) extractClaudeSessionTask(transcriptPath string) string {
 	f, err := os.Open(transcriptPath)
 	if err != nil {
@@ -855,7 +960,8 @@ func (a *Adapter) extractClaudeSessionTask(transcriptPath string) string {
 	buf := make([]byte, 0, 64*1024)
 	scanner.Buffer(buf, 1024*1024)
 
-	var lastUserMsg string
+	var firstPrompt string
+	var lastPrompt string
 	for scanner.Scan() {
 		line := scanner.Bytes()
 		if !bytes.Contains(line, []byte(`"type":"user"`)) {
@@ -867,33 +973,41 @@ func (a *Adapter) extractClaudeSessionTask(transcriptPath string) string {
 			} `json:"message"`
 		}
 		if json.Unmarshal(line, &parsed) == nil {
+			var text string
 			switch c := parsed.Message.Content.(type) {
 			case string:
-				c = strings.TrimSpace(c)
-				if c != "" && !strings.HasPrefix(c, "/") {
-					lastUserMsg = c
-				}
+				text = c
 			case []interface{}:
 				for _, block := range c {
 					if bm, ok := block.(map[string]interface{}); ok {
 						if bm["type"] == "text" {
-							if text, ok := bm["text"].(string); ok {
-								text = strings.TrimSpace(text)
-								if text != "" && !strings.HasPrefix(text, "/") {
-									lastUserMsg = text
-									break
-								}
+							if t, ok := bm["text"].(string); ok {
+								text = t
+								break
 							}
 						}
 					}
 				}
 			}
+			if cleaned := cleanClaudePrompt(text); cleaned != "" {
+				if firstPrompt == "" {
+					firstPrompt = cleaned
+				}
+				lower := strings.ToLower(cleaned)
+				if len(cleaned) > 3 && lower != "yes" && lower != "ok" && lower != "continue" && lower != "proceed" && lower != "go ahead" {
+					lastPrompt = cleaned
+				}
+			}
 		}
 	}
-	if len(lastUserMsg) > 90 {
-		lastUserMsg = lastUserMsg[:87] + "..."
+	res := lastPrompt
+	if res == "" {
+		res = firstPrompt
 	}
-	return lastUserMsg
+	if len(res) > 90 {
+		res = res[:87] + "..."
+	}
+	return res
 }
 
 func (a *Adapter) discoverNativeCodexSessions() []herdrAgent {
