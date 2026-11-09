@@ -54,7 +54,7 @@ export interface SceneCompanion {
   y: number;
   col: number;
   row: number;
-  dir: 'left' | 'right';
+  dir: 'left' | 'right' | 'up' | 'down';
   path: GridPos[];
   frame: number;
   frameTimer: number;
@@ -128,7 +128,7 @@ export class PixelSceneWorld {
       row: c.home_row,
       x: c.home_col * TILE_SIZE + TILE_SIZE / 2,
       y: c.home_row * TILE_SIZE + TILE_SIZE / 2,
-      dir: 'right',
+      dir: 'down',
       path: [],
       frame: 0,
       frameTimer: 0,
@@ -599,7 +599,11 @@ export class PixelSceneWorld {
         const dx = tx - pet.x;
         const dy = ty - pet.y;
         const dist = Math.hypot(dx, dy);
-        if (Math.abs(dx) > 0.1) pet.dir = dx > 0 ? 'right' : 'left';
+        if (Math.abs(dx) > Math.abs(dy)) {
+          pet.dir = dx > 0 ? 'right' : 'left';
+        } else if (Math.abs(dy) > 0.1) {
+          pet.dir = dy > 0 ? 'down' : 'up';
+        }
         const speed = 26;
         if (dist <= speed * dt) {
           pet.x = tx;
@@ -2162,7 +2166,8 @@ function drawCompanion(
 ) {
   const x = Math.round(pet.x - 6);
   const y = Math.round(pet.y - 8);
-  const bob = pet.path.length > 0 ? pet.frame : 0;
+  const isMoving = pet.path.length > 0;
+  const bob = isMoving ? pet.frame : 0;
   const ramp = getRamp(pet.color);
 
   drawDropShadow(px, x + 1, y + 9, 10, 3);
@@ -2170,24 +2175,177 @@ function drawCompanion(
   if (spriteImg) {
     drawImg(spriteImg, x, y - bob, 12, 12);
   } else if (pet.type === 'robot') {
+    // Hi-Bit Cybernetic Drone / Robot Pet with 4 directional sprites
     drawBevelBox(px, x + 1, y + 2 - bob, 10, 7, pet.color);
-    px(x + 4, y + 4 - bob, 4, 2, '#00f0ff');
-    px(x + 5, y + 4 - bob, 2, 1, '#ffffff');
-    px(x + 2, y + 9, 2, 2, ramp.outline);
-    px(x + 8, y + 9, 2, 2, ramp.outline);
+
+    if (pet.dir === 'down') {
+      // Front View: Glowing wide cyan visor + antenna beacon + treads
+      px(x + 3, y + 4 - bob, 6, 2, '#00f0ff');
+      px(x + 5, y + 4 - bob, 2, 1, '#ffffff');
+      px(x + 5, y - 1 - bob, 2, 3, ramp.outline);
+      px(x + 5, y - 2 - bob, 2, 2, '#f43f5e');
+      const stepL = isMoving && pet.frame === 0 ? 1 : 0;
+      const stepR = isMoving && pet.frame === 1 ? 1 : 0;
+      px(x + 2, y + 9 - stepL, 2, 2, ramp.outline);
+      px(x + 8, y + 9 - stepR, 2, 2, ramp.outline);
+    } else if (pet.dir === 'up') {
+      // Back View: Rear cooling vents + green power cells + thruster flicker
+      px(x + 3, y + 3 - bob, 6, 1, ramp.shadow);
+      px(x + 3, y + 5 - bob, 6, 2, '#10b981');
+      px(x + 4, y + 5 - bob, 4, 1, '#6ee7b7');
+      const pulse = Math.floor(time * 12) % 2;
+      px(x + 4, y + 8 - bob + pulse, 4, 1, '#38bdf8');
+      px(x + 5, y - 1 - bob, 2, 3, ramp.outline);
+      px(x + 5, y - 2 - bob, 2, 2, '#f43f5e');
+      const stepL = isMoving && pet.frame === 0 ? 1 : 0;
+      const stepR = isMoving && pet.frame === 1 ? 1 : 0;
+      px(x + 2, y + 9 - stepL, 2, 2, ramp.outline);
+      px(x + 8, y + 9 - stepR, 2, 2, ramp.outline);
+    } else {
+      // Side Profile: Left or Right
+      const isRight = pet.dir === 'right';
+      const vx = isRight ? x + 7 : x + 2;
+      const ax = isRight ? x + 3 : x + 7;
+      px(vx, y + 4 - bob, 3, 2, '#00f0ff');
+      px(isRight ? vx + 1 : vx, y + 4 - bob, 2, 1, '#ffffff');
+      px(isRight ? x : x + 11, y + 5 - bob, 1, 2, '#38bdf8');
+      px(ax, y - 1 - bob, 2, 3, ramp.outline);
+      px(ax, y - 2 - bob, 2, 2, '#f43f5e');
+      const stepF = isMoving && pet.frame === 1 ? 1 : 0;
+      const stepB = isMoving && pet.frame === 0 ? 1 : 0;
+      px(isRight ? x + 7 : x + 2, y + 9 - stepF, 3, 2, ramp.outline);
+      px(isRight ? x + 2 : x + 7, y + 9 - stepB, 3, 2, ramp.outline);
+    }
+  } else if (pet.type === 'dog') {
+    // Hi-Bit Canine (Corgi / Hound / Shiba / K9) with 4 directional sprites
+    if (pet.dir === 'down') {
+      // Front View: Friendly face, floppy/folded ears, snout, front paws
+      drawBevelBox(px, x + 1, y + 4 - bob, 10, 5, pet.color);
+      px(x + 4, y + 5 - bob, 4, 4, '#fef08a'); // cream chest
+      drawBevelBox(px, x + 2, y + 1 - bob, 8, 5, pet.color);
+      px(x + 1, y - bob, 2, 3, ramp.outline); // left ear
+      px(x + 9, y - bob, 2, 3, ramp.outline); // right ear
+      px(x + 3, y + 2 - bob, 2, 2, '#090d16');
+      px(x + 3, y + 2 - bob, 1, 1, '#ffffff');
+      px(x + 7, y + 2 - bob, 2, 2, '#090d16');
+      px(x + 7, y + 2 - bob, 1, 1, '#ffffff');
+      px(x + 4, y + 4 - bob, 4, 2, '#fef08a'); // muzzle
+      px(x + 5, y + 3 - bob, 2, 2, '#090d16'); // nose
+      if (Math.floor(time * 4) % 2 === 0) {
+        px(x + 5, y + 5 - bob, 2, 1, '#f43f5e'); // tongue
+      }
+      const wag = Math.floor(time * 8) % 2;
+      px(x + 10, y + 3 - wag, 2, 3, ramp.base);
+      px(x + 11, y + 3 - wag, 1, 2, '#ffffff');
+      const stepL = isMoving && pet.frame === 0 ? 1 : 0;
+      const stepR = isMoving && pet.frame === 1 ? 1 : 0;
+      px(x + 2, y + 9 - stepL, 2, 2, '#ffffff');
+      px(x + 8, y + 9 - stepR, 2, 2, '#ffffff');
+    } else if (pet.dir === 'up') {
+      // Back View: Dog walking away, back of head, dorsal coat, wagging tail
+      drawBevelBox(px, x + 1, y + 4 - bob, 10, 5, pet.color);
+      drawBevelBox(px, x + 2, y + 1 - bob, 8, 4, pet.color);
+      px(x + 3, y + 2 - bob, 6, 3, ramp.shadow);
+      px(x + 1, y - bob, 2, 3, ramp.outline);
+      px(x + 9, y - bob, 2, 3, ramp.outline);
+      const wag = (Math.floor(time * 10) % 3) - 1;
+      px(x + 5 + wag, y + 1 - bob, 2, 3, ramp.base);
+      px(x + 5 + wag, y - 1 - bob, 2, 2, '#ffffff');
+      const stepL = isMoving && pet.frame === 0 ? 1 : 0;
+      const stepR = isMoving && pet.frame === 1 ? 1 : 0;
+      px(x + 2, y + 9 - stepL, 2, 2, '#ffffff');
+      px(x + 8, y + 9 - stepR, 2, 2, '#ffffff');
+    } else {
+      // Side Profile: Left or Right
+      const isRight = pet.dir === 'right';
+      const bx = isRight ? x + 1 : x + 2;
+      const hx = isRight ? x + 6 : x + 1;
+      const ex = isRight ? x + 6 : x + 4;
+      const eyeX = isRight ? x + 9 : x + 2;
+      const snoutX = isRight ? x + 10 : x;
+      const tailX = isRight ? x - 1 : x + 11;
+      drawBevelBox(px, bx, y + 4 - bob, 9, 5, pet.color);
+      drawBevelBox(px, hx, y + 1 - bob, 5, 5, pet.color);
+      px(ex, y - bob, 2, 3, ramp.outline);
+      px(eyeX, y + 2 - bob, 1, 1, '#090d16');
+      px(eyeX, y + 2 - bob, 1, 1, '#ffffff');
+      px(snoutX, y + 3 - bob, 2, 2, '#fef08a');
+      px(isRight ? snoutX + 1 : snoutX, y + 3 - bob, 1, 1, '#090d16');
+      const wag = Math.floor(time * 8) % 2;
+      px(tailX, y + 2 - wag, 2, 3, ramp.base);
+      px(tailX, y + 1 - wag, 2, 1, '#ffffff');
+      const stepF = isMoving && pet.frame === 1 ? 1 : 0;
+      const stepB = isMoving && pet.frame === 0 ? 1 : 0;
+      px(isRight ? x + 8 : x + 2, y + 9 - stepF, 2, 2, '#ffffff');
+      px(isRight ? x + 2 : x + 8, y + 9 - stepB, 2, 2, '#ffffff');
+    }
   } else {
-    // Hi-Bit Shaded Pixel Cat / Corgi with sel-out contour
-    drawBevelBox(px, x + 2, y + 4 - bob, 8, 5, pet.color);
-    const hx = pet.dir === 'right' ? x + 6 : x + 1;
-    drawBevelBox(px, hx, y + 1 - bob, 5, 5, pet.color);
-    px(hx, y - bob, 2, 2, ramp.outline); // ear L
-    px(hx + 3, y - bob, 2, 2, ramp.outline); // ear R
-    px(hx + (pet.dir === 'right' ? 3 : 1), y + 3 - bob, 1, 1, '#090d16'); // eye
-    const tailWag = Math.floor(time * 6) % 2;
-    const tx = pet.dir === 'right' ? x : x + 10;
-    px(tx, y + 2 - tailWag, 2, 4, ramp.base);
-    px(x + 2, y + 9, 2, 2, '#ffffff');
-    px(x + 7, y + 9, 2, 2, '#ffffff');
+    // Hi-Bit Feline (Cat / Owl / Small Pet) with 4 directional sprites
+    if (pet.dir === 'down') {
+      // Front View: Symmetrical cute cat face, pointed pink ears, whiskers, chest bib
+      drawBevelBox(px, x + 2, y + 4 - bob, 8, 5, pet.color);
+      px(x + 4, y + 5 - bob, 4, 3, '#f8fafc'); // chest bib
+      drawBevelBox(px, x + 2, y + 1 - bob, 8, 4, pet.color);
+      px(x + 2, y - 1 - bob, 2, 2, ramp.outline);
+      px(x + 3, y - bob, 1, 1, '#fda4af'); // pink ear
+      px(x + 8, y - 1 - bob, 2, 2, ramp.outline);
+      px(x + 8, y - bob, 1, 1, '#fda4af');
+      px(x + 3, y + 2 - bob, 2, 2, '#090d16');
+      px(x + 3, y + 2 - bob, 1, 1, '#ffffff');
+      px(x + 7, y + 2 - bob, 2, 2, '#090d16');
+      px(x + 7, y + 2 - bob, 1, 1, '#ffffff');
+      px(x + 5, y + 3 - bob, 2, 1, '#f43f5e'); // nose
+      px(x + 1, y + 3 - bob, 1, 1, '#f8fafc'); // whiskers
+      px(x + 10, y + 3 - bob, 1, 1, '#f8fafc');
+      const tailWag = Math.floor(time * 6) % 2;
+      px(x + 10, y + 3 - tailWag, 2, 4, ramp.base);
+      px(x + 11, y + 2 - tailWag, 1, 2, ramp.light);
+      const stepL = isMoving && pet.frame === 0 ? 1 : 0;
+      const stepR = isMoving && pet.frame === 1 ? 1 : 0;
+      px(x + 3, y + 9 - stepL, 2, 2, '#ffffff');
+      px(x + 7, y + 9 - stepR, 2, 2, '#ffffff');
+    } else if (pet.dir === 'up') {
+      // Back View: Cat walking away, back of head, dorsal fur, swishing tail
+      drawBevelBox(px, x + 2, y + 4 - bob, 8, 5, pet.color);
+      drawBevelBox(px, x + 2, y + 1 - bob, 8, 4, pet.color);
+      px(x + 4, y + 1 - bob, 4, 3, ramp.shadow);
+      px(x + 2, y - 1 - bob, 2, 2, ramp.outline);
+      px(x + 2, y - bob, 2, 1, ramp.shadow);
+      px(x + 8, y - 1 - bob, 2, 2, ramp.outline);
+      px(x + 8, y - bob, 2, 1, ramp.shadow);
+      const tailWag = (Math.floor(time * 6) % 3) - 1;
+      px(x + 5 + tailWag, y + 2 - bob, 2, 4, ramp.base);
+      px(x + 6 + tailWag, y - bob, 2, 3, ramp.light);
+      const stepL = isMoving && pet.frame === 0 ? 1 : 0;
+      const stepR = isMoving && pet.frame === 1 ? 1 : 0;
+      px(x + 3, y + 9 - stepL, 2, 2, '#ffffff');
+      px(x + 7, y + 9 - stepR, 2, 2, '#ffffff');
+    } else {
+      // Side Profile: Left or Right
+      const isRight = pet.dir === 'right';
+      const hx = isRight ? x + 6 : x + 1;
+      const ear1 = isRight ? x + 6 : x + 1;
+      const ear2 = isRight ? x + 9 : x + 4;
+      const eyeX = isRight ? x + 9 : x + 2;
+      const noseX = isRight ? x + 11 : x;
+      const whiskerX = isRight ? x + 11 : x;
+      const tailX = isRight ? x : x + 10;
+      drawBevelBox(px, x + 2, y + 4 - bob, 8, 5, pet.color);
+      drawBevelBox(px, hx, y + 1 - bob, 5, 5, pet.color);
+      px(ear1, y - bob, 2, 2, ramp.outline);
+      px(ear2, y - bob, 2, 2, ramp.outline);
+      px(eyeX, y + 3 - bob, 1, 1, '#090d16');
+      px(eyeX, y + 2 - bob, 1, 1, '#ffffff');
+      px(noseX, y + 4 - bob, 1, 1, '#f43f5e');
+      px(whiskerX, y + 3 - bob, 1, 1, '#f8fafc');
+      const tailWag = Math.floor(time * 6) % 2;
+      px(tailX, y + 2 - tailWag, 2, 4, ramp.base);
+      px(isRight ? tailX - 1 : tailX + 2, y + 1 - tailWag, 1, 2, ramp.light);
+      const stepF = isMoving && pet.frame === 1 ? 1 : 0;
+      const stepB = isMoving && pet.frame === 0 ? 1 : 0;
+      px(isRight ? x + 8 : x + 2, y + 9 - stepF, 2, 2, '#ffffff');
+      px(isRight ? x + 2 : x + 8, y + 9 - stepB, 2, 2, '#ffffff');
+    }
   }
 
   if (pet.heartTimer > 0) {
