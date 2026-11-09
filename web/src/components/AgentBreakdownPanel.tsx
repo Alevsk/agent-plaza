@@ -1,6 +1,6 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { Crosshair, X } from 'lucide-react';
 import type { AgentSession, TemplateManifest } from '../types';
 import { PixelBar } from './PixelBar';
 
@@ -11,6 +11,8 @@ interface AgentBreakdownPanelProps {
   onSelectAgent: (id: string | null) => void;
   onToggleStatus: (id: string) => void;
   onClose?: () => void;
+  onFollowAgent?: (id: string) => void;
+  followTargetId?: string | null;
 }
 
 export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
@@ -20,6 +22,8 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
   onSelectAgent,
   onToggleStatus,
   onClose,
+  onFollowAgent,
+  followTargetId,
 }) => {
   return (
     <div className="flex flex-col h-full min-h-0 rounded-xl md:rounded-lg border border-slate-700/80 bg-slate-950/92 backdrop-blur-md shadow-2xl overflow-hidden">
@@ -48,11 +52,12 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
       </div>
 
       {/* Desktop Table Header */}
-      <div className="hidden md:grid grid-cols-[88px_64px_1fr_148px] gap-2 px-3.5 py-1.5 border-b border-slate-800/80 bg-slate-900/40 font-mono text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0">
+      <div className="hidden md:grid grid-cols-[88px_64px_1fr_130px_28px] gap-2 px-3.5 py-1.5 border-b border-slate-800/80 bg-slate-900/40 font-mono text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0">
         <div>AGENT</div>
         <div>STATUS</div>
         <div>TASK</div>
         <div className="text-right">CONTEXT</div>
+        <div className="text-center" title="Follow agent with camera">CAM</div>
       </div>
 
       {/* Rows */}
@@ -60,6 +65,7 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
         <AnimatePresence initial={false}>
           {agents.map((ag) => {
             const isSelected = ag.id === selectedId;
+            const isFollowed = followTargetId === ag.id;
             const style =
               template?.characters[ag.character_key] ||
               template?.characters[ag.agent] ||
@@ -84,8 +90,8 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
                   isSelected ? 'ring-1 ring-inset ring-sky-400/60' : ''
                 }`}
               >
-                {/* Desktop 4-column Grid */}
-                <div className="hidden md:grid grid-cols-[88px_64px_1fr_148px] gap-2 items-center px-3.5 py-2">
+                {/* Desktop 5-column Grid */}
+                <div className="hidden md:grid grid-cols-[88px_64px_1fr_130px_28px] gap-2 items-center px-3.5 py-2">
                   {/* AGENT */}
                   <div className="flex items-center gap-1.5 truncate">
                     <span
@@ -131,6 +137,24 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
                       tokens={ag.context_percent >= 0 ? ag.context_tokens : undefined}
                     />
                   </div>
+
+                  {/* CAMERA FOLLOW BUTTON */}
+                  <div className="flex justify-center">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onFollowAgent?.(ag.id);
+                      }}
+                      title={isFollowed ? 'Following with camera' : 'Follow and center camera on agent'}
+                      className={`p-1 rounded cursor-pointer transition-colors ${
+                        isFollowed
+                          ? 'text-sky-400 bg-sky-500/25 border border-sky-400/50'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                      }`}
+                    >
+                      <Crosshair className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Mobile Responsive Card (2-row layout) */}
@@ -144,6 +168,20 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
                       <span className="font-mono text-xs font-bold text-white">
                         {ag.display_name}
                       </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onFollowAgent?.(ag.id);
+                        }}
+                        title={isFollowed ? 'Following with camera' : 'Follow with camera'}
+                        className={`p-1 rounded cursor-pointer transition-colors ${
+                          isFollowed
+                            ? 'text-sky-400 bg-sky-500/25 border border-sky-400/50'
+                            : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        }`}
+                      >
+                        <Crosshair className="w-3.5 h-3.5" />
+                      </button>
                     </div>
 
                     <div className="flex items-center gap-2">

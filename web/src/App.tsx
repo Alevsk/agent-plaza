@@ -6,19 +6,24 @@ import {
   ChevronDown,
   Compass,
   CreditCard,
+  Crosshair,
   Eye,
+  Film,
+  Hand,
   Maximize2,
   Plus,
   RotateCcw,
   Sparkles,
   Wifi,
   WifiOff,
+  Zap,
 } from 'lucide-react';
 import { AgentBreakdownPanel } from './components/AgentBreakdownPanel';
 import { PixelCanvas } from './components/PixelCanvas';
 import { SubscriptionLimitsPanel } from './components/SubscriptionLimitsPanel';
 import { PixelSceneWorld } from './engine/pixelEngine';
 import type {
+  CameraMode,
   TemplateManifest,
   TemplateSummary,
   WorkspaceEvent,
@@ -41,6 +46,10 @@ export const App: React.FC = () => {
   const [templatesList, setTemplatesList] = useState<TemplateSummary[]>([]);
 
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+  const [cameraMode, setCameraMode] = useState<CameraMode>('free');
+  const [followTargetId, setFollowTargetId] = useState<string | null>(null);
+  const [latestActivityAgentId, setLatestActivityAgentId] = useState<string | null>(null);
+
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(true);
   const [showLabels, setShowLabels] = useState(true);
@@ -130,6 +139,11 @@ export const App: React.FC = () => {
                 '#22c55e',
               );
             }
+            if (event.joined && event.joined.length > 0) {
+              setLatestActivityAgentId(event.joined[event.joined.length - 1].id);
+            } else if (event.updated && event.updated.length > 0) {
+              setLatestActivityAgentId(event.updated[0].id);
+            }
             for (const u of event.updated || []) {
               pushToast(
                 `🔄 ${u.display_name} → ${u.status.toUpperCase()}`,
@@ -184,6 +198,16 @@ export const App: React.FC = () => {
 
   const handleToggleStatus = (id: string) => {
     sendCommand({ action: 'toggle_status', id });
+    setLatestActivityAgentId(id);
+  };
+
+  const handleFollowAgent = (id: string) => {
+    setFollowTargetId(id);
+    setSelectedAgentId(id);
+    setCameraMode('follow');
+    if (isMobile) {
+      setMobileSheet('none');
+    }
   };
 
   const summary = snapshot?.summary || { total_agents: 0, working: 0, idle: 0 };
@@ -204,6 +228,12 @@ export const App: React.FC = () => {
         onToggleStatus={handleToggleStatus}
         showLabels={showLabels}
         fitTrigger={fitTrigger}
+        cameraMode={cameraMode}
+        onCameraModeChange={setCameraMode}
+        followTargetId={followTargetId}
+        onFollowTargetChange={setFollowTargetId}
+        latestActivityAgentId={latestActivityAgentId}
+        rightPanelOpen={showRightPanel}
       />
 
       {/* TOP COMMAND & SUMMARY BAR */}
@@ -420,6 +450,85 @@ export const App: React.FC = () => {
             </button>
           </div>
 
+          {/* Desktop Camera Mode Segmented Control (>= lg) */}
+          <div className="hidden lg:flex items-center rounded border border-slate-700/80 bg-slate-900/90 p-0.5 border-l border-slate-800 ml-1">
+            <button
+              data-testid="header-camera-mode-free"
+              onClick={() => setCameraMode('free')}
+              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+                cameraMode === 'free'
+                  ? 'bg-sky-500 text-slate-950 font-bold shadow'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+              title="Free Pan — Drag & scroll manually"
+            >
+              <Hand className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Free</span>
+            </button>
+            <button
+              data-testid="header-camera-mode-follow"
+              onClick={() => {
+                if (cameraMode === 'follow') {
+                  setCameraMode('free');
+                } else {
+                  setCameraMode('follow');
+                  if (!followTargetId && selectedAgentId) {
+                    setFollowTargetId(selectedAgentId);
+                  } else if (!followTargetId && agents.length > 0) {
+                    setFollowTargetId(agents[0].id);
+                  }
+                }
+              }}
+              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+                cameraMode === 'follow'
+                  ? 'bg-sky-500 text-slate-950 font-bold shadow'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+              title="Follow Agent — Lock camera onto active agent"
+            >
+              <Crosshair className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Follow</span>
+            </button>
+            <button
+              data-testid="header-camera-mode-tour"
+              onClick={() => {
+                if (cameraMode === 'tour') {
+                  setCameraMode('free');
+                } else {
+                  setCameraMode('tour');
+                }
+              }}
+              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+                cameraMode === 'tour'
+                  ? 'bg-purple-500 text-slate-950 font-bold shadow'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+              title="Cinematic Tour — Auto-pan showcase between agents"
+            >
+              <Film className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Tour</span>
+            </button>
+            <button
+              data-testid="header-camera-mode-activity"
+              onClick={() => {
+                if (cameraMode === 'activity') {
+                  setCameraMode('free');
+                } else {
+                  setCameraMode('activity');
+                }
+              }}
+              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+                cameraMode === 'activity'
+                  ? 'bg-emerald-500 text-slate-950 font-bold shadow'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              }`}
+              title="Live Activity — Auto-focus on active events"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Activity</span>
+            </button>
+          </div>
+
           {/* Overhead Labels & Camera Fit Toggles */}
           <div className="flex items-center gap-1 border-l border-slate-800 pl-1.5">
             <button
@@ -483,6 +592,8 @@ export const App: React.FC = () => {
                   selectedId={selectedAgentId}
                   onSelectAgent={setSelectedAgentId}
                   onToggleStatus={handleToggleStatus}
+                  onFollowAgent={handleFollowAgent}
+                  followTargetId={cameraMode === 'follow' ? followTargetId : null}
                 />
               </motion.aside>
             )}
@@ -545,6 +656,8 @@ export const App: React.FC = () => {
                       onSelectAgent={setSelectedAgentId}
                       onToggleStatus={handleToggleStatus}
                       onClose={() => setMobileSheet('none')}
+                      onFollowAgent={handleFollowAgent}
+                      followTargetId={cameraMode === 'follow' ? followTargetId : null}
                     />
                   )}
                   {mobileSheet === 'quotas' && (

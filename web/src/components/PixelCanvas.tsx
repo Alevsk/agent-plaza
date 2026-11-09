@@ -1,12 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Maximize2, Minimize2, Minus, Plus, X } from 'lucide-react';
+import {
+  Crosshair,
+  Film,
+  Hand,
+  Maximize2,
+  Minimize2,
+  Minus,
+  Plus,
+  X,
+  Zap,
+} from 'lucide-react';
 import {
   PixelSceneWorld,
   renderPixelWorld,
   SceneCharacter,
   TILE_SIZE,
 } from '../engine/pixelEngine';
-import type { AgentSession, TemplateManifest } from '../types';
+import type { AgentSession, CameraMode, TemplateManifest } from '../types';
 
 interface PixelCanvasProps {
   worldRef: React.MutableRefObject<PixelSceneWorld>;
@@ -17,25 +27,43 @@ interface PixelCanvasProps {
   onToggleStatus: (id: string) => void;
   showLabels: boolean;
   fitTrigger: number;
+  cameraMode: CameraMode;
+  onCameraModeChange: (mode: CameraMode) => void;
+  followTargetId: string | null;
+  onFollowTargetChange: (id: string | null) => void;
+  latestActivityAgentId?: string | null;
+  rightPanelOpen?: boolean;
 }
 
 export const PixelCanvas: React.FC<PixelCanvasProps> = ({
   worldRef,
   template,
+  agents,
   selectedId,
   onSelectAgent,
   onToggleStatus,
   showLabels,
   fitTrigger,
+  cameraMode,
+  onCameraModeChange,
+  followTargetId,
+  onFollowTargetChange,
+  latestActivityAgentId,
+  rightPanelOpen = false,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [zoom, setZoom] = useState<number>(3);
-  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const panRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [, setOverlayTick] = useState<number>(0);
   const [mobileViewMode, setMobileViewMode] = useState<'cover' | 'contain'>('cover');
+
+  // Tour tracking state
+  const tourTimerRef = useRef<number>(0);
+  const tourIndexRef = useRef<number>(0);
+  const [tourIndexDisplay, setTourIndexDisplay] = useState<number>(0);
 
   const dragRef = useRef<{
     dragging: boolean;
@@ -126,7 +154,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       const targetH = h * 0.78;
       const fitZ = Math.max(0.9, Math.min(4.5, Math.min(targetW / mapW, targetH / mapH)));
       setZoom(Number(fitZ.toFixed(2)));
-      setPan({ x: 0, y: 12 });
+      panRef.current = { x: 0, y: 12 };
       return;
     }
 
@@ -135,7 +163,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       const coverZ = Math.max(w / mapW, h / mapH);
       const chosenZ = Number(coverZ.toFixed(2));
       setZoom(chosenZ);
-      setPan({ x: 0, y: 0 });
+      panRef.current = { x: 0, y: 0 };
       setMobileViewMode('cover');
     } else {
       // Overview Mode: Show full canvas with black borders
@@ -144,7 +172,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       const fitZ = Math.max(0.5, Math.min(4.5, Math.min(targetW / mapW, targetH / mapH)));
       const chosenZ = Number(fitZ.toFixed(2));
       setZoom(chosenZ);
-      setPan({ x: 0, y: 0 });
+      panRef.current = { x: 0, y: 0 };
       setMobileViewMode('contain');
     }
   };
@@ -175,7 +203,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, [template]);
 
-  // 60fps Game Loop
+  // 60fps Game Loop & Smooth Exponential Damped Camera Tracking
   useEffect(() => {
     let rafId = 0;
     let lastTime = performance.now();
@@ -187,6 +215,53 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
 
       const world = worldRef.current;
       world.update(dt);
+
+      // Camera tracking modes: follow, tour, activity
+      if (cameraMode !== 'free' && template) {
+        let targetChar: SceneCharacter | null = null;
+        const charList = Array.from(world.characters.values());
+
+        if (cameraMode === 'follow') {
+          if (followTargetId && world.characters.has(followTargetId)) {
+            targetChar = world.characters.get(followTargetId)!;
+          } else if (selectedId && world.characters.has(selectedId)) {
+            targetChar = world.characters.get(selectedId)!;
+          } else if (charList.length > 0) {
+            targetChar = charList[0];
+          }
+        } else if (cameraMode === 'tour') {
+          if (charList.length > 0) {
+            tourTimerRef.current += dt;
+            if (tourTimerRef.current >= 7.0) {
+              tourTimerRef.current = 0;
+              tourIndexRef.current = (tourIndexRef.current + 1) % charList.length;
+              setTourIndexDisplay(tourIndexRef.current);
+            }
+            targetChar = charList[tourIndexRef.current % charList.length];
+          }
+        } else if (cameraMode === 'activity') {
+          if (latestActivityAgentId && world.characters.has(latestActivityAgentId)) {
+            targetChar = world.characters.get(latestActivityAgentId)!;
+          } else {
+            const working = charList.find((c) => c.session.status === 'working');
+            targetChar = working || charList[0] || null;
+          }
+        }
+
+        if (targetChar) {
+          const mapW = template.grid.cols * TILE_SIZE * zoom;
+          const mapH = template.grid.rows * TILE_SIZE * zoom;
+          const desiredX = mapW / 2 - targetChar.x * zoom;
+          const desiredY = mapH / 2 - targetChar.y * zoom;
+          const targetPan = clampPan({ x: desiredX, y: desiredY }, zoom);
+
+          // Smooth exponential damping (dt-independent physics)
+          const lerpRate = cameraMode === 'tour' ? 4.2 : 6.5;
+          const lerpFactor = 1 - Math.exp(-lerpRate * dt);
+          panRef.current.x += (targetPan.x - panRef.current.x) * lerpFactor;
+          panRef.current.y += (targetPan.y - panRef.current.y) * lerpFactor;
+        }
+      }
 
       const canvas = canvasRef.current;
       const container = containerRef.current;
@@ -208,8 +283,8 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
             cw,
             ch,
             zoom,
-            pan.x,
-            pan.y,
+            panRef.current.x,
+            panRef.current.y,
             selectedId,
             hoveredId,
           );
@@ -226,7 +301,16 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
 
     rafId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(rafId);
-  }, [worldRef, zoom, pan, selectedId, hoveredId]);
+  }, [
+    worldRef,
+    zoom,
+    selectedId,
+    hoveredId,
+    cameraMode,
+    followTargetId,
+    latestActivityAgentId,
+    template,
+  ]);
 
   const hitTestCharacter = (clientX: number, clientY: number): SceneCharacter | null => {
     const container = containerRef.current;
@@ -262,8 +346,8 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       dragging: true,
       startX: e.clientX,
       startY: e.clientY,
-      origX: pan.x,
-      origY: pan.y,
+      origX: panRef.current.x,
+      origY: panRef.current.y,
       moved: false,
     };
   };
@@ -274,6 +358,10 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       const dy = e.clientY - dragRef.current.startY;
       if (Math.hypot(dx, dy) > 4) {
         dragRef.current.moved = true;
+        // User manually dragged: smoothly exit tracking mode to free pan
+        if (cameraMode !== 'free') {
+          onCameraModeChange('free');
+        }
       }
       const rawPan = {
         x: dragRef.current.origX + dx,
@@ -281,7 +369,7 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       };
       const el = containerRef.current;
       const isMobile = el ? el.clientWidth < 768 : false;
-      setPan(isMobile ? clampPan(rawPan, zoom) : rawPan);
+      panRef.current = isMobile ? clampPan(rawPan, zoom) : rawPan;
       return;
     }
     const hit = hitTestCharacter(e.clientX, e.clientY);
@@ -310,8 +398,8 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
         mode: 'pan',
         startX: t.clientX,
         startY: t.clientY,
-        origPanX: pan.x,
-        origPanY: pan.y,
+        origPanX: panRef.current.x,
+        origPanY: panRef.current.y,
         startDist: 0,
         startZoom: zoom,
         startTime: performance.now(),
@@ -325,8 +413,8 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
         mode: 'pinch',
         startX: (t1.clientX + t2.clientX) / 2,
         startY: (t1.clientY + t2.clientY) / 2,
-        origPanX: pan.x,
-        origPanY: pan.y,
+        origPanX: panRef.current.x,
+        origPanY: panRef.current.y,
         startDist: Math.max(10, dist),
         startZoom: zoom,
         startTime: performance.now(),
@@ -343,12 +431,16 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       const dy = t.clientY - s.startY;
       if (Math.hypot(dx, dy) > 6) {
         s.moved = true;
+        // User manually dragged: smoothly exit tracking mode to free pan
+        if (cameraMode !== 'free') {
+          onCameraModeChange('free');
+        }
       }
       const rawPan = {
         x: s.origPanX + dx,
         y: s.origPanY + dy,
       };
-      setPan(clampPan(rawPan, zoom));
+      panRef.current = clampPan(rawPan, zoom);
     } else if (s.mode === 'pinch' && e.touches.length === 2) {
       const t1 = e.touches[0];
       const t2 = e.touches[1];
@@ -359,12 +451,15 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
         const mapW = template ? template.grid.cols * TILE_SIZE : 448;
         const mapH = template ? template.grid.rows * TILE_SIZE : 288;
         const isMobile = el ? el.clientWidth < 768 : false;
-        const minZ = (el && isMobile)
-          ? Math.max(el.clientWidth / mapW, el.clientHeight / mapH)
-          : 0.5;
+        const minZ =
+          el && isMobile
+            ? Math.max(el.clientWidth / mapW, el.clientHeight / mapH)
+            : 0.5;
         const newZoom = Math.max(minZ, Math.min(6, Number((s.startZoom * factor).toFixed(2))));
         setZoom(newZoom);
-        setPan((prevPan) => (isMobile ? clampPan(prevPan, newZoom) : prevPan));
+        if (isMobile) {
+          panRef.current = clampPan(panRef.current, newZoom);
+        }
       }
     }
   };
@@ -393,8 +488,8 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
         mode: 'pan',
         startX: t.clientX,
         startY: t.clientY,
-        origPanX: pan.x,
-        origPanY: pan.y,
+        origPanX: panRef.current.x,
+        origPanY: panRef.current.y,
         startDist: 0,
         startZoom: zoom,
         startTime: performance.now(),
@@ -410,12 +505,13 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
     const isMobile = el ? el.clientWidth < 768 : false;
     const mapW = template ? template.grid.cols * TILE_SIZE : 448;
     const mapH = template ? template.grid.rows * TILE_SIZE : 288;
-    const minZ = (el && isMobile)
-      ? Math.max(el.clientWidth / mapW, el.clientHeight / mapH)
-      : 0.5;
+    const minZ =
+      el && isMobile
+        ? Math.max(el.clientWidth / mapW, el.clientHeight / mapH)
+        : 0.5;
     setZoom((z) => {
       const newZ = Number(Math.max(minZ, Math.min(6, z + delta)).toFixed(2));
-      if (isMobile) setPan((p) => clampPan(p, newZ));
+      if (isMobile) panRef.current = clampPan(panRef.current, newZ);
       return newZ;
     });
   };
@@ -432,6 +528,17 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
     ? template?.workstations.find((w) => w.id === selectedCharacter.assignedStationId)
     : undefined;
 
+  const followedAgentChar = followTargetId
+    ? worldRef.current.characters.get(followTargetId)
+    : selectedId
+      ? worldRef.current.characters.get(selectedId)
+      : null;
+  const tourAgentChar =
+    characters.length > 0 ? characters[tourIndexDisplay % characters.length] : null;
+  const activityAgentChar = latestActivityAgentId
+    ? worldRef.current.characters.get(latestActivityAgentId)
+    : null;
+
   return (
     <div
       ref={containerRef}
@@ -447,67 +554,204 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
     >
       <canvas ref={canvasRef} className="block w-full h-full" />
 
-      {/* Floating On-Canvas Camera Controls (Zoom In, Zoom Out, Fit) */}
-      <div className="pointer-events-auto absolute bottom-20 md:bottom-4 right-3 md:right-4 z-20 flex flex-col items-center gap-1 rounded-lg border border-slate-700/80 bg-slate-950/90 p-1 backdrop-blur-md shadow-2xl">
-        <button
-          onClick={() => {
-            const el = containerRef.current;
-            const isMobile = el ? el.clientWidth < 768 : false;
-            setZoom((z) => {
-              const newZ = Math.min(6, Number((z + 0.35).toFixed(2)));
-              if (isMobile) setPan((p) => clampPan(p, newZ));
-              return newZ;
-            });
-          }}
-          className="flex h-8 w-8 items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-800 transition-colors font-mono text-base font-bold cursor-pointer active:scale-95"
-          title="Zoom In"
-          aria-label="Zoom In"
+      {/* Active Camera Tracking HUD Badge (shown when not in 'free' pan) */}
+      {cameraMode !== 'free' && (
+        <div
+          data-testid="camera-hud-badge"
+          className="pointer-events-none absolute top-14 md:top-16 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-full border border-slate-700/90 bg-slate-950/95 px-3 py-1 font-mono text-[11px] text-white shadow-2xl backdrop-blur-md"
         >
-          <Plus className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => {
-            const el = containerRef.current;
-            const isMobile = el ? el.clientWidth < 768 : false;
-            const mapW = template ? template.grid.cols * TILE_SIZE : 448;
-            const mapH = template ? template.grid.rows * TILE_SIZE : 288;
-            const minZ = (el && isMobile && mobileViewMode === 'cover')
-              ? Math.max(el.clientWidth / mapW, el.clientHeight / mapH)
-              : 0.5;
-            setZoom((z) => {
-              const newZ = Math.max(minZ, Number((z - 0.35).toFixed(2)));
-              if (isMobile) setPan((p) => clampPan(p, newZ));
-              return newZ;
-            });
-          }}
-          className="flex h-8 w-8 items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-800 transition-colors font-mono text-base font-bold cursor-pointer active:scale-95"
-          title="Zoom Out"
-          aria-label="Zoom Out"
-        >
-          <Minus className="w-4 h-4" />
-        </button>
-        <div className="h-px w-5 bg-slate-800 my-0.5" />
-        <button
-          data-testid="camera-mode-toggle"
-          onClick={toggleViewMode}
-          className="flex h-8 w-8 items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer active:scale-95"
-          title={
-            mobileViewMode === 'cover'
-              ? 'Overview: Show entire scene with borders'
-              : 'Fill Screen: Immersive Pokémon view'
-          }
-          aria-label={
-            mobileViewMode === 'cover'
-              ? 'Overview: Show entire scene with borders'
-              : 'Fill Screen: Immersive Pokémon view'
-          }
-        >
-          {mobileViewMode === 'cover' ? (
-            <Minimize2 className="w-3.5 h-3.5 text-sky-400" />
-          ) : (
-            <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
+          {cameraMode === 'follow' && (
+            <>
+              <Crosshair className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
+              <span className="text-slate-400">TRACKING:</span>
+              <span className="font-bold text-sky-300 uppercase">
+                {followedAgentChar?.session.display_name || 'Agent'}
+              </span>
+            </>
           )}
-        </button>
+          {cameraMode === 'tour' && (
+            <>
+              <Film className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+              <span className="text-slate-400">TOUR:</span>
+              <span className="font-bold text-purple-300 uppercase">
+                {tourAgentChar?.session.display_name || 'Showcase'}
+              </span>
+              {characters.length > 0 && (
+                <span className="text-[10px] text-slate-500 font-semibold">
+                  ({(tourIndexDisplay % characters.length) + 1}/{characters.length})
+                </span>
+              )}
+            </>
+          )}
+          {cameraMode === 'activity' && (
+            <>
+              <Zap className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span className="text-slate-400">ACTIVITY:</span>
+              <span className="font-bold text-emerald-300 uppercase">
+                {activityAgentChar?.session.display_name || 'Waiting...'}
+              </span>
+            </>
+          )}
+          <button
+            onClick={() => onCameraModeChange('free')}
+            className="pointer-events-auto ml-1 p-0.5 rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            title="Exit tracking (switch to Free Pan)"
+            aria-label="Exit tracking"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      )}
+
+      {/* Floating On-Canvas Camera Controls Stack (Modes + Zoom) */}
+      <div
+        className={`pointer-events-auto absolute bottom-20 md:bottom-4 z-20 flex flex-col items-center gap-1.5 transition-all duration-300 ${
+          rightPanelOpen ? 'right-3 md:right-[640px]' : 'right-3 md:right-4'
+        }`}
+      >
+        {/* Camera Mode Selector */}
+        <div className="flex flex-col items-center gap-1 rounded-lg border border-slate-700/80 bg-slate-950/92 p-1 backdrop-blur-md shadow-2xl">
+          <button
+            data-testid="camera-mode-free"
+            onClick={() => onCameraModeChange('free')}
+            className={`flex h-8 w-8 items-center justify-center rounded transition-colors cursor-pointer active:scale-95 ${
+              cameraMode === 'free'
+                ? 'bg-sky-500/25 text-sky-300 border border-sky-400/50 shadow-inner'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+            title="Free Pan — Drag & scroll manually"
+            aria-label="Free Pan Camera"
+          >
+            <Hand className="w-4 h-4" />
+          </button>
+          <button
+            data-testid="camera-mode-follow"
+            onClick={() => {
+              if (cameraMode === 'follow') {
+                onCameraModeChange('free');
+              } else {
+                onCameraModeChange('follow');
+                if (!followTargetId && selectedId) {
+                  onFollowTargetChange(selectedId);
+                } else if (!followTargetId && characters.length > 0) {
+                  onFollowTargetChange(characters[0].id);
+                }
+              }
+            }}
+            className={`flex h-8 w-8 items-center justify-center rounded transition-colors cursor-pointer active:scale-95 ${
+              cameraMode === 'follow'
+                ? 'bg-sky-500/25 text-sky-300 border border-sky-400/50 shadow-inner'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+            title="Follow Agent — Lock camera onto active agent"
+            aria-label="Follow Agent Camera"
+          >
+            <Crosshair className="w-4 h-4" />
+          </button>
+          <button
+            data-testid="camera-mode-tour"
+            onClick={() => {
+              if (cameraMode === 'tour') {
+                onCameraModeChange('free');
+              } else {
+                tourTimerRef.current = 0;
+                onCameraModeChange('tour');
+              }
+            }}
+            className={`flex h-8 w-8 items-center justify-center rounded transition-colors cursor-pointer active:scale-95 ${
+              cameraMode === 'tour'
+                ? 'bg-purple-500/25 text-purple-300 border border-purple-400/50 shadow-inner'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+            title="Cinematic Tour — Auto-pan showcase between agents"
+            aria-label="Cinematic Tour Camera"
+          >
+            <Film className="w-4 h-4" />
+          </button>
+          <button
+            data-testid="camera-mode-activity"
+            onClick={() => {
+              if (cameraMode === 'activity') {
+                onCameraModeChange('free');
+              } else {
+                onCameraModeChange('activity');
+              }
+            }}
+            className={`flex h-8 w-8 items-center justify-center rounded transition-colors cursor-pointer active:scale-95 ${
+              cameraMode === 'activity'
+                ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/50 shadow-inner'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+            title="Live Activity — Auto-focus on active agent events"
+            aria-label="Live Activity Camera"
+          >
+            <Zap className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Zoom & Viewport Mode Pill */}
+        <div className="flex flex-col items-center gap-1 rounded-lg border border-slate-700/80 bg-slate-950/90 p-1 backdrop-blur-md shadow-2xl">
+          <button
+            onClick={() => {
+              const el = containerRef.current;
+              const isMobile = el ? el.clientWidth < 768 : false;
+              setZoom((z) => {
+                const newZ = Math.min(6, Number((z + 0.35).toFixed(2)));
+                if (isMobile) panRef.current = clampPan(panRef.current, newZ);
+                return newZ;
+              });
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-800 transition-colors font-mono text-base font-bold cursor-pointer active:scale-95"
+            title="Zoom In"
+            aria-label="Zoom In"
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => {
+              const el = containerRef.current;
+              const isMobile = el ? el.clientWidth < 768 : false;
+              const mapW = template ? template.grid.cols * TILE_SIZE : 448;
+              const mapH = template ? template.grid.rows * TILE_SIZE : 288;
+              const minZ =
+                el && isMobile && mobileViewMode === 'cover'
+                  ? Math.max(el.clientWidth / mapW, el.clientHeight / mapH)
+                  : 0.5;
+              setZoom((z) => {
+                const newZ = Math.max(minZ, Number((z - 0.35).toFixed(2)));
+                if (isMobile) panRef.current = clampPan(panRef.current, newZ);
+                return newZ;
+              });
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-800 transition-colors font-mono text-base font-bold cursor-pointer active:scale-95"
+            title="Zoom Out"
+            aria-label="Zoom Out"
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+          <div className="h-px w-5 bg-slate-800 my-0.5" />
+          <button
+            data-testid="camera-mode-toggle"
+            onClick={toggleViewMode}
+            className="flex h-8 w-8 items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer active:scale-95"
+            title={
+              mobileViewMode === 'cover'
+                ? 'Overview: Show entire scene with borders'
+                : 'Fill Screen: Immersive Pokémon view'
+            }
+            aria-label={
+              mobileViewMode === 'cover'
+                ? 'Overview: Show entire scene with borders'
+                : 'Fill Screen: Immersive Pokémon view'
+            }
+          >
+            {mobileViewMode === 'cover' ? (
+              <Minimize2 className="w-3.5 h-3.5 text-sky-400" />
+            ) : (
+              <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Selected Agent Inspector Docked Card */}
@@ -523,7 +767,36 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
                 {selectedCharacter.session.display_name}
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  if (cameraMode === 'follow' && followTargetId === selectedCharacter.id) {
+                    onCameraModeChange('free');
+                    onFollowTargetChange(null);
+                  } else {
+                    onCameraModeChange('follow');
+                    onFollowTargetChange(selectedCharacter.id);
+                  }
+                }}
+                className={`px-2 py-1 rounded font-mono text-[11px] font-bold uppercase cursor-pointer border flex items-center gap-1 transition-colors ${
+                  cameraMode === 'follow' && followTargetId === selectedCharacter.id
+                    ? 'bg-sky-500/25 text-sky-300 border-sky-400/60'
+                    : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'
+                }`}
+                title={
+                  cameraMode === 'follow' && followTargetId === selectedCharacter.id
+                    ? 'Following with camera'
+                    : 'Follow agent with camera'
+                }
+              >
+                <Crosshair className="w-3 h-3" />
+                <span>
+                  {cameraMode === 'follow' && followTargetId === selectedCharacter.id
+                    ? 'TRACKING'
+                    : 'TRACK'}
+                </span>
+              </button>
               <button
                 onClick={(ev) => {
                   ev.stopPropagation();
@@ -607,20 +880,47 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
                     >
                       {ch.session.display_name}
                     </span>
-                    <button
-                      onClick={(ev) => {
-                        ev.stopPropagation();
-                        onToggleStatus(ch.id);
-                      }}
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase cursor-pointer border ${
-                        ch.session.status === 'working'
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
-                          : 'bg-amber-500/20 text-amber-300 border-amber-500/50'
-                      }`}
-                      title="Click to toggle working/idle animation"
-                    >
-                      {ch.session.status === 'working' ? '⚡ WORKING' : '☕ IDLE'}
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={(ev) => {
+                          ev.stopPropagation();
+                          if (cameraMode === 'follow' && followTargetId === ch.id) {
+                            onCameraModeChange('free');
+                            onFollowTargetChange(null);
+                          } else {
+                            onCameraModeChange('follow');
+                            onFollowTargetChange(ch.id);
+                          }
+                        }}
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase cursor-pointer border flex items-center gap-1 transition-colors ${
+                          cameraMode === 'follow' && followTargetId === ch.id
+                            ? 'bg-sky-500/25 text-sky-300 border-sky-400/60'
+                            : 'bg-slate-900/80 text-slate-400 border-slate-700/80 hover:text-white'
+                        }`}
+                        title={
+                          cameraMode === 'follow' && followTargetId === ch.id
+                            ? 'Following with camera (click to unfollow)'
+                            : 'Follow this agent with camera'
+                        }
+                      >
+                        <Crosshair className="w-3 h-3" />
+                        <span>{cameraMode === 'follow' && followTargetId === ch.id ? 'FOLLOWING' : 'FOLLOW'}</span>
+                      </button>
+                      <button
+                        onClick={(ev) => {
+                          ev.stopPropagation();
+                          onToggleStatus(ch.id);
+                        }}
+                        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase cursor-pointer border ${
+                          ch.session.status === 'working'
+                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
+                            : 'bg-amber-500/20 text-amber-300 border-amber-500/50'
+                        }`}
+                        title="Click to toggle working/idle animation"
+                      >
+                        {ch.session.status === 'working' ? '⚡ WORKING' : '☕ IDLE'}
+                      </button>
+                    </div>
                   </div>
                   {station?.label && ch.session.status === 'working' && (
                     <div className="text-[10px] font-mono text-cyan-300/90 truncate mb-1">

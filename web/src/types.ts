@@ -1,4 +1,5 @@
 export type AgentStatus = 'working' | 'idle';
+export type CameraMode = 'free' | 'follow' | 'tour' | 'activity';
 
 export interface Summary {
   total_agents: number;
