@@ -33,6 +33,11 @@ config.local.yaml
 **/.hyperframes/
 docs/video/
 
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
 # OS & Editor files
 .DS_Store
 .AppleDouble
