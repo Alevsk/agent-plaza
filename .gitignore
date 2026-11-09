@@ -29,6 +29,9 @@ pnpm-debug.log*
 !.env.example
 config.local.yaml
 *.local.yaml
+.hyperframes/
+**/.hyperframes/
+docs/video/
 
 # OS & Editor files
 .DS_Store

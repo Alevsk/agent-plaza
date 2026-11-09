@@ -55,123 +55,175 @@ func saveGridPNG(path string, grid []string, palette map[byte]string) error {
 }
 
 func main() {
-	// 1. Saguaro Desert Cactus (16x16) for templates/cowboys/sprites/cactus.png
+	// 1. Hi-Bit Saguaro Desert Cactus with Sel-Out, Rib Highlights & Desert Flower (16x16)
 	cactusGrid := []string{
-		"......GGGG......",
-		".....GLLLLG.....",
-		".....GLLLLG..GG.",
-		".GG..GLLLLG.GLLG",
-		"GLLG.GLLLLG.GLLG",
-		"GLLG.GLLLLG.GLLG",
-		"GLLGGGLLLLGGGLLG",
-		".GLLLLLLLLLLLLG.",
-		"..GGGLLLLLLGGG..",
-		".....GLLLLG.....",
-		".....GLLLLG.....",
-		"....BBBBBBBB....",
-		"....BDDDDDDB....",
-		".....BBBBBB.....",
-		".....BDDDDB.....",
-		"......BBBB......",
+		"......PPOO......",
+		".....OSSSSO.....",
+		".....OSLLGO..OO.",
+		".OO..OSLLGO.OSLO",
+		"OSLO.OSLLGO.OSLO",
+		"OSLO.OSLLGO.OSLO",
+		"OSLOOOSLLGOOOSLO",
+		".OSSSSSLLGGGGGO.",
+		"..OOOOOLLGGGOO..",
+		".....OSLLGO.....",
+		".....OSLLGO.....",
+		"...OOOOOOOOOO...",
+		"...OTTTTTDDDO...",
+		"....OOOOOOOO....",
+		"....OTTTTDDO....",
+		".....OOOOOO.....",
 	}
 	_ = saveGridPNG("templates/cowboys/sprites/cactus.png", cactusGrid, map[byte]string{
-		'G': "#15803d",
-		'L': "#22c55e",
-		'B': "#92400e",
-		'D': "#b45309",
+		'O': "#0d1f14", // sel-out dark forest outline
+		'S': "#86efac", // sunlit specular rib
+		'L': "#22c55e", // mid saguaro green
+		'G': "#15803d", // shaded rib
+		'P': "#f472b6", // desert cactus blossom
+		'T': "#d97706", // terracotta pot highlight
+		'D': "#78350f", // terracotta pot shadow
 	})
 
-	// 2. Sheriff Gold Star Badge (16x16) for templates/cowboys/sprites/sheriff_star.png
+	// 2. Hi-Bit Sheriff Gold Star Badge with Sel-Out & Specular Facets (16x16)
 	starGrid := []string{
-		".......YY.......",
-		"......YYYY......",
-		"......YGGY......",
-		".YYYYYYGGYYYYYY.",
-		"..YYYYGGGGYYYY..",
-		"...YYGGGGGGYY...",
-		"....YGGWWGGY....",
-		"...YYGGGGGGYY...",
-		"..YYYYGGGGYYYY..",
-		".YYYYYYGGYYYYYY.",
-		"......YGGY......",
-		"......YYYY......",
-		".......YY.......",
+		".......OO.......",
+		"......OWYO......",
+		"......OYYO......",
+		".OOOOOOGGOOOOOO.",
+		".OWYYYYGGDDDDYO.",
+		"..OYYYGGGGDDYO..",
+		"...OYGGWWGGDO...",
+		"..OYYYGGGGDDYO..",
+		".OWYYYYGGDDDDYO.",
+		".OOOOOOGGOOOOOO.",
+		"......OGDO......",
+		"......ODDO......",
+		".......OO.......",
 		"................",
 		"................",
 		"................",
 	}
 	_ = saveGridPNG("templates/cowboys/sprites/sheriff_star.png", starGrid, map[byte]string{
-		'Y': "#facc15",
-		'G': "#eab308",
-		'W': "#fef08a",
+		'O': "#291805", // sel-out bronze contour
+		'W': "#ffffff", // specular gleam
+		'Y': "#fef08a", // bright gold facet
+		'G': "#eab308", // mid gold
+		'D': "#a16207", // deep gold bevel
 	})
 
-	// 3. Multi-frame Character Sprite Sheet (64x20 = 4 frames of 16x20: idle, walk1, walk2, type)
-	// for templates/cowboys/sprites/ranger_claude.png
-	frame0 := []string{
-		"....HHHHHHHH....",
-		"..HHHHHHHHHHHH..",
-		"....YYYYYYYY....",
-		"....SSSSSSSS....",
-		"....SKS..SKS....",
-		"....SSSSSSSS....",
-		"....RRRRRRRR....",
-		"...CCCCCCCCCC...",
-		"..CCCRRRRRRCCC..",
-		"..CCCRYYRYYCCC..",
-		"..SSCCCCCCCCSS..",
-		"....CCCCCCCC....",
-		"....BBBBBBBB....",
-		"....PPP..PPP....",
-		"....PPP..PPP....",
-		"....PPP..PPP....",
-		"....DDD..DDD....",
+	// 3. Hi-Bit 4-Frame Ranger Character Sprite Sheet (64x20 = 4 frames of 16x20)
+	// with sel-out contour, sclera eyes, bandana, duster coat & walk stride
+	frameIdle := []string{
+		"...OOOOOOOOOO...",
+		"..OLLLLHHHHHDO..",
+		".OOOOOOOOOOOOOO.",
+		"...OYYYYYYYYO...",
+		"..OOSSSSSSSSOO..",
+		"..OSWKSSSWKSSO..",
+		"..OSSSSSSSSSSO..",
+		"..OORRRRRRRROO..",
+		".OOLLCCCCCCDDDO.",
+		".OLLCCRRRRCCDDDO",
+		".OLLCCRYYRCCDDDO",
+		".OSSCCCCCCCCSSO.",
+		"..OOCCCCCCCCOO..",
+		"..OOBBBYYBBBOO..",
+		"...OOPP..PPOO...",
+		"...OOPP..PPOO...",
+		"...OODD..DDOO...",
 		"................",
 		"................",
 		"................",
 	}
-	// Build 64x20 sprite sheet with 4 frames horizontally
+	frameWalk1 := []string{
+		"...OOOOOOOOOO...",
+		"..OLLLLHHHHHDO..",
+		".OOOOOOOOOOOOOO.",
+		"...OYYYYYYYYO...",
+		"..OOSSSSSSSSOO..",
+		"..OSWKSSSWKSSO..",
+		"..OSSSSSSSSSSO..",
+		"..OORRRRRRRROO..",
+		".OOLLCCCCCCDDDO.",
+		".OLLCCRRRRCCDDDO",
+		".OSSCCRYYRCCSSO.",
+		"..OOCCCCCCCCOO..",
+		"..OOBBBYYBBBOO..",
+		"...OOPP..PPOO...",
+		"...OODD..PPOO...",
+		".........OODO...",
+		"................",
+		"................",
+		"................",
+		"................",
+	}
+	frameWalk2 := []string{
+		"...OOOOOOOOOO...",
+		"..OLLLLHHHHHDO..",
+		".OOOOOOOOOOOOOO.",
+		"...OYYYYYYYYO...",
+		"..OOSSSSSSSSOO..",
+		"..OSWKSSSWKSSO..",
+		"..OSSSSSSSSSSO..",
+		"..OORRRRRRRROO..",
+		".OOLLCCCCCCDDDO.",
+		".OLLCCRRRRCCDDDO",
+		".OSSCCRYYRCCSSO.",
+		"..OOCCCCCCCCOO..",
+		"..OOBBBYYBBBOO..",
+		"...OOPP..PPOO...",
+		"...OOPP..DDOO...",
+		"...ODOO.........",
+		"................",
+		"................",
+		"................",
+		"................",
+	}
 	sheet := make([]string, 20)
 	for r := 0; r < 20; r++ {
-		sheet[r] = frame0[r] + frame0[r] + frame0[r] + frame0[r]
+		sheet[r] = frameIdle[r] + frameWalk1[r] + frameIdle[r] + frameWalk2[r]
 	}
 	_ = saveGridPNG("templates/cowboys/sprites/ranger_claude.png", sheet, map[byte]string{
-		'H': "#78350f",
-		'Y': "#facc15",
-		'S': "#fdba74",
-		'K': "#0f172a",
-		'R': "#dc2626",
-		'C': "#b45309",
-		'B': "#451a03",
-		'P': "#1e293b",
-		'D': "#090d16",
+		'O': "#160d08", // sel-out dark espresso outline
+		'L': "#b45309", // sunlit Stetson/duster highlight
+		'H': "#78350f", // Stetson crown base
+		'D': "#451a03", // deep leather shadow
+		'Y': "#facc15", // gold buckle & sheriff star
+		'S': "#fed7aa", // skin tone
+		'W': "#ffffff", // eye sclera
+		'K': "#090d16", // eye pupil
+		'R': "#ef4444", // crimson frontier bandana
+		'C': "#92400e", // duster coat base
+		'B': "#291809", // gunbelt
+		'P': "#1e293b", // denim jeans
 	})
 
-	// 4. WW2 Tactical War Map Table (48x16) for templates/ww2/sprites/war_map.png
+	// 4. Hi-Bit WW2 Tactical War Map Table (48x16) with Sel-Out, Beveled Oak Frame & Illuminated Grid
 	warMap := []string{
-		"..BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB..",
-		".BDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDB.",
-		".BDGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGDB.",
-		".BDGLLLLLLLLLLLLBBBBBBBBLLLLLLLLLLLLLLLLLLLLGDB.",
-		".BDGLLRRRRLLLLLLBBBBBBBBLLLLLLYYYYLLLLLLLLLLGDB.",
-		".BDGLLRRRRRRRRLLBBBBBBBBLLLLLLYYYYLLLLLLLLLLGDB.",
-		".BDGLLLLLLLLRRRRBBBBBBBBLLLLLLLLLLLLRRLLLLLLGDB.",
-		".BDGLLLLLLLLLLLLBBBBBBBBLLLLLLLLLLRRRRRRLLLLGDB.",
-		".BDGLLLLLLLLLLLLBBBBBBBBLLLLLLLLLLLLRRLLLLLLGDB.",
-		".BDGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGDB.",
-		".BDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDB.",
-		"..BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB..",
-		"...BBBB..................................BBBB...",
-		"...BBBB..................................BBBB...",
-		"...BBBB..................................BBBB...",
-		"................................................",
+		".OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO.",
+		"OLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLO",
+		"OLBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBLO",
+		"OLBGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGBLO",
+		"OLBGCCCCCCCCCCCCGGGGGGGGCCCCCCCCCCCCCCCCCCCCGBLO",
+		"OLBGCCRRRRCCCCCCGGGGGGGGCCCCCCYYYYCCCCCCCCCCGBLO",
+		"OLBGCCRRRRRRRRCCGGGGGGGGCCCCCCYYYYCCCCCCCCCCGBLO",
+		"OLBGCCCCCCCCRRRRGGGGGGGGCCCCCCCCCCCCRRCCCCCCGBLO",
+		"OLBGCCCCCCCCCCCCGGGGGGGGCCCCCCCCCCRRRRRRCCCCGBLO",
+		"OLBGCCCCCCCCCCCCGGGGGGGGCCCCCCCCCCCCRRCCCCCCGBLO",
+		"OLBGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGBLO",
+		"OLBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBLO",
+		".OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO.",
+		"...OBBO..................................OBBO...",
+		"...OBBO..................................OBBO...",
+		"...OOOO..................................OOOO...",
 	}
 	_ = saveGridPNG("templates/ww2/sprites/war_map.png", warMap, map[byte]string{
-		'B': "#263028",
-		'D': "#3f6212",
-		'G': "#14532d",
-		'L': "#15803d",
-		'R': "#ef4444",
-		'Y': "#facc15",
+		'O': "#090d0a", // sel-out bunker outline
+		'L': "#4d7c0f", // sunlit rim bevel
+		'B': "#263028", // steel table frame
+		'G': "#052e16", // deep radar grid trench
+		'C': "#15803d", // illuminated sector map
+		'R': "#ef4444", // axis front markers
+		'Y': "#fef08a", // allied convoy pins
 	})
 }
