@@ -1,0 +1,32 @@
+# Git & VCS
+.git
+.gitignore
+
+# Build outputs & dependencies
+bin/
+dist/
+node_modules/
+web/node_modules/
+web/dist/
+*.exe
+*.out
+*.test
+coverage.txt
+
+# Local environment & secret overrides
+.env
+.env.*
+config.local.yaml
+*.local.yaml
+
+# Editor & OS metadata
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Agent / Skill scratch directories
+.agent/
+skills/

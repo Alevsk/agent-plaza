@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -205,6 +206,10 @@ func (s *WorkspaceService) SpawnSimulatedAgent(agentType, task string, status do
 	}
 	pct := 15 + (seq*17)%70
 	tok := fmt.Sprintf("%dk", 40+(seq*35)%300)
+	cwd, err := os.Getwd()
+	if err != nil || cwd == "" {
+		cwd = "/workspace"
+	}
 	sim := domain.AgentSession{
 		ID:             fmt.Sprintf("sim:%s:%d", agentType, seq),
 		Agent:          agentType,
@@ -212,7 +217,7 @@ func (s *WorkspaceService) SpawnSimulatedAgent(agentType, task string, status do
 		DisplayName:    agentType + "·sim",
 		Status:         status,
 		Task:           task,
-		CWD:            "/Users/alevsk/Development/agents-animated-workspace",
+		CWD:            cwd,
 		WorkspaceID:    "wSim",
 		PaneID:         fmt.Sprintf("wSim:p%d", seq),
 		SessionID:      fmt.Sprintf("sim-session-%d", seq),

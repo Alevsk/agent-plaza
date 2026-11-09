@@ -109,18 +109,17 @@ waypoints:
   - { id: "wp-hall-2",      col: 18, row: 8,  activity: "lounge",      bubble: "🎵 Vibing to lo-fi beats" }
 
 props:
-  - { id: "prop-coffee",      type: "coffee_machine", col: 15, row: 1,  w: 2, h: 1, label: "ESPRESSO", animated: true }
-  - { id: "prop-water",       type: "watercooler",    col: 18, row: 1,  w: 1, h: 1, animated: true }
-  - { id: "prop-books-1",     type: "bookshelf",      col: 20, row: 1,  w: 3, h: 1 }
-  - { id: "prop-arcade",      type: "arcade",         col: 24, row: 1,  w: 2, h: 1, label: "PIXEL QUEST", animated: true }
-  - { id: "prop-sofa-top",    type: "sofa",           col: 15, row: 4,  w: 4, h: 1, color: "#be123c" }
-  - { id: "prop-pingpong",    type: "ping_pong",      col: 21, row: 4,  w: 4, h: 2, label: "PING PONG", animated: true }
+  - { id: "prop-coffee",      type: "coffee_machine", col: 15, row: 2,  w: 2, h: 1, label: "ESPRESSO", animated: true }
+  - { id: "prop-water",       type: "watercooler",    col: 18, row: 2,  w: 1, h: 1, animated: true }
+  - { id: "prop-books-1",     type: "bookshelf",      col: 20, row: 2,  w: 3, h: 1 }
+  - { id: "prop-arcade",      type: "arcade",         col: 24, row: 2,  w: 2, h: 1, label: "PIXEL QUEST", animated: true }
+  - { id: "prop-sofa-top",    type: "sofa",           col: 15, row: 5,  w: 4, h: 1, color: "#be123c" }
+  - { id: "prop-pingpong",    type: "ping_pong",      col: 21, row: 5,  w: 4, h: 2, label: "PING PONG", animated: true }
   - { id: "prop-whiteboard",  type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "SPRINT" }
   - { id: "prop-clock",       type: "clock",          col: 10, row: 0,  w: 1, h: 1, animated: true }
   - { id: "prop-server-1",    type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "LLM CLUSTER", animated: true }
   - { id: "prop-server-2",    type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "KV CACHE", animated: true }
-  - { id: "prop-plant-1",     type: "plant",          col: 1,  row: 1,  w: 1, h: 1 }
-  - { id: "prop-plant-2",     type: "plant",          col: 10, row: 1,  w: 1, h: 1 }
+  - { id: "prop-plant-2",     type: "plant",          col: 11, row: 1,  w: 1, h: 1 }
   - { id: "prop-plant-3",     type: "plant",          col: 26, row: 1,  w: 1, h: 1 }
   - { id: "prop-plant-4",     type: "plant",          col: 1,  row: 16, w: 1, h: 1 }
   - { id: "prop-plant-5",     type: "plant",          col: 14, row: 16, w: 1, h: 1 }

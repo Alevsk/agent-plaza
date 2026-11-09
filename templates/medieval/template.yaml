@@ -4,12 +4,12 @@ description: "Medieval castle keep where agents brew potions in bubbling cauldro
 theme_badge: "🏰 Medieval"
 
 theme:
-  background: "#0d0907"
-  wall_color: "#332922"
-  wall_trim: "#85684a"
-  floor_primary: "#2a221c"
-  floor_secondary: "#382d25"
-  floor_accent: "#5c1d24"
+  background: "#0b090c"
+  wall_color: "#2d2520"
+  wall_trim: "#6b533b"
+  floor_primary: "#1c181f"
+  floor_secondary: "#221d1a"
+  floor_accent: "#211c24"
   grid_line: "rgba(245, 158, 11, 0.05)"
   accent_color: "#f59e0b"
   secondary_color: "#ef4444"
@@ -106,13 +106,13 @@ waypoints:
   - { id: "wp-hall-2",    col: 15, row: 8, activity: "lounge",      bubble: "🛡️ Inspecting courtyard banners" }
 
 props:
-  - { id: "prop-archery",  type: "archery_target", col: 15, row: 1,  w: 6, h: 2, label: "ARCHERY RANGE", animated: true }
-  - { id: "prop-dummy",    type: "sword_dummy",    col: 22, row: 1,  w: 2, h: 2, label: "PELLS", animated: true }
-  - { id: "prop-barrel",   type: "barrel",         col: 25, row: 1,  w: 2, h: 1, label: "MEAD CASK" }
-  - { id: "prop-fire",     type: "campfire",       col: 18, row: 4,  w: 2, h: 2, animated: true }
-  - { id: "prop-obelisk1", type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "MANA OBELISK", animated: true }
-  - { id: "prop-obelisk2", type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "GRIMOIRE VAULT", animated: true }
-  - { id: "prop-board",    type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "QUEST BOARD" }
+  - { id: "prop-archery",  type: "archery_target", col: 15, row: 2,  w: 6, h: 2, label: "ARCHERY RANGE", animated: true }
+  - { id: "prop-dummy",    type: "sword_dummy",    col: 22, row: 2,  w: 2, h: 2, label: "PELLS", animated: true }
+  - { id: "prop-barrel",   type: "barrel",         col: 25, row: 2,  w: 2, h: 1, label: "MEAD CASK" }
+  - { id: "prop-fire",     type: "campfire",       col: 18, row: 5,  w: 2, h: 2, animated: true }
+  - { id: "prop-obelisk1", type: "mana_obelisk",   col: 25, row: 11, w: 2, h: 2, label: "MANA OBELISK", animated: true }
+  - { id: "prop-obelisk2", type: "grimoire_shelf", col: 25, row: 14, w: 2, h: 2, label: "GRIMOIRE VAULT" }
+  - { id: "prop-board",    type: "royal_banner",   col: 4,  row: 0,  w: 4, h: 1, label: "GUILD CREST" }
 
 characters:
   claude:

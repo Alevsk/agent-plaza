@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
 	"gopkg.in/yaml.v3"
@@ -68,7 +69,7 @@ func Default() *Config {
 			Type: "local",
 			Local: LocalConfig{
 				HerdrBin:        "herdr",
-				UsagePluginDir:  "/Users/alevsk/Development/herdr-plugins/herdr-agent-usage",
+				UsagePluginDir:  os.Getenv("HERDR_USAGE_PLUGIN_DIR"),
 				QuotaTTLSeconds: 300,
 			},
 			Remote: RemoteConfig{
@@ -110,6 +111,30 @@ func Load(path string) (*Config, error) {
 	}
 	if cfg.Source.Type == "" {
 		cfg.Source.Type = "local"
+	}
+	// Environment variable overrides for container and CI/CD deployments
+	if v := os.Getenv("HOST"); v != "" {
+		cfg.Server.Host = v
+	}
+	if v := os.Getenv("PORT"); v != "" {
+		if p, err := strconv.Atoi(v); err == nil && p > 0 {
+			cfg.Server.Port = p
+		}
+	}
+	if v := os.Getenv("ACTIVE_TEMPLATE"); v != "" {
+		cfg.Scene.ActiveTemplate = v
+	}
+	if v := os.Getenv("SOURCE_TYPE"); v != "" {
+		cfg.Source.Type = v
+	}
+	if v := os.Getenv("HERDR_USAGE_PLUGIN_DIR"); v != "" {
+		cfg.Source.Local.UsagePluginDir = v
+	}
+	if v := os.Getenv("REMOTE_ENDPOINT"); v != "" {
+		cfg.Source.Remote.Endpoint = v
+	}
+	if v := os.Getenv("AUTH_TOKEN"); v != "" {
+		cfg.Server.Auth.Token = v
 	}
 	return cfg, nil
 }

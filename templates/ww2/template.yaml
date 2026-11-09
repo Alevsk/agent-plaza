@@ -106,13 +106,13 @@ waypoints:
   - { id: "wp-hall-2",  col: 18, row: 8, activity: "lounge",      bubble: "📻 Listening to BBC dispatch" }
 
 props:
-  - { id: "prop-sandbag", type: "sandbag_post",   col: 15, row: 1,  w: 4, h: 2, label: "WATCH POST", animated: true }
-  - { id: "prop-mast",    type: "radar_dish",     col: 23, row: 1,  w: 3, h: 2, label: "RADAR ARRAY", animated: true }
-  - { id: "prop-map",     type: "holo_table",     col: 17, row: 4,  w: 3, h: 1, sprite: "war_map.png" }
-  - { id: "prop-crates",  type: "ammo_crates",    col: 22, row: 4,  w: 3, h: 1 }
-  - { id: "prop-bombe-1", type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "BOMBE MK1", animated: true }
-  - { id: "prop-bombe-2", type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "COLOSSUS", animated: true }
-  - { id: "prop-board",   type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "FRONT LINE" }
+  - { id: "prop-sandbag", type: "sandbag_post",     col: 15, row: 2,  w: 4, h: 2, label: "WATCH POST", animated: true }
+  - { id: "prop-mast",    type: "radar_dish",       col: 23, row: 2,  w: 3, h: 2, label: "RADAR ARRAY", animated: true }
+  - { id: "prop-map",     type: "war_map_table",    col: 17, row: 5,  w: 3, h: 1, sprite: "war_map.png" }
+  - { id: "prop-crates",  type: "ammo_crates",      col: 22, row: 5,  w: 3, h: 1 }
+  - { id: "prop-bombe-1", type: "colossus_rack",    col: 25, row: 11, w: 2, h: 2, label: "COLOSSUS TAPE", animated: true }
+  - { id: "prop-bombe-2", type: "ordnance_rack",    col: 25, row: 14, w: 2, h: 2, label: "ORDNANCE RACK" }
+  - { id: "prop-board",   type: "bunker_map_board", col: 4,  row: 0,  w: 4, h: 1, label: "SECTOR CHART" }
 
 characters:
   claude:

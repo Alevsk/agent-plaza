@@ -4,12 +4,12 @@ description: "High-tech cyberpunk enclave with neural dive chairs, ripperdoc cyb
 theme_badge: "🌃 Cyberpunk"
 
 theme:
-  background: "#06040f"
-  wall_color: "#181030"
-  wall_trim: "#00f0ff"
-  floor_primary: "#0f0b1f"
-  floor_secondary: "#17112e"
-  floor_accent: "#281147"
+  background: "#06050d"
+  wall_color: "#1b1630"
+  wall_trim: "#3b3358"
+  floor_primary: "#111320"
+  floor_secondary: "#151726"
+  floor_accent: "#17152b"
   grid_line: "rgba(0, 240, 255, 0.08)"
   accent_color: "#00f0ff"
   secondary_color: "#ff007f"
@@ -107,14 +107,14 @@ waypoints:
   - { id: "wp-hall-2",  col: 20, row: 8, activity: "lounge",      bubble: "🎧 Tuning synthwave radio" }
 
 props:
-  - { id: "prop-ramen",  type: "ramen_stall", col: 15, row: 1,  w: 3, h: 1, label: "NEON RAMEN", animated: true }
-  - { id: "prop-cryo",   type: "cryo_tank",   col: 19, row: 1,  w: 2, h: 2, label: "CRYO", animated: true }
-  - { id: "prop-bd",     type: "holo_pod",    col: 23, row: 1,  w: 3, h: 1, label: "BRAINDANCE", animated: true }
-  - { id: "prop-sofa",   type: "sofa",        col: 15, row: 4,  w: 4, h: 1, color: "#7e22ce" }
-  - { id: "prop-holo",   type: "holo_table",  col: 20, row: 4,  w: 4, h: 2, animated: true }
-  - { id: "prop-srv-1",  type: "server_rack", col: 25, row: 11, w: 2, h: 2, label: "MAINFRAME", animated: true }
-  - { id: "prop-srv-2",  type: "server_rack", col: 25, row: 14, w: 2, h: 2, label: "ICE WALL", animated: true }
-  - { id: "prop-board",  type: "whiteboard",  col: 4,  row: 0,  w: 4, h: 1, label: "SUBNET MAP" }
+  - { id: "prop-ramen",  type: "ramen_stall",     col: 15, row: 2,  w: 3, h: 1, label: "NEON RAMEN", animated: true }
+  - { id: "prop-cryo",   type: "cryo_tank",       col: 19, row: 2,  w: 2, h: 2, label: "CRYO", animated: true }
+  - { id: "prop-bd",     type: "holo_pod",        col: 23, row: 2,  w: 3, h: 1, label: "BRAINDANCE", animated: true }
+  - { id: "prop-sofa",   type: "sofa",            col: 15, row: 5,  w: 4, h: 1, color: "#7e22ce" }
+  - { id: "prop-holo",   type: "holo_table",      col: 20, row: 5,  w: 4, h: 2, animated: true }
+  - { id: "prop-srv-1",  type: "cyber_mainframe", col: 25, row: 11, w: 2, h: 2, label: "NEURAL CORE", animated: true }
+  - { id: "prop-srv-2",  type: "cyber_mainframe", col: 25, row: 14, w: 2, h: 2, label: "BLACKWALL ICE", animated: true }
+  - { id: "prop-board",  type: "cyber_screen",    col: 4,  row: 0,  w: 4, h: 1, label: "NETMAP", animated: true }
 
 characters:
   claude:

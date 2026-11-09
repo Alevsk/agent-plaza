@@ -60,14 +60,26 @@ bash skills/template-generator/scripts/scaffold_template.sh <template-id> "<Disp
 5. **Waypoints (`waypoints`)**:
    - 6–10 coordinates in thematic hangout areas (e.g., Zen Rock Garden & Koi Pond in `japanese`, Archery & Sword Practice Square in `medieval`, Campfire & Saloon Piano in `cowboys`, Ramen Stall & Cryo Lounge in `cyberpunk`, Sandbag Watch Post in `ww2`, Ping-Pong & Arcade Lounge in `office`) where `idle` agents walk, pause, and display thematic speech bubbles (`bubble`).
 
-6. **Props (`props`)**:
-   - Decorative & animated pixel elements:
-     - **General / Office**: `"coffee_machine"`, `"watercooler"`, `"arcade"`, `"ping_pong"`, `"bookshelf"`, `"sofa"`, `"coffee_table"`, `"whiteboard"`, `"clock"`, `"server_rack"`, `"plant"`
-     - **Cowboys**: `"campfire"`, `"piano"`, `"water_trough"`, `"barrel"`, `"lantern"`, `"cactus"`, `"sheriff_star"`
-     - **Cyberpunk**: `"ramen_stall"`, `"cryo_tank"`, `"holo_pod"`, `"holo_table"`
-     - **Japanese (Edo Dojo)**: `"zen_garden"`, `"koi_pond"`, `"torii_gate"`, `"training_dummy"`
-     - **Medieval**: `"archery_target"`, `"sword_dummy"`, `"campfire"`, `"barrel"`, `"lantern"`
-     - **WW2 Bunker**: `"sandbag_post"`, `"radar_dish"`, `"ammo_crates"`, `"war_map"`
+6. **Props (`props`) — Scene-Specific Isolation Rule**:
+   - **Never reuse `office`-specific props (`server_rack`, `whiteboard`, `coffee_machine`, `watercooler`) in non-office scenes.** Every scene must use its own thematic equivalents:
+     - **Office**: `"coffee_machine"`, `"watercooler"`, `"arcade"`, `"ping_pong"`, `"bookshelf"`, `"sofa"`, `"coffee_table"`, `"whiteboard"`, `"clock"`, `"server_rack"`, `"plant"`
+     - **Cowboys**: `"saloon_bar"`, `"piano"`, `"campfire"`, `"water_trough"`, `"gold_safe"`, `"saddle_rack"`, `"wanted_board"`, `"barrel"`, `"plant"` (with `sprite: "cactus.png"`), `"clock"` (with `sprite: "sheriff_star.png"`)
+     - **Cyberpunk**: `"ramen_stall"`, `"cryo_tank"`, `"holo_pod"`, `"holo_table"`, `"cyber_mainframe"`, `"cyber_screen"`, `"sofa"`
+     - **Japanese (Edo Dojo)**: `"zen_garden"`, `"koi_pond"`, `"torii_gate"`, `"training_dummy"`, `"scroll_rack"`, `"katana_rack"`, `"shodo_banner"`, `"dojo_bamboo"`
+     - **Medieval**: `"archery_target"`, `"sword_dummy"`, `"campfire"`, `"barrel"`, `"mana_obelisk"`, `"grimoire_shelf"`, `"royal_banner"`
+     - **WW2 Bunker**: `"sandbag_post"`, `"radar_dish"`, `"war_map_table"` (with `sprite: "war_map.png"`), `"ammo_crates"`, `"colossus_rack"`, `"ordnance_rack"`, `"bunker_map_board"`
+   - **Zone Header Clearance**: Keep `row: 1` clear of wide props near `col: 1..6` and `col: 14..20` so props never overlap the zone title text; place top-row lounge props at `row: 2`.
+
+## Hi-Bit Color Palette & Contrast Design System
+
+All current and future templates must obey the **4-Layer Value (Luminance `L`) & Saturation (`S`) Hierarchy** enforced by `web/src/engine/hibitPalette.ts` (`getFloorPalette` & `getRamp`):
+
+| Layer | Target Elements | HSL Lightness (`L`) | HSL Saturation (`S`) | Local Contrast (`ΔL`) | Rules |
+|---|---|---|---|---|---|
+| **Layer 0: Void / Backdrop** | `theme.background` | `5% – 9%` | `<= 22%` | `<= 2%` | Deepest dark frame around the building |
+| **Layer 1: Walkable Floors** | `floor_primary`, `floor_secondary`, `floor_accent` | **`11% – 18%`** | **`<= 26%` (Muted)** | **`<= 3.5%` (Strict Cap)** | Floors are a calm, quiet stage. Never put bright dots, high-contrast 16x16 borders, or saturated colors on floor tiles. |
+| **Layer 2: Walls & Workstations** | `wall_color`, `wall_trim`, desks, props | `22% – 65%` | `30% – 75%` | `15% – 35%` | Grounded by `1px` dark selective outline (`sel-out`, `L ~ 7%`) and soft floor drop shadow |
+| **Layer 3: Characters & Active FX** | `characters.*`, companions, active screens | **`45% – 95%`** | **`65% – 95%` (Vibrant)** | **`40% – 80%`** | Highest contrast in the scene; 1px dark `sel-out` silhouette + bright specular highlights |
 
 7. **Characters (`characters`)**:
    - Keyed by agent name (`claude`, `agy`, `codex`, `grok`, `opencode`, `kimi`, `devin`, `default`).

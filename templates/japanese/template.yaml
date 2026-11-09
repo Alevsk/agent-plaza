@@ -4,12 +4,12 @@ description: "Traditional Japanese artisan sanctuary where agents forge katanas,
 theme_badge: "⛩️ Edo Dojo"
 
 theme:
-  background: "#0f0d12"
+  background: "#0c0d0e"
   wall_color: "#2b211e"
-  wall_trim: "#d97706"
-  floor_primary: "#363b2a"
-  floor_secondary: "#424833"
-  floor_accent: "#4a2531"
+  wall_trim: "#854d0e"
+  floor_primary: "#1a1f1c"
+  floor_secondary: "#222921"
+  floor_accent: "#1f271f"
   grid_line: "rgba(244, 114, 182, 0.06)"
   accent_color: "#f472b6"
   secondary_color: "#fb923c"
@@ -106,15 +106,16 @@ waypoints:
   - { id: "wp-hall-2",  col: 17, row: 8, activity: "lounge",      bubble: "🌸 Catching falling sakura petals" }
 
 props:
-  - { id: "prop-zengarden", type: "zen_garden",     col: 15, row: 1,  w: 5, h: 2, label: "ZEN ROCK GARDEN", animated: true }
-  - { id: "prop-torii",     type: "torii_gate",     col: 24, row: 1,  w: 2, h: 2, label: "TORII", animated: true }
-  - { id: "prop-koipond",   type: "koi_pond",       col: 20, row: 4,  w: 5, h: 2, label: "KOI POND", animated: true }
-  - { id: "prop-dummy",     type: "training_dummy", col: 15, row: 4,  w: 2, h: 2, animated: true }
-  - { id: "prop-shrine1",   type: "server_rack",    col: 25, row: 11, w: 2, h: 2, label: "SCROLL ARCHIVE", animated: true }
-  - { id: "prop-shrine2",   type: "server_rack",    col: 25, row: 14, w: 2, h: 2, label: "KATANA RACK", animated: true }
-  - { id: "prop-board",     type: "whiteboard",     col: 4,  row: 0,  w: 4, h: 1, label: "BUSHIDO CODE" }
-  - { id: "prop-plant-1",   type: "plant",          col: 1,  row: 1,  w: 1, h: 1 }
-  - { id: "prop-plant-2",   type: "plant",          col: 26, row: 1,  w: 1, h: 1 }
+  - { id: "prop-zengarden", type: "zen_garden",     col: 15, row: 2,  w: 5, h: 2, label: "ZEN ROCK GARDEN", animated: true }
+  - { id: "prop-torii",     type: "torii_gate",     col: 24, row: 2,  w: 2, h: 2, label: "TORII", animated: true }
+  - { id: "prop-koipond",   type: "koi_pond",       col: 20, row: 5,  w: 5, h: 2, label: "KOI POND", animated: true }
+  - { id: "prop-dummy",     type: "training_dummy", col: 15, row: 5,  w: 2, h: 2, animated: true }
+  - { id: "prop-shrine1",   type: "scroll_rack",    col: 25, row: 11, w: 2, h: 2, label: "SCROLL ARCHIVE" }
+  - { id: "prop-shrine2",   type: "katana_rack",    col: 25, row: 14, w: 2, h: 2, label: "DAISHO STAND" }
+  - { id: "prop-board",     type: "shodo_banner",   col: 4,  row: 0,  w: 4, h: 1, label: "BUSHIDO" }
+  - { id: "prop-plant-1",   type: "dojo_bamboo",    col: 11, row: 1,  w: 1, h: 1 }
+  - { id: "prop-plant-2",   type: "dojo_bamboo",    col: 26, row: 1,  w: 1, h: 1 }
+  - { id: "prop-plant-3",   type: "dojo_bamboo",    col: 1,  row: 16, w: 1, h: 1 }
 
 characters:
   claude:

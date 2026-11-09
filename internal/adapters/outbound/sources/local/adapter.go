@@ -43,6 +43,21 @@ func NewAdapter(cfg config.LocalConfig) *Adapter {
 	if cfg.HerdrBin == "" {
 		cfg.HerdrBin = "herdr"
 	}
+	if cfg.UsagePluginDir == "" {
+		cfg.UsagePluginDir = os.Getenv("HERDR_USAGE_PLUGIN_DIR")
+	}
+	if cfg.UsagePluginDir == "" && home != "" {
+		candidates := []string{
+			filepath.Join(home, ".config", "herdr", "plugins", "herdr-agent-usage"),
+			filepath.Join(home, "Development", "herdr-plugins", "herdr-agent-usage"),
+		}
+		for _, candidate := range candidates {
+			if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+				cfg.UsagePluginDir = candidate
+				break
+			}
+		}
+	}
 	if cfg.QuotaTTLSeconds <= 0 {
 		cfg.QuotaTTLSeconds = 300
 	}

@@ -16,7 +16,9 @@ source:
   type: "local"
   local:
     herdr_bin: "herdr"
-    usage_plugin_dir: "/Users/alevsk/Development/herdr-plugins/herdr-agent-usage"
+    # Optional path to herdr-agent-usage plugin directory; if empty, auto-discovers via
+    # $HERDR_USAGE_PLUGIN_DIR, ~/.config/herdr/plugins/herdr-agent-usage, or ~/Development/herdr-plugins/herdr-agent-usage
+    usage_plugin_dir: ""
     quota_ttl_seconds: 300
   remote:
     endpoint: "http://localhost:8080/api/snapshot"

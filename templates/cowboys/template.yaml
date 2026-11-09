@@ -4,12 +4,12 @@ description: "Frontier ranch where agents groom & saddle horses, hammer glowing 
 theme_badge: "🤠 Cowboys"
 
 theme:
-  background: "#170e08"
-  wall_color: "#4a2c18"
-  wall_trim: "#b45309"
-  floor_primary: "#5c3820"
-  floor_secondary: "#6e4326"
-  floor_accent: "#7c2d12"
+  background: "#0d0907"
+  wall_color: "#382214"
+  wall_trim: "#78472a"
+  floor_primary: "#211712"
+  floor_secondary: "#261b15"
+  floor_accent: "#1e1510"
   grid_line: "rgba(251, 191, 36, 0.05)"
   accent_color: "#f59e0b"
   secondary_color: "#ea580c"
@@ -107,14 +107,14 @@ waypoints:
   - { id: "wp-hall-2",       col: 18, row: 8, activity: "lounge",      bubble: "🌵 Watching tumbleweeds roll" }
 
 props:
-  - { id: "prop-bar",      type: "barrel",       col: 15, row: 1,  w: 3, h: 1, label: "SALOON BAR" }
-  - { id: "prop-piano",    type: "piano",        col: 23, row: 1,  w: 2, h: 1, label: "RAGTIME", animated: true }
-  - { id: "prop-campfire", type: "campfire",     col: 19, row: 4,  w: 2, h: 2, animated: true }
-  - { id: "prop-trough",   type: "water_trough", col: 23, row: 4,  w: 3, h: 1, animated: true }
-  - { id: "prop-safe-1",   type: "barrel",       col: 25, row: 11, w: 2, h: 2, label: "POWDER KEGS" }
-  - { id: "prop-safe-2",   type: "barrel",       col: 25, row: 14, w: 2, h: 2, label: "GOLD BULLION" }
-  - { id: "prop-wanted",   type: "whiteboard",   col: 4,  row: 0,  w: 4, h: 1, label: "WANTED" }
-  - { id: "prop-cactus-1", type: "plant",        col: 1,  row: 1,  w: 1, h: 1, sprite: "cactus.png" }
+  - { id: "prop-bar",      type: "saloon_bar",   col: 15, row: 2,  w: 4, h: 1, label: "SALOON BAR", animated: true }
+  - { id: "prop-piano",    type: "piano",        col: 23, row: 2,  w: 2, h: 1, label: "RAGTIME", animated: true }
+  - { id: "prop-campfire", type: "campfire",     col: 18, row: 5,  w: 2, h: 2, animated: true }
+  - { id: "prop-trough",   type: "water_trough", col: 22, row: 5,  w: 3, h: 1, animated: true }
+  - { id: "prop-safe-1",   type: "gold_safe",    col: 25, row: 11, w: 2, h: 2, label: "WELLS FARGO SAFE", animated: true }
+  - { id: "prop-safe-2",   type: "saddle_rack",  col: 25, row: 14, w: 2, h: 2, label: "SADDLE & TACK" }
+  - { id: "prop-wanted",   type: "wanted_board", col: 4,  row: 0,  w: 4, h: 1, label: "BOUNTY" }
+  - { id: "prop-cactus-1", type: "plant",        col: 11, row: 1,  w: 1, h: 1, sprite: "cactus.png" }
   - { id: "prop-cactus-2", type: "plant",        col: 26, row: 1,  w: 1, h: 1, sprite: "cactus.png" }
   - { id: "prop-cactus-3", type: "plant",        col: 1,  row: 16, w: 1, h: 1, sprite: "cactus.png" }
   - { id: "prop-badge",    type: "clock",        col: 10, row: 0,  w: 1, h: 1, sprite: "sheriff_star.png" }
