@@ -2,12 +2,14 @@ package templates
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
 
 	"github.com/alevsk/agents-animated-workspace/internal/config"
 	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
+	embeddedTemplates "github.com/alevsk/agents-animated-workspace/templates"
 	"gopkg.in/yaml.v3"
 )
 
@@ -22,26 +24,53 @@ func NewRepository(sceneCfg config.SceneConfig) *Repository {
 }
 
 func (r *Repository) ListTemplates() ([]domain.TemplateSummary, error) {
-	entries, err := os.ReadDir(r.sceneCfg.TemplatesDir)
-	if err != nil {
-		return nil, err
-	}
+	seen := make(map[string]bool)
 	var list []domain.TemplateSummary
-	for _, e := range entries {
-		if !e.IsDir() {
-			continue
+
+	// 1. Scan disk templates directory if it exists
+	if entries, err := os.ReadDir(r.sceneCfg.TemplatesDir); err == nil {
+		for _, e := range entries {
+			if !e.IsDir() {
+				continue
+			}
+			mf, err := r.GetTemplate(e.Name())
+			if err != nil {
+				continue
+			}
+			seen[mf.ID] = true
+			list = append(list, domain.TemplateSummary{
+				ID:          mf.ID,
+				Name:        mf.Name,
+				Description: mf.Description,
+				ThemeBadge:  mf.ThemeBadge,
+			})
 		}
-		mf, err := r.GetTemplate(e.Name())
-		if err != nil {
-			continue
-		}
-		list = append(list, domain.TemplateSummary{
-			ID:          mf.ID,
-			Name:        mf.Name,
-			Description: mf.Description,
-			ThemeBadge:  mf.ThemeBadge,
-		})
 	}
+
+	// 2. Discover embedded templates for any default themes not yet found on disk
+	if entries, err := fs.ReadDir(embeddedTemplates.EmbeddedFS, "."); err == nil {
+		for _, e := range entries {
+			if !e.IsDir() || seen[e.Name()] {
+				continue
+			}
+			mf, err := r.GetTemplate(e.Name())
+			if err != nil {
+				continue
+			}
+			seen[mf.ID] = true
+			list = append(list, domain.TemplateSummary{
+				ID:          mf.ID,
+				Name:        mf.Name,
+				Description: mf.Description,
+				ThemeBadge:  mf.ThemeBadge,
+			})
+		}
+	}
+
+	if len(list) == 0 {
+		return nil, fmt.Errorf("no scene templates available on disk or embedded")
+	}
+
 	sort.Slice(list, func(i, j int) bool {
 		if list[i].ID == "office" {
 			return true
@@ -55,11 +84,24 @@ func (r *Repository) ListTemplates() ([]domain.TemplateSummary, error) {
 }
 
 func (r *Repository) GetTemplate(id string) (*domain.TemplateManifest, error) {
+	var data []byte
+	var err error
+
+	// 1. Try disk directory first
 	file := filepath.Join(r.sceneCfg.TemplatesDir, id, "template.yaml")
-	data, err := os.ReadFile(file)
-	if err != nil {
-		return nil, fmt.Errorf("template %q not found: %w", id, err)
+	if st, statErr := os.Stat(file); statErr == nil && !st.IsDir() {
+		data, err = os.ReadFile(file)
 	}
+
+	// 2. Fallback to embedded template assets
+	if len(data) == 0 {
+		embeddedPath := id + "/template.yaml"
+		data, err = embeddedTemplates.EmbeddedFS.ReadFile(embeddedPath)
+		if err != nil {
+			return nil, fmt.Errorf("template %q not found on disk or embedded: %w", id, err)
+		}
+	}
+
 	var mf domain.TemplateManifest
 	if err := yaml.Unmarshal(data, &mf); err != nil {
 		return nil, fmt.Errorf("invalid template %q yaml: %w", id, err)

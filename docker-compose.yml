@@ -1,0 +1,29 @@
+services:
+  agents-workspace:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: agents-animated-workspace:latest
+    container_name: agents-animated-workspace
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+      - ACTIVE_TEMPLATE=${ACTIVE_TEMPLATE:-office}
+      - SOURCE_TYPE=local
+    volumes:
+      # Optional configuration and custom templates volume mounts
+      - ./config.yaml:/app/config.yaml:ro
+      - ./templates:/app/templates:ro
+
+      # Host agent telemetry directories (mounted read-only for local discovery)
+      - ${HOME}/.claude:/home/workspace/.claude:ro
+      - ${HOME}/.codex:/home/workspace/.codex:ro
+      - ${HOME}/.gemini:/home/workspace/.gemini:ro
+      - ${HOME}/.local/share/opencode:/home/workspace/.local/share/opencode:ro
+      - ${HOME}/.config/opencode:/home/workspace/.config/opencode:ro
+      - ${HOME}/.grok:/home/workspace/.grok:ro
+      # Optional Herdr usage quota cache mount
+      - /tmp/herdr-agent-usage:/tmp/herdr-agent-usage:ro

@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 # Stage 1: Build Frontend SPA (React 19 + Vite + TypeScript)
 # -----------------------------------------------------------------------------
-FROM node:22-alpine AS web-builder
+FROM --platform=$BUILDPLATFORM node:22-alpine AS web-builder
 WORKDIR /app/web
 
 COPY web/package.json web/package-lock.json ./
@@ -13,24 +13,33 @@ COPY web/ ./
 RUN npm run build
 
 # -----------------------------------------------------------------------------
-# Stage 2: Build Backend Server (Hexagonal Go Server)
+# Stage 2: Build Backend Server (Hexagonal Go Server with Embedded Assets)
 # -----------------------------------------------------------------------------
-FROM golang:1.24-alpine AS go-builder
+FROM --platform=$BUILDPLATFORM golang:1.24-alpine AS go-builder
 WORKDIR /app
 
+ARG TARGETOS
+ARG TARGETARCH
+
 ENV CGO_ENABLED=0 \
-    GOOS=linux \
+    GOOS=${TARGETOS:-linux} \
+    GOARCH=${TARGETARCH:-amd64} \
     GOTOOLCHAIN=auto
 
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy backend sources, embedded templates, and built web dist
 COPY cmd/ ./cmd/
 COPY internal/ ./internal/
+COPY templates/ ./templates/
+COPY web/web.go ./web/web.go
+COPY --from=web-builder /app/web/dist ./web/dist
+
 RUN go build -trimpath -ldflags="-s -w" -o /out/agents-workspace ./cmd/server
 
 # -----------------------------------------------------------------------------
-# Stage 3: Minimal Production Runtime
+# Stage 3: Minimal Multi-Arch Production Runtime
 # -----------------------------------------------------------------------------
 FROM alpine:3.21
 
@@ -41,20 +50,20 @@ RUN apk add --no-cache \
     jq \
     tzdata && \
     addgroup -S workspace && \
-    adduser -S -G workspace workspace
+    adduser -S -G workspace -h /home/workspace workspace
 
 WORKDIR /app
 
 COPY --from=go-builder /out/agents-workspace /app/agents-workspace
-COPY --from=web-builder /app/web/dist /app/web/dist
 COPY templates/ /app/templates/
 COPY config.yaml /app/config.yaml
 
-RUN chown -R workspace:workspace /app
+RUN chown -R workspace:workspace /app /home/workspace
 USER workspace
 
 ENV HOST="0.0.0.0" \
-    PORT="8080"
+    PORT="8080" \
+    TEMPLATES_DIR="/app/templates"
 
 EXPOSE 8080
 

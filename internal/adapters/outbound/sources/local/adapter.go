@@ -121,9 +121,10 @@ func (a *Adapter) FetchState(ctx context.Context) (
 	error,
 ) {
 	rawAgents, err := a.fetchHerdrAgents(ctx)
-	if err != nil {
-		// If herdr fails, return empty slice gracefully rather than crashing
-		rawAgents = nil
+	if err != nil || len(rawAgents) == 0 {
+		// When Herdr CLI is absent or returns no active processes,
+		// discover recent & active sessions natively from local transcripts
+		rawAgents = a.discoverNativeSessions()
 	}
 
 	accounts := a.discoverAccounts(ctx)
@@ -333,6 +334,8 @@ func (a *Adapter) claudeCandidateHomes() []string {
 	}
 	add(os.Getenv("CLAUDE_CONFIG_DIR"))
 	add(filepath.Join(a.homeDir, ".claude"))
+	add("/home/workspace/.claude")
+	add("/root/.claude")
 	matches, _ := filepath.Glob(filepath.Join(a.homeDir, ".claude-*"))
 	for _, m := range matches {
 		add(m)
@@ -354,6 +357,8 @@ func (a *Adapter) codexCandidateHomes() []string {
 	}
 	add(os.Getenv("CODEX_HOME"))
 	add(filepath.Join(a.homeDir, ".codex"))
+	add("/home/workspace/.codex")
+	add("/root/.codex")
 	matches, _ := filepath.Glob(filepath.Join(a.homeDir, ".codex-*"))
 	for _, m := range matches {
 		add(m)
@@ -746,6 +751,219 @@ func decodeCodexJWT(jwt string) (email, plan string) {
 		}
 	}
 	return
+}
+
+// ── Native Transcript-Based Session Discovery (fallback when Herdr is absent) ─
+
+type transcriptCandidate struct {
+	path    string
+	modTime time.Time
+	id      string
+	cwd     string
+}
+
+func (a *Adapter) discoverNativeSessions() []herdrAgent {
+	var results []herdrAgent
+	results = append(results, a.discoverNativeClaudeSessions()...)
+	results = append(results, a.discoverNativeCodexSessions()...)
+	return results
+}
+
+func (a *Adapter) discoverNativeClaudeSessions() []herdrAgent {
+	cutoff := time.Now().Add(-48 * time.Hour)
+	var candidates []transcriptCandidate
+
+	for _, dir := range a.claudeCandidateHomes() {
+		projectsDir := filepath.Join(dir, "projects")
+		pEntries, err := os.ReadDir(projectsDir)
+		if err != nil {
+			continue
+		}
+		for _, pe := range pEntries {
+			if !pe.IsDir() {
+				continue
+			}
+			projDir := filepath.Join(projectsDir, pe.Name())
+			matches, _ := filepath.Glob(filepath.Join(projDir, "*.jsonl"))
+			for _, m := range matches {
+				fi, err := os.Stat(m)
+				if err != nil || fi.IsDir() || fi.ModTime().Before(cutoff) {
+					continue
+				}
+				sessionID := strings.TrimSuffix(filepath.Base(m), ".jsonl")
+				cwd := pe.Name()
+				if strings.HasPrefix(cwd, "-") {
+					cwd = "/" + strings.ReplaceAll(strings.TrimPrefix(cwd, "-"), "-", "/")
+				}
+				candidates = append(candidates, transcriptCandidate{
+					path:    m,
+					modTime: fi.ModTime(),
+					id:      sessionID,
+					cwd:     cwd,
+				})
+			}
+		}
+	}
+
+	sort.Slice(candidates, func(i, j int) bool {
+		return candidates[i].modTime.After(candidates[j].modTime)
+	})
+
+	if len(candidates) > 8 {
+		candidates = candidates[:8]
+	}
+
+	var agents []herdrAgent
+	for _, c := range candidates {
+		task := a.extractClaudeSessionTask(c.path)
+		if task == "" {
+			task = "Claude Session (" + filepath.Base(c.cwd) + ")"
+		}
+		status := "idle"
+		if time.Since(c.modTime) < 5*time.Minute {
+			status = "working"
+		}
+		paneID := "claude-" + c.id
+		if len(c.id) > 8 {
+			paneID = "claude-" + c.id[:8]
+		}
+		agents = append(agents, herdrAgent{
+			Agent:        "claude",
+			AgentStatus:  status,
+			CWD:          c.cwd,
+			DisplayAgent: "claude",
+			PaneID:       paneID,
+			Title:        task,
+			TitleStrip:   task,
+			WorkspaceID:  filepath.Base(c.cwd),
+			AgentSession: &struct {
+				Value string `json:"value"`
+			}{Value: c.id},
+		})
+	}
+	return agents
+}
+
+func (a *Adapter) extractClaudeSessionTask(transcriptPath string) string {
+	f, err := os.Open(transcriptPath)
+	if err != nil {
+		return ""
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	buf := make([]byte, 0, 64*1024)
+	scanner.Buffer(buf, 1024*1024)
+
+	var lastUserMsg string
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		if !bytes.Contains(line, []byte(`"type":"user"`)) {
+			continue
+		}
+		var parsed struct {
+			Message struct {
+				Content interface{} `json:"content"`
+			} `json:"message"`
+		}
+		if json.Unmarshal(line, &parsed) == nil {
+			switch c := parsed.Message.Content.(type) {
+			case string:
+				c = strings.TrimSpace(c)
+				if c != "" && !strings.HasPrefix(c, "/") {
+					lastUserMsg = c
+				}
+			case []interface{}:
+				for _, block := range c {
+					if bm, ok := block.(map[string]interface{}); ok {
+						if bm["type"] == "text" {
+							if text, ok := bm["text"].(string); ok {
+								text = strings.TrimSpace(text)
+								if text != "" && !strings.HasPrefix(text, "/") {
+									lastUserMsg = text
+									break
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if len(lastUserMsg) > 90 {
+		lastUserMsg = lastUserMsg[:87] + "..."
+	}
+	return lastUserMsg
+}
+
+func (a *Adapter) discoverNativeCodexSessions() []herdrAgent {
+	var agents []herdrAgent
+	cutoff := time.Now().Add(-48 * time.Hour)
+
+	for _, dir := range a.codexCandidateHomes() {
+		idxPath := filepath.Join(dir, "session_index.jsonl")
+		f, err := os.Open(idxPath)
+		if err != nil {
+			continue
+		}
+		scanner := bufio.NewScanner(f)
+		var entries []struct {
+			ID         string    `json:"id"`
+			ThreadName string    `json:"thread_name"`
+			UpdatedAt  time.Time `json:"updated_at"`
+		}
+		for scanner.Scan() {
+			var e struct {
+				ID         string    `json:"id"`
+				ThreadName string    `json:"thread_name"`
+				UpdatedAt  time.Time `json:"updated_at"`
+			}
+			if json.Unmarshal(scanner.Bytes(), &e) == nil && e.ID != "" && e.UpdatedAt.After(cutoff) {
+				entries = append(entries, e)
+			}
+		}
+		_ = f.Close()
+
+		sort.Slice(entries, func(i, j int) bool {
+			return entries[i].UpdatedAt.After(entries[j].UpdatedAt)
+		})
+
+		if len(entries) > 4 {
+			entries = entries[:4]
+		}
+
+		for _, e := range entries {
+			status := "idle"
+			if time.Since(e.UpdatedAt) < 5*time.Minute {
+				status = "working"
+			}
+			task := strings.TrimSpace(e.ThreadName)
+			if task == "" {
+				task = "Codex Session"
+			}
+			if len(task) > 90 {
+				task = task[:87] + "..."
+			}
+			paneID := "codex-" + e.ID
+			if len(e.ID) > 8 {
+				paneID = "codex-" + e.ID[:8]
+			}
+			agents = append(agents, herdrAgent{
+				Agent:        "codex",
+				AgentStatus:  status,
+				CWD:          dir,
+				DisplayAgent: "codex",
+				PaneID:       paneID,
+				Title:        task,
+				TitleStrip:   task,
+				WorkspaceID:  "codex",
+				AgentSession: &struct {
+					Value string `json:"value"`
+				}{Value: e.ID},
+			})
+		}
+	}
+	return agents
 }
 
 func (a *Adapter) quotaCachePath(agent, id, ext string) string {

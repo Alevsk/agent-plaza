@@ -13,6 +13,8 @@ import (
 	"github.com/alevsk/agents-animated-workspace/internal/config"
 	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
 	"github.com/alevsk/agents-animated-workspace/internal/core/services"
+	embeddedTemplates "github.com/alevsk/agents-animated-workspace/templates"
+	"github.com/alevsk/agents-animated-workspace/web"
 	"github.com/gorilla/websocket"
 )
 
@@ -92,26 +94,80 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/api/sim/toggle", s.authMiddleware(s.handleSimToggle))
 	mux.HandleFunc("/api/sim/clear", s.authMiddleware(s.handleSimClear))
 
-	// Serve template static assets if any
-	templatesFS := http.FileServer(http.Dir(s.cfg.Scene.TemplatesDir))
-	mux.Handle("/template-assets/", http.StripPrefix("/template-assets/", templatesFS))
+	// Serve template static assets: check disk directory first, fallback to embedded templates
+	mux.HandleFunc("/template-assets/", func(w http.ResponseWriter, r *http.Request) {
+		relPath := strings.TrimPrefix(r.URL.Path, "/template-assets/")
+		relPath = strings.TrimPrefix(relPath, "/")
 
-	// Serve built frontend if present
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		staticDir := s.cfg.Server.StaticDir
-		if st, err := os.Stat(staticDir); err == nil && st.IsDir() {
-			cleanPath := filepath.Clean(r.URL.Path)
-			fullPath := filepath.Join(staticDir, cleanPath)
-			if info, err := os.Stat(fullPath); err == nil && !info.IsDir() {
-				http.ServeFile(w, r, fullPath)
-				return
-			}
-			indexFile := filepath.Join(staticDir, "index.html")
-			if _, err := os.Stat(indexFile); err == nil {
-				http.ServeFile(w, r, indexFile)
+		// 1. Try disk if templates_dir exists
+		if s.cfg.Scene.TemplatesDir != "" {
+			diskPath := filepath.Join(s.cfg.Scene.TemplatesDir, filepath.Clean(relPath))
+			if info, err := os.Stat(diskPath); err == nil && !info.IsDir() {
+				http.ServeFile(w, r, diskPath)
 				return
 			}
 		}
+
+		// 2. Fallback to embedded template assets
+		if f, err := embeddedTemplates.EmbeddedFS.Open(relPath); err == nil {
+			_ = f.Close()
+			http.StripPrefix("/template-assets/", http.FileServer(http.FS(embeddedTemplates.EmbeddedFS))).ServeHTTP(w, r)
+			return
+		}
+
+		http.NotFound(w, r)
+	})
+
+	// Serve frontend SPA: check disk static_dir first (for dev / hot-reload), fallback to embedded web assets
+	distFS, _ := web.DistFS()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		cleanPath := strings.TrimPrefix(filepath.Clean(r.URL.Path), "/")
+		if cleanPath == "." {
+			cleanPath = ""
+		}
+
+		// 1. Try disk if static_dir exists
+		staticDir := s.cfg.Server.StaticDir
+		if staticDir != "" {
+			if st, err := os.Stat(staticDir); err == nil && st.IsDir() {
+				if cleanPath != "" {
+					fullPath := filepath.Join(staticDir, cleanPath)
+					if info, err := os.Stat(fullPath); err == nil && !info.IsDir() {
+						http.ServeFile(w, r, fullPath)
+						return
+					}
+				}
+				indexFile := filepath.Join(staticDir, "index.html")
+				if _, err := os.Stat(indexFile); err == nil {
+					http.ServeFile(w, r, indexFile)
+					return
+				}
+			}
+		}
+
+		// 2. Try embedded web dist assets
+		if distFS != nil {
+			if cleanPath != "" {
+				if f, err := distFS.Open(cleanPath); err == nil {
+					st, statErr := f.Stat()
+					_ = f.Close()
+					if statErr == nil && !st.IsDir() {
+						http.FileServer(http.FS(distFS)).ServeHTTP(w, r)
+						return
+					}
+				}
+			}
+			// Fallback to index.html for root and SPA routes
+			if f, err := distFS.Open("index.html"); err == nil {
+				_ = f.Close()
+				r2 := new(http.Request)
+				*r2 = *r
+				r2.URL.Path = "/"
+				http.FileServer(http.FS(distFS)).ServeHTTP(w, r2)
+				return
+			}
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"status":"ok","service":"agents-animated-workspace"}`))
 	})

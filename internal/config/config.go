@@ -89,14 +89,13 @@ func Load(path string) (*Config, error) {
 	cfg := Default()
 	data, err := os.ReadFile(path)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return cfg, nil
+		if !os.IsNotExist(err) {
+			return nil, err
 		}
+	} else if err := yaml.Unmarshal(data, cfg); err != nil {
 		return nil, err
 	}
-	if err := yaml.Unmarshal(data, cfg); err != nil {
-		return nil, err
-	}
+
 	if cfg.Server.Port == 0 {
 		cfg.Server.Port = 8080
 	}
@@ -121,8 +120,14 @@ func Load(path string) (*Config, error) {
 			cfg.Server.Port = p
 		}
 	}
+	if v := os.Getenv("STATIC_DIR"); v != "" {
+		cfg.Server.StaticDir = v
+	}
 	if v := os.Getenv("ACTIVE_TEMPLATE"); v != "" {
 		cfg.Scene.ActiveTemplate = v
+	}
+	if v := os.Getenv("TEMPLATES_DIR"); v != "" {
+		cfg.Scene.TemplatesDir = v
 	}
 	if v := os.Getenv("SOURCE_TYPE"); v != "" {
 		cfg.Source.Type = v
