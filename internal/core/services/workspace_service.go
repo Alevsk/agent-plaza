@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
-	"github.com/alevsk/agents-animated-workspace/internal/core/ports"
+	"github.com/alevsk/agent-plaza/internal/core/domain"
+	"github.com/alevsk/agent-plaza/internal/core/ports"
 )
 
 type WorkspaceService struct {

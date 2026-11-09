@@ -3,7 +3,7 @@ package ports
 import (
 	"context"
 
-	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
+	"github.com/alevsk/agent-plaza/internal/core/domain"
 )
 
 // DataSourcePort defines the outbound port for fetching agent sessions and subscription quotas.

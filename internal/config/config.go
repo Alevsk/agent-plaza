@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
+	"github.com/alevsk/agent-plaza/internal/core/domain"
 	"gopkg.in/yaml.v3"
 )
 

@@ -93,7 +93,7 @@ Download or compile the single standalone binary with embedded web assets:
 make build-multiarch
 
 # Run directly on your machine
-./bin/agents-workspace -config config.yaml
+./bin/agent-plaza -config config.yaml
 ```
 
 Open **`http://localhost:8080`** in your browser.

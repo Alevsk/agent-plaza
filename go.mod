@@ -1,4 +1,4 @@
-module github.com/alevsk/agents-animated-workspace
+module github.com/alevsk/agent-plaza
 
 go 1.26.10
 

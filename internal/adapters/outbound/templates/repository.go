@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/alevsk/agents-animated-workspace/internal/config"
-	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
-	embeddedTemplates "github.com/alevsk/agents-animated-workspace/templates"
+	"github.com/alevsk/agent-plaza/internal/config"
+	"github.com/alevsk/agent-plaza/internal/core/domain"
+	embeddedTemplates "github.com/alevsk/agent-plaza/templates"
 	"gopkg.in/yaml.v3"
 )
 

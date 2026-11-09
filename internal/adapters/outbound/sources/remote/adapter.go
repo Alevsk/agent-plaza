@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/alevsk/agents-animated-workspace/internal/config"
-	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
+	"github.com/alevsk/agent-plaza/internal/config"
+	"github.com/alevsk/agent-plaza/internal/core/domain"
 )
 
 type Adapter struct {

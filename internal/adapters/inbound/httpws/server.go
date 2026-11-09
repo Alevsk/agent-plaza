@@ -10,11 +10,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/alevsk/agents-animated-workspace/internal/config"
-	"github.com/alevsk/agents-animated-workspace/internal/core/domain"
-	"github.com/alevsk/agents-animated-workspace/internal/core/services"
-	embeddedTemplates "github.com/alevsk/agents-animated-workspace/templates"
-	"github.com/alevsk/agents-animated-workspace/web"
+	"github.com/alevsk/agent-plaza/internal/config"
+	"github.com/alevsk/agent-plaza/internal/core/domain"
+	"github.com/alevsk/agent-plaza/internal/core/services"
+	embeddedTemplates "github.com/alevsk/agent-plaza/templates"
+	"github.com/alevsk/agent-plaza/web"
 	"github.com/gorilla/websocket"
 )
 
@@ -169,7 +169,7 @@ func (s *Server) Handler() http.Handler {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(`{"status":"ok","service":"agents-animated-workspace"}`))
+		_, _ = w.Write([]byte(`{"status":"ok","service":"agent-plaza"}`))
 	})
 
 	return corsMiddleware(mux)

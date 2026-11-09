@@ -1,6 +1,6 @@
 # AGENTS.md — AI Coding Agent Guide
 
-This document provides architecture context, design system rules, and workflow commands for AI coding agents working on `agents-animated-workspace`.
+This document provides architecture context, design system rules, and workflow commands for AI coding agents working on `agent-plaza`.
 
 ---
 
@@ -94,7 +94,7 @@ When adding or modifying templates, props, workstations, or characters, you **mu
 
 ### Build & Test Backend (Go)
 ```bash
-go build -o bin/agents-workspace ./cmd/server
+go build -o bin/agent-plaza ./cmd/server
 go test ./...
 ```
 

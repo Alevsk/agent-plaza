@@ -11,13 +11,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/alevsk/agents-animated-workspace/internal/adapters/inbound/httpws"
-	"github.com/alevsk/agents-animated-workspace/internal/adapters/outbound/sources/local"
-	"github.com/alevsk/agents-animated-workspace/internal/adapters/outbound/sources/remote"
-	"github.com/alevsk/agents-animated-workspace/internal/adapters/outbound/templates"
-	"github.com/alevsk/agents-animated-workspace/internal/config"
-	"github.com/alevsk/agents-animated-workspace/internal/core/ports"
-	"github.com/alevsk/agents-animated-workspace/internal/core/services"
+	"github.com/alevsk/agent-plaza/internal/adapters/inbound/httpws"
+	"github.com/alevsk/agent-plaza/internal/adapters/outbound/sources/local"
+	"github.com/alevsk/agent-plaza/internal/adapters/outbound/sources/remote"
+	"github.com/alevsk/agent-plaza/internal/adapters/outbound/templates"
+	"github.com/alevsk/agent-plaza/internal/config"
+	"github.com/alevsk/agent-plaza/internal/core/ports"
+	"github.com/alevsk/agent-plaza/internal/core/services"
 )
 
 func main() {

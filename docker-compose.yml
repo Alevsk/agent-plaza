@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: agents-animated-workspace:latest
-    container_name: agents-animated-workspace
+    image: agent-plaza:latest
+    container_name: agent-plaza
     restart: unless-stopped
     ports:
       - "${PORT:-8080}:8080"
