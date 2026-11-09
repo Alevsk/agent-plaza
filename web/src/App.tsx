@@ -237,76 +237,70 @@ export const App: React.FC = () => {
       />
 
       {/* TOP COMMAND & SUMMARY BAR */}
-      <header className="pointer-events-auto absolute top-2 left-2 right-2 md:top-3 md:left-3 md:right-3 z-30 flex items-center justify-between gap-1.5 md:gap-3 rounded-xl md:rounded-lg border border-slate-700/80 bg-slate-950/92 px-2.5 py-1.5 md:px-4 md:py-2.5 backdrop-blur-md shadow-2xl safe-top">
-        {/* Left: Brand + Live + Scene Description + Desktop Summary */}
-        <div className="flex items-center gap-3 md:gap-5 min-w-0 shrink">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-7 w-7 md:h-8 md:w-8 shrink-0 items-center justify-center rounded border border-sky-400/50 bg-sky-500/15 text-sky-400 shadow-inner">
-              <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4" />
+      <header className="pointer-events-auto absolute top-2 left-2 right-2 md:top-3 md:left-3 md:right-3 z-30 flex items-center justify-between gap-1.5 sm:gap-2 md:gap-3 rounded-xl border border-slate-700/80 bg-slate-950/92 px-2 py-1.5 sm:px-2.5 sm:py-1.5 md:px-3.5 md:py-2 backdrop-blur-md shadow-2xl safe-top">
+        {/* Left: Brand + Live + Desktop Summary */}
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <div className="flex h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 items-center justify-center rounded-lg border border-sky-400/50 bg-sky-500/15 text-sky-400 shadow-inner">
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h1 className="font-pixel text-[10px] md:text-[11px] tracking-tight text-white whitespace-nowrap">
-                  HERDR
-                </h1>
-                <span
-                  className={`inline-flex items-center gap-1 rounded px-1.5 py-0.2 font-mono text-[9px] md:text-[10px] font-bold ${
-                    connected
-                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
-                  }`}
-                >
-                  {connected ? (
-                    <>
-                      <Wifi className="w-2 md:w-2.5 h-2 md:h-2.5" /> LIVE
-                    </>
-                  ) : (
-                    <>
-                      <WifiOff className="w-2 md:w-2.5 h-2 md:h-2.5" /> OFF
-                    </>
-                  )}
-                </span>
-              </div>
-              <p className="hidden md:block font-mono text-[10px] text-slate-400 truncate max-w-[180px] lg:max-w-[240px]">
-                {template ? `${template.name} — ${template.description}` : 'Loading scene...'}
-              </p>
+            <div className="flex items-center gap-1.5 leading-none">
+              <h1 className="font-pixel text-[9px] sm:text-[10px] md:text-[11px] tracking-tight text-white whitespace-nowrap">
+                HERDR
+              </h1>
+              <span
+                className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-mono text-[9px] md:text-[10px] font-bold ${
+                  connected
+                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
+                }`}
+              >
+                {connected ? (
+                  <>
+                    <Wifi className="w-2 md:w-2.5 h-2 md:h-2.5" /> LIVE
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="w-2 md:w-2.5 h-2 md:h-2.5" /> OFF
+                  </>
+                )}
+              </span>
             </div>
           </div>
 
-          {/* Desktop Summary Block */}
-          <div className="hidden xl:flex items-center gap-3 border-l border-slate-800 pl-4 font-mono text-xs">
-            <span className="text-fuchsia-400 font-extrabold tracking-wider">■ SUMMARY</span>
-            <div className="flex items-center gap-1.5 bg-slate-900/90 border border-slate-800 px-2.5 py-1 rounded">
-              <span className="text-slate-400">Total:</span>
+          {/* Desktop Summary Metrics Pill */}
+          <div className="hidden md:flex items-center gap-2 bg-slate-900/90 border border-slate-800/90 rounded-md px-2.5 py-1 text-[11px] font-mono shrink-0 whitespace-nowrap select-none">
+            <div className="flex items-center gap-1 text-slate-300">
+              <span className="text-slate-400 font-semibold">Total:</span>
               <span className="font-extrabold text-white">{summary.total_agents}</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-emerald-950/40 border border-emerald-500/30 px-2.5 py-1 rounded">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-slate-300">Working:</span>
-              <span className="font-extrabold text-emerald-400">{summary.working}</span>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{summary.working} working</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-amber-950/30 border border-amber-500/30 px-2.5 py-1 rounded">
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span className="text-slate-300">Idle:</span>
-              <span className="font-extrabold text-amber-300">{summary.idle}</span>
+            <span className="text-slate-700">|</span>
+            <div className="flex items-center gap-1.5 text-amber-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              <span>{summary.idle} idle</span>
             </div>
           </div>
         </div>
 
         {/* Right: Controls & Template Selection */}
         <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2 shrink-0">
-          {/* Custom UI-styled Template Dropdown (< lg) */}
-          <div className="relative block lg:hidden">
+          {/* Custom UI-styled Template Dropdown */}
+          <div className="relative">
             <button
               onClick={() => setTemplateMenuOpen((v) => !v)}
-              className="flex items-center gap-1.5 h-7 rounded border border-slate-700/80 bg-slate-900/90 hover:bg-slate-800 px-2 font-mono text-[11px] font-bold text-sky-400 cursor-pointer transition-colors active:scale-95 shadow-inner"
+              className="flex items-center gap-1 sm:gap-1.5 h-6.5 sm:h-7 md:h-8 rounded-lg border border-slate-700/80 bg-slate-900/90 hover:bg-slate-800 px-2 sm:px-2.5 font-mono text-[10px] sm:text-[11px] md:text-xs font-bold text-sky-400 cursor-pointer transition-colors active:scale-95 shadow-inner"
               aria-label="Select scene template"
             >
-              <span className="truncate max-w-[105px] sm:max-w-[150px]">
+              <span className="truncate max-w-[85px] sm:max-w-[140px]">
                 {template?.theme_badge || template?.name || 'Theme'}
               </span>
               <ChevronDown
-                className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${
+                className={`w-3 sm:w-3.5 h-3 sm:h-3.5 text-slate-400 transition-transform duration-200 shrink-0 ${
                   templateMenuOpen ? 'rotate-180 text-sky-400' : ''
                 }`}
               />
@@ -327,7 +321,7 @@ export const App: React.FC = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -8, scale: 0.95 }}
                     transition={{ duration: 0.16 }}
-                    className="absolute top-full mt-2 right-0 sm:left-0 sm:right-auto z-50 w-72 max-w-[88vw] rounded-xl border border-slate-700/90 bg-slate-950/98 backdrop-blur-xl shadow-2xl p-1.5 flex flex-col gap-1 overflow-hidden"
+                    className="absolute top-full mt-2 right-0 z-50 w-72 max-w-[88vw] rounded-xl border border-slate-700/90 bg-slate-950/98 backdrop-blur-xl shadow-2xl p-1.5 flex flex-col gap-1 overflow-hidden"
                   >
                     <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-slate-800/80 font-mono text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                       <div className="flex items-center gap-1.5">
@@ -381,31 +375,10 @@ export const App: React.FC = () => {
             </AnimatePresence>
           </div>
 
-          {/* Desktop Template Selector Buttons (>= lg) */}
-          <div className="hidden lg:flex items-center rounded border border-slate-700/80 bg-slate-900/90 p-0.5">
-            {templatesList.map((tpl) => {
-              const active = template?.id === tpl.id;
-              return (
-                <button
-                  key={tpl.id}
-                  onClick={() => handleSelectTemplate(tpl.id)}
-                  className={`px-2.5 py-1 rounded-xs font-mono text-xs font-bold transition-all cursor-pointer ${
-                    active
-                      ? 'bg-sky-500 text-slate-950 shadow'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                  }`}
-                  title={tpl.description}
-                >
-                  {tpl.theme_badge || tpl.name}
-                </button>
-              );
-            })}
-          </div>
-
           {/* Simulation Quick Actions */}
           <button
             onClick={handleSpawnSimAgent}
-            className="inline-flex items-center gap-1 rounded border border-emerald-500/50 bg-emerald-500/15 p-1.5 sm:px-2.5 sm:py-1.5 font-mono text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/50 bg-emerald-500/15 p-1 sm:px-2.5 sm:py-1.5 font-mono text-xs font-bold text-emerald-300 hover:bg-emerald-500/25 transition-colors cursor-pointer"
             title="Spawn simulated agent"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -414,10 +387,10 @@ export const App: React.FC = () => {
 
           <button
             onClick={handleClearSim}
-            className={`inline-flex items-center gap-1 rounded border p-1.5 sm:px-2 sm:py-1.5 font-mono text-xs font-semibold transition-colors cursor-pointer ${
+            className={`items-center gap-1 rounded-lg border p-1 sm:px-2 sm:py-1.5 font-mono text-xs font-semibold transition-colors cursor-pointer ${
               hasSimOrOverrides
-                ? 'border-amber-500/40 bg-amber-500/15 text-amber-300 hover:bg-amber-500/25'
-                : 'border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200'
+                ? 'inline-flex border-amber-500/40 bg-amber-500/15 text-amber-300 hover:bg-amber-500/25'
+                : 'hidden sm:inline-flex border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200'
             }`}
             title="Reset simulated agents"
           >
@@ -428,7 +401,7 @@ export const App: React.FC = () => {
           <div className="hidden lg:flex items-center gap-1 border-l border-slate-800 pl-2">
             <button
               onClick={() => setShowLeftPanel((v) => !v)}
-              className={`inline-flex items-center gap-1 rounded border px-2.5 py-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
+              className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
                 showLeftPanel
                   ? 'border-sky-500/60 bg-sky-500/20 text-sky-300'
                   : 'border-slate-700 bg-slate-900 text-slate-400 hover:text-white'
@@ -439,7 +412,7 @@ export const App: React.FC = () => {
             </button>
             <button
               onClick={() => setShowRightPanel((v) => !v)}
-              className={`inline-flex items-center gap-1 rounded border px-2.5 py-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
+              className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
                 showRightPanel
                   ? 'border-amber-500/60 bg-amber-500/20 text-amber-300'
                   : 'border-slate-700 bg-slate-900 text-slate-400 hover:text-white'
@@ -451,19 +424,18 @@ export const App: React.FC = () => {
           </div>
 
           {/* Desktop Camera Mode Segmented Control (>= lg) */}
-          <div className="hidden lg:flex items-center rounded border border-slate-700/80 bg-slate-900/90 p-0.5 border-l border-slate-800 ml-1">
+          <div className="hidden lg:flex items-center rounded-lg border border-slate-700/80 bg-slate-900/90 p-0.5 border-l border-slate-800 ml-1">
             <button
               data-testid="header-camera-mode-free"
               onClick={() => setCameraMode('free')}
-              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+              className={`flex items-center justify-center p-1.5 rounded-md transition-colors cursor-pointer ${
                 cameraMode === 'free'
-                  ? 'bg-sky-500 text-slate-950 font-bold shadow'
+                  ? 'bg-sky-500 text-slate-950 shadow'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
               title="Free Pan — Drag & scroll manually"
             >
               <Hand className="w-3.5 h-3.5" />
-              <span className="hidden xl:inline">Free</span>
             </button>
             <button
               data-testid="header-camera-mode-follow"
@@ -479,15 +451,14 @@ export const App: React.FC = () => {
                   }
                 }
               }}
-              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+              className={`flex items-center justify-center p-1.5 rounded-md transition-colors cursor-pointer ${
                 cameraMode === 'follow'
-                  ? 'bg-sky-500 text-slate-950 font-bold shadow'
+                  ? 'bg-sky-500 text-slate-950 shadow'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
               title="Follow Agent — Lock camera onto active agent"
             >
               <Crosshair className="w-3.5 h-3.5" />
-              <span className="hidden xl:inline">Follow</span>
             </button>
             <button
               data-testid="header-camera-mode-tour"
@@ -498,15 +469,14 @@ export const App: React.FC = () => {
                   setCameraMode('tour');
                 }
               }}
-              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+              className={`flex items-center justify-center p-1.5 rounded-md transition-colors cursor-pointer ${
                 cameraMode === 'tour'
-                  ? 'bg-purple-500 text-slate-950 font-bold shadow'
+                  ? 'bg-purple-500 text-slate-950 shadow'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
               title="Cinematic Tour — Auto-pan showcase between agents"
             >
               <Film className="w-3.5 h-3.5" />
-              <span className="hidden xl:inline">Tour</span>
             </button>
             <button
               data-testid="header-camera-mode-activity"
@@ -517,23 +487,22 @@ export const App: React.FC = () => {
                   setCameraMode('activity');
                 }
               }}
-              className={`flex items-center gap-1 px-2 py-1 rounded-xs font-mono text-xs transition-colors cursor-pointer ${
+              className={`flex items-center justify-center p-1.5 rounded-md transition-colors cursor-pointer ${
                 cameraMode === 'activity'
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow'
+                  ? 'bg-emerald-500 text-slate-950 shadow'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               }`}
               title="Live Activity — Auto-focus on active events"
             >
               <Zap className="w-3.5 h-3.5" />
-              <span className="hidden xl:inline">Activity</span>
             </button>
           </div>
 
           {/* Overhead Labels & Camera Fit Toggles */}
-          <div className="flex items-center gap-1 border-l border-slate-800 pl-1.5">
+          <div className="flex items-center gap-1 border-l border-slate-800 pl-1 sm:pl-1.5">
             <button
               onClick={() => setShowLabels((v) => !v)}
-              className={`inline-flex items-center justify-center rounded border p-1.5 sm:px-2 sm:py-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
+              className={`inline-flex items-center justify-center rounded-lg border p-1 sm:p-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
                 showLabels
                   ? 'border-purple-500/60 bg-purple-500/20 text-purple-300'
                   : 'border-slate-700 bg-slate-900 text-slate-400 hover:text-white'
@@ -545,7 +514,7 @@ export const App: React.FC = () => {
             </button>
             <button
               onClick={() => setFitTrigger((n) => n + 1)}
-              className="hidden sm:inline-flex items-center justify-center rounded border border-slate-700 bg-slate-900 p-1.5 sm:px-2 sm:py-1.5 font-mono text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
+              className="hidden sm:inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-900 p-1.5 font-mono text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
               title="Center and fit scene camera"
               aria-label="Center camera"
             >
