@@ -58,5 +58,43 @@ elevenlabs text-to-sound-effects convert \
   --duration-seconds 0.8 \
   -o "${SFX_DIR}/toast-notification.mp3"
 
+echo "==> Generating contextual theme work sound effects..."
+
+# Office contextual work: mechanical keyboard clatter & typing
+elevenlabs text-to-sound-effects convert \
+  --text "retro mechanical keyboard clattering typing sounds, subtle cherry mx brown switches and spacebar click" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-office.mp3"
+
+# Cowboys contextual work: blacksmith anvil & horseshoe forge strike
+elevenlabs text-to-sound-effects convert \
+  --text "retro wild west blacksmith forge hammer striking iron anvil, horseshoe metal clink and frontier workshop clatter" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-cowboys.mp3"
+
+# Medieval contextual work: arcane alchemy bubbling & quill on parchment
+elevenlabs text-to-sound-effects convert \
+  --text "retro medieval fantasy alchemy bubbling glass potion, quill pen scratching parchment paper, gentle arcane apothecary craft" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-medieval.mp3"
+
+# Japanese contextual work: dojo wooden bokken clack & zen bamboo knock
+elevenlabs text-to-sound-effects convert \
+  --text "japanese martial arts wooden dojo bokken sparring clack, zen bamboo shishi odoshi water dropper knock, calligraphy ink brush" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-japanese.mp3"
+
+# WW2 contextual work: military teletype morse code & radio cipher
+elevenlabs text-to-sound-effects convert \
+  --text "vintage military telegraph morse code key clicking, mechanical teletype typewriter clatter, WWII bunker radio cipher" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-ww2.mp3"
+
+# Cyberpunk contextual work: cyberdeck hacking & neon synth terminal
+elevenlabs text-to-sound-effects convert \
+  --text "sci-fi cyberpunk cyberdeck rapid keyboard keystrokes, high-tech neon terminal data hacking clicks, synthesizer digital pulse" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-cyberpunk.mp3"
+
 echo "==> All sound effects generated successfully in ${SFX_DIR}:"
 ls -lh "${SFX_DIR}"

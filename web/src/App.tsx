@@ -47,6 +47,8 @@ export const App: React.FC = () => {
   const [snapshot, setSnapshot] = useState<WorkspaceSnapshot | null>(null);
   const [template, setTemplate] = useState<TemplateManifest | null>(null);
   const [templatesList, setTemplatesList] = useState<TemplateSummary[]>([]);
+  const templateRef = useRef<TemplateManifest | null>(null);
+  templateRef.current = template;
 
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
   const [cameraMode, setCameraMode] = useState<CameraMode>('free');
@@ -154,6 +156,9 @@ export const App: React.FC = () => {
               setLatestActivityAgentId(event.updated[0].id);
             }
             for (const u of event.updated || []) {
+              if (u.status === 'working') {
+                soundEngine.playWorkSound(templateRef.current?.id);
+              }
               pushToast(
                 `🔄 ${u.display_name} → ${u.status.toUpperCase()}`,
                 u.status === 'working' ? '#38bdf8' : '#f59e0b',
@@ -211,7 +216,11 @@ export const App: React.FC = () => {
   const handleToggleStatus = (id: string) => {
     const ag = agents.find((a) => a.id === id);
     if (ag) {
-      soundEngine.play(ag.status === 'working' ? 'agent-complete' : 'agent-work');
+      if (ag.status === 'working') {
+        soundEngine.play('agent-complete');
+      } else {
+        soundEngine.playWorkSound(templateRef.current?.id);
+      }
     } else {
       soundEngine.play('ui-click');
     }
@@ -234,6 +243,35 @@ export const App: React.FC = () => {
   const subscriptions = snapshot?.subscriptions || [];
   const otherAgents = snapshot?.other_agents || [];
   const hasSimOrOverrides = agents.some((a) => a.simulated);
+
+  // Periodic ambient sound effect when agents are actively working in the workspace
+  useEffect(() => {
+    if (!soundEnabled) return;
+    const workingCount = agents.filter((a) => a.status === 'working').length;
+    if (workingCount === 0) return;
+
+    let timer: ReturnType<typeof setTimeout>;
+    let active = true;
+
+    const scheduleNextWorkSound = () => {
+      // Natural cadence: between 4.0s and 7.5s, jittered
+      const delayMs = 4000 + Math.random() * 3500;
+      timer = setTimeout(() => {
+        if (!active) return;
+        if (typeof document !== 'undefined' && !document.hidden) {
+          soundEngine.playWorkSound(templateRef.current?.id);
+        }
+        scheduleNextWorkSound();
+      }, delayMs);
+    };
+
+    scheduleNextWorkSound();
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [soundEnabled, agents, template]);
 
   return (
     <div className="relative w-screen h-[100dvh] overflow-hidden bg-[#080b11] select-none">

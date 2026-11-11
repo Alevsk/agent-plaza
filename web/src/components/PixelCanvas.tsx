@@ -390,7 +390,11 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       }
       const hit = hitTestCharacter(e.clientX, e.clientY);
       if (hit) {
-        soundEngine.play('ui-click');
+        if (hit.session.status === 'working') {
+          soundEngine.playWorkSound(template?.id);
+        } else {
+          soundEngine.play('ui-click');
+        }
       }
       onSelectAgent(hit ? (selectedId === hit.id ? null : hit.id) : null);
     }
@@ -486,7 +490,11 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
         }
         const hit = hitTestCharacter(t.clientX, t.clientY);
         if (hit) {
-          soundEngine.play('ui-click');
+          if (hit.session.status === 'working') {
+            soundEngine.playWorkSound(template?.id);
+          } else {
+            soundEngine.play('ui-click');
+          }
         }
         onSelectAgent(hit ? (selectedId === hit.id ? null : hit.id) : null);
       }

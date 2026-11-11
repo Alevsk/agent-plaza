@@ -10,6 +10,12 @@ export type SoundName =
   | 'ui-switch-theme'
   | 'agent-work'
   | 'agent-complete'
+  | 'work-office'
+  | 'work-cowboys'
+  | 'work-medieval'
+  | 'work-japanese'
+  | 'work-ww2'
+  | 'work-cyberpunk'
   | 'pet-cat'
   | 'pet-dog'
   | 'pet-robot'
@@ -25,8 +31,14 @@ const SOUND_DEFS: Record<SoundName, SoundDef> = {
   'ui-click': { file: '/sfx/ui-click.mp3', volume: 0.35, throttleMs: 60 },
   'ui-spawn': { file: '/sfx/ui-spawn.mp3', volume: 0.5, throttleMs: 200 },
   'ui-switch-theme': { file: '/sfx/ui-switch-theme.mp3', volume: 0.45, throttleMs: 300 },
-  'agent-work': { file: '/sfx/agent-work.mp3', volume: 0.3, throttleMs: 400 },
+  'agent-work': { file: '/sfx/agent-work.mp3', volume: 0.32, throttleMs: 350 },
   'agent-complete': { file: '/sfx/agent-complete.mp3', volume: 0.4, throttleMs: 400 },
+  'work-office': { file: '/sfx/work-office.mp3', volume: 0.32, throttleMs: 350 },
+  'work-cowboys': { file: '/sfx/work-cowboys.mp3', volume: 0.35, throttleMs: 350 },
+  'work-medieval': { file: '/sfx/work-medieval.mp3', volume: 0.35, throttleMs: 350 },
+  'work-japanese': { file: '/sfx/work-japanese.mp3', volume: 0.35, throttleMs: 350 },
+  'work-ww2': { file: '/sfx/work-ww2.mp3', volume: 0.35, throttleMs: 350 },
+  'work-cyberpunk': { file: '/sfx/work-cyberpunk.mp3', volume: 0.32, throttleMs: 350 },
   'pet-cat': { file: '/sfx/pet-cat.mp3', volume: 0.45, throttleMs: 250 },
   'pet-dog': { file: '/sfx/pet-dog.mp3', volume: 0.45, throttleMs: 250 },
   'pet-robot': { file: '/sfx/pet-robot.mp3', volume: 0.45, throttleMs: 250 },
@@ -133,6 +145,36 @@ class SoundEngine {
     } catch {
       // Audio playback blocked or unavailable
     }
+  }
+
+  /**
+   * Resolves the contextual work sound for a given template ID
+   */
+  public getWorkSoundForTemplate(templateId?: string): SoundName {
+    switch (templateId?.toLowerCase()) {
+      case 'office':
+        return 'work-office';
+      case 'cowboys':
+        return 'work-cowboys';
+      case 'medieval':
+        return 'work-medieval';
+      case 'japanese':
+        return 'work-japanese';
+      case 'ww2':
+        return 'work-ww2';
+      case 'cyberpunk':
+        return 'work-cyberpunk';
+      default:
+        return 'work-office';
+    }
+  }
+
+  /**
+   * Plays the contextual work sound corresponding to the active scene template
+   */
+  public playWorkSound(templateId?: string) {
+    const sfx = this.getWorkSoundForTemplate(templateId);
+    this.play(sfx);
   }
 }
 
