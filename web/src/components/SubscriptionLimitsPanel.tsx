@@ -2,6 +2,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import type { AccountSubscription, OfflineAgent, TemplateManifest } from '../types';
 import { PixelBar } from './PixelBar';
+import { soundEngine } from '../engine/soundEngine';
 
 interface SubscriptionLimitsPanelProps {
   subscriptions: AccountSubscription[];
@@ -32,7 +33,10 @@ export const SubscriptionLimitsPanel: React.FC<SubscriptionLimitsPanelProps> = (
           </span>
           {onClose && (
             <button
-              onClick={onClose}
+              onClick={() => {
+                soundEngine.play('ui-click');
+                onClose();
+              }}
               className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
               aria-label="Close panel"
             >

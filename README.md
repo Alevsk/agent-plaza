@@ -40,6 +40,8 @@ Agent Plaza includes **6 self-contained scene templates** that can be hot-swappe
   - **4-Layer Contrast System**: Desaturated architectural floors (`L = 13%–22%`) ensure characters and HUD badges remain crisp and readable without visual noise.
 - **Dynamic Companion Pets**:
   - Interactive companion pets (**cats**, **dogs**, and **robots**) roam alongside agents with custom 4-directional procedural pixel sprites and playful idle behaviors.
+- **Retro 8-Bit Sound Effects Suite**:
+  - High-quality retro sound effects generated with ElevenLabs for agent work typing, task completion, pet interactions (cats, dogs, robots), theme warp transitions, toasts, and UI clicks, with a master mute/unmute toggle and audio state persistence.
 - **6 Thematic Scene Templates**:
   - 🏢 **Retro Startup HQ (`office`)** — Standing desks, ultrawide monitors, espresso bar, server rack, and beanbag lounge.
   - 🤠 **Wild West Saloon & Forge (`cowboys`)** — Anvil blacksmith forge, horse grooming stall, bounty board, telegraph desk, and campfire corral.

@@ -16,6 +16,7 @@ import {
   SceneCharacter,
   TILE_SIZE,
 } from '../engine/pixelEngine';
+import { soundEngine } from '../engine/soundEngine';
 import type { AgentSession, CameraMode, TemplateManifest } from '../types';
 
 interface PixelCanvasProps {
@@ -383,9 +384,14 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       const pet = hitTestPet(e.clientX, e.clientY);
       if (pet) {
         pet.heartTimer = 1.4;
+        const sfx = pet.type === 'cat' ? 'pet-cat' : pet.type === 'dog' ? 'pet-dog' : 'pet-robot';
+        soundEngine.play(sfx);
         return;
       }
       const hit = hitTestCharacter(e.clientX, e.clientY);
+      if (hit) {
+        soundEngine.play('ui-click');
+      }
       onSelectAgent(hit ? (selectedId === hit.id ? null : hit.id) : null);
     }
   };
@@ -473,10 +479,15 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
         const pet = hitTestPet(t.clientX, t.clientY);
         if (pet) {
           pet.heartTimer = 1.4;
+          const sfx = pet.type === 'cat' ? 'pet-cat' : pet.type === 'dog' ? 'pet-dog' : 'pet-robot';
+          soundEngine.play(sfx);
           s.mode = 'none';
           return;
         }
         const hit = hitTestCharacter(t.clientX, t.clientY);
+        if (hit) {
+          soundEngine.play('ui-click');
+        }
         onSelectAgent(hit ? (selectedId === hit.id ? null : hit.id) : null);
       }
     }

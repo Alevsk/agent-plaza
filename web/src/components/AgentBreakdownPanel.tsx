@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Crosshair, X } from 'lucide-react';
 import type { AgentSession, TemplateManifest } from '../types';
 import { PixelBar } from './PixelBar';
+import { soundEngine } from '../engine/soundEngine';
 
 interface AgentBreakdownPanelProps {
   agents: AgentSession[];
@@ -41,7 +42,10 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
           </span>
           {onClose && (
             <button
-              onClick={onClose}
+              onClick={() => {
+                soundEngine.play('ui-click');
+                onClose();
+              }}
               className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
               aria-label="Close panel"
             >
@@ -85,7 +89,10 @@ export const AgentBreakdownPanel: React.FC<AgentBreakdownPanelProps> = ({
                 }}
                 exit={{ opacity: 0, x: -14 }}
                 transition={{ duration: 0.2 }}
-                onClick={() => onSelectAgent(isSelected ? null : ag.id)}
+                onClick={() => {
+                  soundEngine.play('ui-click');
+                  onSelectAgent(isSelected ? null : ag.id);
+                }}
                 className={`cursor-pointer hover:bg-slate-800/50 transition-colors rounded-lg md:rounded-none ${
                   isSelected ? 'ring-1 ring-inset ring-sky-400/60' : ''
                 }`}

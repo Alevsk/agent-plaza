@@ -16,11 +16,14 @@ import {
   Sparkles,
   Wifi,
   WifiOff,
+  Volume2,
+  VolumeX,
   Zap,
 } from 'lucide-react';
 import { AgentBreakdownPanel } from './components/AgentBreakdownPanel';
 import { PixelCanvas } from './components/PixelCanvas';
 import { SubscriptionLimitsPanel } from './components/SubscriptionLimitsPanel';
+import { soundEngine } from './engine/soundEngine';
 import { PixelSceneWorld } from './engine/pixelEngine';
 import type {
   CameraMode,
@@ -53,9 +56,14 @@ export const App: React.FC = () => {
   const [showLeftPanel, setShowLeftPanel] = useState(true);
   const [showRightPanel, setShowRightPanel] = useState(true);
   const [showLabels, setShowLabels] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(soundEngine.isEnabled());
   const [fitTrigger, setFitTrigger] = useState(0);
   const [toasts, setToasts] = useState<ToastNotice[]>([]);
   const [templateMenuOpen, setTemplateMenuOpen] = useState(false);
+
+  useEffect(() => {
+    return soundEngine.subscribe(setSoundEnabled);
+  }, []);
 
   // Mobile drawer sheet state: 'none' | 'context' | 'quotas'
   const [mobileSheet, setMobileSheet] = useState<'none' | 'context' | 'quotas'>('none');
@@ -73,6 +81,7 @@ export const App: React.FC = () => {
   }, []);
 
   const pushToast = useCallback((text: string, color = '#38bdf8') => {
+    soundEngine.play('toast-notification');
     const id = Date.now() + Math.random();
     setToasts((prev) => [...prev.slice(-3), { id, text, color }]);
     setTimeout(() => {
@@ -184,24 +193,34 @@ export const App: React.FC = () => {
   };
 
   const handleSelectTemplate = (id: string) => {
+    soundEngine.play('ui-switch-theme');
     sendCommand({ action: 'set_template', template_id: id });
   };
 
   const handleSpawnSimAgent = () => {
+    soundEngine.play('ui-spawn');
     sendCommand({ action: 'spawn_sim', status: 'working' });
   };
 
   const handleClearSim = () => {
+    soundEngine.play('ui-click');
     sendCommand({ action: 'clear_sim' });
     pushToast('🧹 Reset simulated agents & status overrides', '#94a3b8');
   };
 
   const handleToggleStatus = (id: string) => {
+    const ag = agents.find((a) => a.id === id);
+    if (ag) {
+      soundEngine.play(ag.status === 'working' ? 'agent-complete' : 'agent-work');
+    } else {
+      soundEngine.play('ui-click');
+    }
     sendCommand({ action: 'toggle_status', id });
     setLatestActivityAgentId(id);
   };
 
   const handleFollowAgent = (id: string) => {
+    soundEngine.play('ui-click');
     setFollowTargetId(id);
     setSelectedAgentId(id);
     setCameraMode('follow');
@@ -400,7 +419,10 @@ export const App: React.FC = () => {
           {/* Desktop HUD Panel Toggles (>= lg) */}
           <div className="hidden lg:flex items-center gap-1 border-l border-slate-800 pl-2">
             <button
-              onClick={() => setShowLeftPanel((v) => !v)}
+              onClick={() => {
+                soundEngine.play('ui-click');
+                setShowLeftPanel((v) => !v);
+              }}
               className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
                 showLeftPanel
                   ? 'border-sky-500/60 bg-sky-500/20 text-sky-300'
@@ -411,7 +433,10 @@ export const App: React.FC = () => {
               <Activity className="w-3.5 h-3.5" /> Context
             </button>
             <button
-              onClick={() => setShowRightPanel((v) => !v)}
+              onClick={() => {
+                soundEngine.play('ui-click');
+                setShowRightPanel((v) => !v);
+              }}
               className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
                 showRightPanel
                   ? 'border-amber-500/60 bg-amber-500/20 text-amber-300'
@@ -498,10 +523,34 @@ export const App: React.FC = () => {
             </button>
           </div>
 
-          {/* Overhead Labels & Camera Fit Toggles */}
+          {/* Overhead Labels, Camera Fit, and Sound FX Toggles */}
           <div className="flex items-center gap-1 border-l border-slate-800 pl-1 sm:pl-1.5">
+            {/* Sound FX Toggle Button */}
             <button
-              onClick={() => setShowLabels((v) => !v)}
+              onClick={() => {
+                const next = soundEngine.toggle();
+                setSoundEnabled(next);
+              }}
+              className={`inline-flex items-center justify-center rounded-lg border p-1 sm:p-1.5 font-mono text-xs font-bold cursor-pointer transition-colors active:scale-95 ${
+                soundEnabled
+                  ? 'border-emerald-500/60 bg-emerald-500/20 text-emerald-300'
+                  : 'border-slate-700 bg-slate-900 text-slate-500 hover:text-slate-300'
+              }`}
+              title={soundEnabled ? 'Mute all sounds' : 'Enable sound effects'}
+              aria-label={soundEnabled ? 'Mute all sounds' : 'Enable sound effects'}
+            >
+              {soundEnabled ? (
+                <Volume2 className="w-3.5 h-3.5" />
+              ) : (
+                <VolumeX className="w-3.5 h-3.5" />
+              )}
+            </button>
+
+            <button
+              onClick={() => {
+                soundEngine.play('ui-click');
+                setShowLabels((v) => !v);
+              }}
               className={`inline-flex items-center justify-center rounded-lg border p-1 sm:p-1.5 font-mono text-xs font-bold cursor-pointer transition-colors ${
                 showLabels
                   ? 'border-purple-500/60 bg-purple-500/20 text-purple-300'
@@ -513,7 +562,10 @@ export const App: React.FC = () => {
               <Eye className="w-3.5 h-3.5" />
             </button>
             <button
-              onClick={() => setFitTrigger((n) => n + 1)}
+              onClick={() => {
+                soundEngine.play('ui-click');
+                setFitTrigger((n) => n + 1);
+              }}
               className="hidden sm:inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-900 p-1.5 font-mono text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
               title="Center and fit scene camera"
               aria-label="Center camera"
