@@ -3,21 +3,33 @@ import {
   Crosshair,
   Film,
   Hand,
+  Map as MapIcon,
   Maximize2,
   Minimize2,
   Minus,
+  Moon,
   Plus,
+  Sun,
+  Sunset,
+  Tv,
   X,
   Zap,
 } from 'lucide-react';
 import {
+  type AmbienceMode,
   PixelSceneWorld,
   renderPixelWorld,
   SceneCharacter,
   TILE_SIZE,
 } from '../engine/pixelEngine';
 import { soundEngine } from '../engine/soundEngine';
-import type { AgentSession, CameraMode, TemplateManifest } from '../types';
+import type {
+  AgentSession,
+  CameraMode,
+  TemplateManifest,
+  TemplateProp,
+  TemplateWorkstation,
+} from '../types';
 
 interface PixelCanvasProps {
   worldRef: React.MutableRefObject<PixelSceneWorld>;
@@ -58,6 +70,11 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
   const [zoom, setZoom] = useState<number>(3);
   const panRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [hoveredProp, setHoveredProp] = useState<TemplateProp | null>(null);
+  const [hoveredStation, setHoveredStation] = useState<TemplateWorkstation | null>(null);
+  const [ambienceMode, setAmbienceMode] = useState<AmbienceMode>('standard');
+  const [showMinimap, setShowMinimap] = useState<boolean>(true);
+  const minimapCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const [, setOverlayTick] = useState<number>(0);
   const [mobileViewMode, setMobileViewMode] = useState<'cover' | 'contain'>('cover');
 
@@ -288,8 +305,98 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
             panRef.current.y,
             selectedId,
             hoveredId,
+            ambienceMode,
+            hoveredProp?.id || null,
+            hoveredStation?.id || null,
           );
           ctx.restore();
+        }
+
+        // Render Live Tactical Radar Minimap (4px per tile = 112x72)
+        const mini = minimapCanvasRef.current;
+        if (mini && template) {
+          const mScale = 4;
+          const mw = template.grid.cols * mScale;
+          const mh = template.grid.rows * mScale;
+          if (mini.width !== mw || mini.height !== mh) {
+            mini.width = mw;
+            mini.height = mh;
+          }
+          const mctx = mini.getContext('2d');
+          if (mctx) {
+            mctx.imageSmoothingEnabled = false;
+            mctx.fillStyle = '#070a12';
+            mctx.fillRect(0, 0, mw, mh);
+
+            // Draw tile grid
+            for (let r = 0; r < template.grid.rows; r++) {
+              const rowStr = template.grid.layout[r] || '';
+              for (let c = 0; c < template.grid.cols; c++) {
+                const tile = rowStr[c] || 'W';
+                mctx.fillStyle =
+                  tile === 'W'
+                    ? '#334155'
+                    : tile === 'V'
+                      ? '#090d16'
+                      : tile === 'L'
+                        ? '#1e293b'
+                        : '#131b2b';
+                mctx.fillRect(c * mScale, r * mScale, mScale, mScale);
+              }
+            }
+
+            // Draw zone tint borders
+            for (const z of template.zones || []) {
+              mctx.strokeStyle = z.color;
+              mctx.lineWidth = 1;
+              mctx.strokeRect(
+                z.col * mScale + 0.5,
+                z.row * mScale + 0.5,
+                z.w * mScale - 1,
+                z.h * mScale - 1,
+              );
+            }
+
+            // Draw workstations
+            for (const ws of template.workstations || []) {
+              mctx.fillStyle = world.stationOccupancy.has(ws.id) ? '#10b981' : '#475569';
+              mctx.fillRect(ws.col * mScale, ws.row * mScale, mScale * 2 - 1, mScale - 1);
+            }
+
+            // Draw companion pets
+            for (const pet of world.companions) {
+              const px = Math.round((pet.x / TILE_SIZE) * mScale);
+              const py = Math.round((pet.y / TILE_SIZE) * mScale);
+              mctx.fillStyle = '#f472b6';
+              mctx.fillRect(px - 1, py - 1, 2, 2);
+            }
+
+            // Draw agents (pulsing emerald for working, amber for idle, white ring for selected)
+            for (const chObj of world.characters.values()) {
+              const ax = Math.round((chObj.x / TILE_SIZE) * mScale);
+              const ay = Math.round((chObj.y / TILE_SIZE) * mScale);
+              if (chObj.id === selectedId) {
+                mctx.fillStyle = '#ffffff';
+                mctx.fillRect(ax - 2, ay - 2, 5, 5);
+              }
+              mctx.fillStyle = chObj.session.status === 'working' ? '#4ade80' : '#fbbf24';
+              mctx.fillRect(ax - 1, ay - 1, 3, 3);
+            }
+
+            // Draw current camera viewport frame
+            const vx = (-offsetRef.current.offsetX / (TILE_SIZE * zoom)) * mScale;
+            const vy = (-offsetRef.current.offsetY / (TILE_SIZE * zoom)) * mScale;
+            const vw = (cw / (TILE_SIZE * zoom)) * mScale;
+            const vh = (ch / (TILE_SIZE * zoom)) * mScale;
+            mctx.strokeStyle = 'rgba(56, 189, 248, 0.9)';
+            mctx.lineWidth = 1;
+            mctx.strokeRect(
+              Math.max(0.5, vx),
+              Math.max(0.5, vy),
+              Math.min(mw - 1, vw),
+              Math.min(mh - 1, vh),
+            );
+          }
         }
       }
 
@@ -311,6 +418,9 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
     followTargetId,
     latestActivityAgentId,
     template,
+    ambienceMode,
+    hoveredProp,
+    hoveredStation,
   ]);
 
   const hitTestCharacter = (clientX: number, clientY: number): SceneCharacter | null => {
@@ -340,6 +450,54 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       }
     }
     return null;
+  };
+
+  const hitTestProp = (clientX: number, clientY: number): TemplateProp | null => {
+    const container = containerRef.current;
+    if (!container || !template) return null;
+    const rect = container.getBoundingClientRect();
+    const mx = (clientX - rect.left - offsetRef.current.offsetX) / zoom;
+    const my = (clientY - rect.top - offsetRef.current.offsetY) / zoom;
+    for (const prop of template.props || []) {
+      const px = prop.col * TILE_SIZE;
+      const py = prop.row * TILE_SIZE;
+      const pw = (prop.w || 1) * TILE_SIZE;
+      const ph = (prop.h || 1) * TILE_SIZE;
+      if (mx >= px && mx <= px + pw && my >= py - 4 && my <= py + ph) {
+        return prop;
+      }
+    }
+    return null;
+  };
+
+  const hitTestWorkstation = (clientX: number, clientY: number): TemplateWorkstation | null => {
+    const container = containerRef.current;
+    if (!container || !template) return null;
+    const rect = container.getBoundingClientRect();
+    const mx = (clientX - rect.left - offsetRef.current.offsetX) / zoom;
+    const my = (clientY - rect.top - offsetRef.current.offsetY) / zoom;
+    for (const ws of template.workstations || []) {
+      const wx = ws.col * TILE_SIZE;
+      const wy = ws.row * TILE_SIZE;
+      if (mx >= wx && mx <= wx + TILE_SIZE * 2 && my >= wy - 5 && my <= wy + TILE_SIZE) {
+        return ws;
+      }
+    }
+    return null;
+  };
+
+  const screenToTile = (clientX: number, clientY: number): { col: number; row: number } | null => {
+    const container = containerRef.current;
+    if (!container || !template) return null;
+    const rect = container.getBoundingClientRect();
+    const mx = (clientX - rect.left - offsetRef.current.offsetX) / zoom;
+    const my = (clientY - rect.top - offsetRef.current.offsetY) / zoom;
+    const col = Math.floor(mx / TILE_SIZE);
+    const row = Math.floor(my / TILE_SIZE);
+    if (col < 0 || row < 0 || col >= template.grid.cols || row >= template.grid.rows) {
+      return null;
+    }
+    return { col, row };
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -375,6 +533,19 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
     }
     const hit = hitTestCharacter(e.clientX, e.clientY);
     setHoveredId(hit ? hit.id : null);
+    if (hit) {
+      setHoveredProp(null);
+      setHoveredStation(null);
+      return;
+    }
+    const propHit = hitTestProp(e.clientX, e.clientY);
+    setHoveredProp(propHit);
+    if (propHit) {
+      setHoveredStation(null);
+      return;
+    }
+    const wsHit = hitTestWorkstation(e.clientX, e.clientY);
+    setHoveredStation(wsHit);
   };
 
   const handleMouseUp = (e: React.MouseEvent) => {
@@ -384,6 +555,8 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
       const pet = hitTestPet(e.clientX, e.clientY);
       if (pet) {
         pet.heartTimer = 1.4;
+        worldRef.current.spawnBurst(pet.x, pet.y - 6, '#f43f5e', 10);
+        worldRef.current.spawnPopup(pet.x, pet.y - 12, `❤️ ${pet.name}!`, '#fda4af');
         const sfx = pet.type === 'cat' ? 'pet-cat' : pet.type === 'dog' ? 'pet-dog' : 'pet-robot';
         soundEngine.play(sfx);
         return;
@@ -395,8 +568,49 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
         } else {
           soundEngine.play('ui-click');
         }
+        worldRef.current.spawnBurst(hit.x, hit.y - 10, '#38bdf8', 8);
+        onSelectAgent(selectedId === hit.id ? null : hit.id);
+        return;
       }
-      onSelectAgent(hit ? (selectedId === hit.id ? null : hit.id) : null);
+      const propHit = hitTestProp(e.clientX, e.clientY);
+      if (propHit) {
+        worldRef.current.triggerPropInteraction(propHit);
+        soundEngine.play('ui-click');
+        return;
+      }
+      const wsHit = hitTestWorkstation(e.clientX, e.clientY);
+      if (wsHit) {
+        const occId = worldRef.current.stationOccupancy.get(wsHit.id);
+        if (selectedId && (!occId || occId === selectedId)) {
+          worldRef.current.commandAgentToTile(selectedId, wsHit.seat_col, wsHit.seat_row);
+          soundEngine.playWorkSound(template?.id);
+          return;
+        } else if (occId) {
+          onSelectAgent(occId);
+          soundEngine.playWorkSound(template?.id);
+          return;
+        } else {
+          worldRef.current.spawnBeacon(wsHit.col, wsHit.row, wsHit.glow_color || '#38bdf8');
+          worldRef.current.spawnPopup(
+            (wsHit.col + 1) * TILE_SIZE,
+            wsHit.row * TILE_SIZE - 4,
+            `🛠️ ${wsHit.label || wsHit.id}`,
+            wsHit.glow_color || '#38bdf8',
+          );
+          soundEngine.play('ui-click');
+          return;
+        }
+      }
+      onSelectAgent(null);
+    }
+  };
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    const tile = screenToTile(e.clientX, e.clientY);
+    if (!tile) return;
+    const targetId = selectedId || Array.from(worldRef.current.characters.keys())[0];
+    if (targetId && worldRef.current.commandAgentToTile(targetId, tile.col, tile.row)) {
+      soundEngine.play('ui-click');
     }
   };
 
@@ -558,12 +772,37 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
     ? worldRef.current.characters.get(latestActivityAgentId)
     : null;
 
+  const cycleAmbience = () => {
+    const order: AmbienceMode[] = ['standard', 'dusk', 'night', 'crt'];
+    const next = order[(order.indexOf(ambienceMode) + 1) % order.length];
+    setAmbienceMode(next);
+    soundEngine.play('ui-click');
+  };
+
+  const handleMinimapClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    e.stopPropagation();
+    if (!template || !minimapCanvasRef.current) return;
+    const rect = minimapCanvasRef.current.getBoundingClientRect();
+    const clickRatioX = (e.clientX - rect.left) / rect.width;
+    const clickRatioY = (e.clientY - rect.top) / rect.height;
+    const mapW = template.grid.cols * TILE_SIZE * zoom;
+    const mapH = template.grid.rows * TILE_SIZE * zoom;
+    const desiredX = mapW * (0.5 - clickRatioX);
+    const desiredY = mapH * (0.5 - clickRatioY);
+    if (cameraMode !== 'free') {
+      onCameraModeChange('free');
+    }
+    panRef.current = { x: desiredX, y: desiredY };
+    soundEngine.play('ui-click');
+  };
+
   return (
     <div
       ref={containerRef}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onDoubleClick={handleDoubleClick}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -770,8 +1009,101 @@ export const PixelCanvas: React.FC<PixelCanvasProps> = ({
               <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
             )}
           </button>
+          <div className="h-px w-5 bg-slate-800 my-0.5" />
+          <button
+            data-testid="ambience-mode-toggle"
+            onClick={cycleAmbience}
+            className={`flex h-8 w-8 items-center justify-center rounded transition-colors cursor-pointer active:scale-95 ${
+              ambienceMode !== 'standard'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-400/50'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            }`}
+            title={`Ambience Mode: ${ambienceMode.toUpperCase()} (Click to cycle Daylight / Sunset Dusk / Midnight Glow / Retro CRT)`}
+            aria-label="Cycle Ambience Lighting Mode"
+          >
+            {ambienceMode === 'standard' && <Sun className="w-3.5 h-3.5 text-amber-300" />}
+            {ambienceMode === 'dusk' && <Sunset className="w-3.5 h-3.5 text-orange-400" />}
+            {ambienceMode === 'night' && <Moon className="w-3.5 h-3.5 text-indigo-300" />}
+            {ambienceMode === 'crt' && <Tv className="w-3.5 h-3.5 text-emerald-400" />}
+          </button>
+          <button
+            data-testid="minimap-toggle"
+            onClick={() => {
+              soundEngine.play('ui-click');
+              setShowMinimap((v) => !v);
+            }}
+            className={`flex h-8 w-8 items-center justify-center rounded transition-colors cursor-pointer active:scale-95 ${
+              showMinimap
+                ? 'bg-sky-500/20 text-sky-300 border border-sky-400/50'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+            title="Toggle Tactical Radar Minimap"
+            aria-label="Toggle Tactical Radar Minimap"
+          >
+            <MapIcon className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
+
+      {/* Interactive Tactical Hi-Bit Radar Minimap */}
+      {showMinimap && template && (
+        <div
+          data-testid="tactical-minimap"
+          className={`pointer-events-auto hidden sm:flex flex-col gap-1 absolute bottom-14 z-20 rounded-lg border border-slate-700/85 bg-slate-950/92 p-1.5 backdrop-blur-md shadow-2xl transition-all duration-300 ${
+            rightPanelOpen ? 'right-14 md:right-[688px]' : 'right-14 md:right-16'
+          }`}
+        >
+          <div className="flex items-center justify-between gap-2 px-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+            <span className="flex items-center gap-1 text-sky-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              RADAR
+            </span>
+            <span className="text-slate-500">{ambienceMode}</span>
+          </div>
+          <canvas
+            ref={minimapCanvasRef}
+            onClick={handleMinimapClick}
+            title="Click anywhere on radar to jump camera"
+            className="w-[140px] h-[90px] rounded border border-slate-800 cursor-crosshair block"
+            style={{ imageRendering: 'pixelated' }}
+          />
+        </div>
+      )}
+
+      {/* Interactive Prop & Workstation Hover Inspector Pill */}
+      {(hoveredProp || hoveredStation) && !hoveredId && (
+        <div
+          data-testid="object-hover-pill"
+          className="pointer-events-none absolute bottom-14 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-full border border-sky-500/50 bg-slate-950/95 px-3.5 py-1 font-mono text-[11px] text-slate-200 shadow-2xl backdrop-blur-md"
+        >
+          {hoveredProp && (
+            <>
+              <span className="text-sky-400 font-bold">
+                ✨ {hoveredProp.label || hoveredProp.type.replace(/_/g, ' ').toUpperCase()}
+              </span>
+              <span className="text-slate-600">·</span>
+              <span className="text-amber-300 text-[10px]">Click to interact!</span>
+            </>
+          )}
+          {hoveredStation && (
+            <>
+              <span className="text-cyan-300 font-bold">
+                🛠️ {hoveredStation.label || hoveredStation.id}
+              </span>
+              <span className="text-slate-600">·</span>
+              {worldRef.current.stationOccupancy.has(hoveredStation.id) ? (
+                <span className="text-emerald-400 text-[10px]">
+                  Occupied ({worldRef.current.characters.get(worldRef.current.stationOccupancy.get(hoveredStation.id)!)?.session.display_name || 'Agent'})
+                </span>
+              ) : (
+                <span className="text-slate-400 text-[10px]">
+                  {selectedId ? 'Click to assign selected agent' : 'Vacant workstation'}
+                </span>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {/* Mobile Selected Agent Inspector Docked Card */}
       {selectedCharacter && (

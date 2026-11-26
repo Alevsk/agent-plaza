@@ -780,12 +780,12 @@ export const App: React.FC = () => {
       </nav>
 
       {/* BOTTOM DESKTOP LEGEND BAR */}
-      <footer className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 z-10 hidden lg:flex items-center gap-4 rounded-full border border-slate-800/90 bg-slate-950/85 px-4 py-1 font-mono text-[11px] text-slate-400 backdrop-blur-sm shadow-lg">
+      <footer className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 z-10 hidden lg:flex items-center gap-3 rounded-full border border-slate-800/90 bg-slate-950/85 px-4 py-1 font-mono text-[11px] text-slate-400 backdrop-blur-sm shadow-lg whitespace-nowrap">
         <span>🖱️ Drag to pan · Scroll to zoom</span>
         <span>·</span>
-        <span>⚡ Click any agent status badge to toggle Working / Idle</span>
+        <span>✨ Click props & pets to interact</span>
         <span>·</span>
-        <span>🐾 Click companions to interact</span>
+        <span>🎯 Double-click any floor or desk to send agent</span>
       </footer>
     </div>
   );

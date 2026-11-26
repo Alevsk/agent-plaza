@@ -92,6 +92,55 @@ export interface FootstepPuff {
   color: string;
 }
 
+export interface BurstParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  gravity: number;
+  size: number;
+  color: string;
+  age: number;
+  maxAge: number;
+}
+
+export interface FloatingPopup {
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+  age: number;
+  maxAge: number;
+}
+
+export interface TileBeacon {
+  col: number;
+  row: number;
+  color: string;
+  age: number;
+  maxAge: number;
+}
+
+export interface SocialLink {
+  fromId: string;
+  toId: string;
+  color: string;
+  age: number;
+  maxAge: number;
+}
+
+export interface SwarmPacket {
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  progress: number;
+  speed: number;
+  color: string;
+}
+
+export type AmbienceMode = 'standard' | 'dusk' | 'night' | 'crt';
+
 export function resolveTemplateSpriteUrl(templateId: string, spritePath: string): string {
   if (!spritePath) return '';
   if (spritePath.startsWith('http://') || spritePath.startsWith('https://') || spritePath.startsWith('/')) {
@@ -107,6 +156,14 @@ export class PixelSceneWorld {
   companions: SceneCompanion[] = [];
   particles: AmbientParticle[] = [];
   footsteps: FootstepPuff[] = [];
+  bursts: BurstParticle[] = [];
+  popups: FloatingPopup[] = [];
+  beacons: TileBeacon[] = [];
+  socialLinks: SocialLink[] = [];
+  swarmPackets: SwarmPacket[] = [];
+  propBoostTimers = new Map<string, number>(); // propId -> remaining boost seconds
+  socialCooldown = 0;
+  swarmCooldown = 0;
   stationOccupancy = new Map<string, string>(); // stationId -> charId
   spriteImages = new Map<string, HTMLImageElement>(); // url -> loaded HTMLImageElement
   blockedTiles = new Set<string>();
@@ -352,6 +409,18 @@ export class PixelSceneWorld {
         }
         if (prevStatus !== ag.status) {
           this.assignDestination(existing, false);
+          this.spawnBurst(
+            existing.x,
+            existing.y - 10,
+            ag.status === 'working' ? '#22c55e' : '#f59e0b',
+            10,
+          );
+          this.spawnPopup(
+            existing.x,
+            existing.y - 18,
+            ag.status === 'working' ? '⚡ WORKING!' : '☕ IDLE BREAK',
+            ag.status === 'working' ? '#4ade80' : '#fde047',
+          );
         }
       }
     });
@@ -530,6 +599,141 @@ export class PixelSceneWorld {
     return path;
   }
 
+  /** Spawns a physics-driven Hi-Bit pixel particle burst at (x, y) in logical canvas pixels */
+  spawnBurst(x: number, y: number, baseColor: string, count = 12) {
+    const ramp = getRamp(baseColor);
+    const palette = [ramp.spec, ramp.light, ramp.base, '#ffffff', '#fef08a'];
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.45;
+      const speed = 14 + Math.random() * 34;
+      this.bursts.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 12,
+        gravity: 52,
+        size: i % 3 === 0 ? 2 : 1,
+        color: palette[i % palette.length],
+        age: 0,
+        maxAge: 0.45 + Math.random() * 0.35,
+      });
+    }
+  }
+
+  /** Spawns a floating pixel text popup at (x, y) in logical canvas pixels */
+  spawnPopup(x: number, y: number, text: string, color = '#38bdf8') {
+    if (this.popups.length > 14) {
+      this.popups.shift();
+    }
+    this.popups.push({
+      x,
+      y,
+      text,
+      color,
+      age: 0,
+      maxAge: 1.35,
+    });
+  }
+
+  /** Spawns an expanding Hi-Bit pixel beacon ring on tile (col, row) */
+  spawnBeacon(col: number, row: number, color = '#38bdf8') {
+    this.beacons.push({
+      col,
+      row,
+      color,
+      age: 0,
+      maxAge: 0.75,
+    });
+  }
+
+  /** Interactive prop click: triggers thematic particle burst, floating popup, and 3s prop overdrive */
+  triggerPropInteraction(prop: TemplateProp): { label: string; color: string } {
+    const cx = (prop.col + (prop.w || 1) / 2) * TILE_SIZE;
+    const cy = (prop.row + (prop.h || 1) / 2) * TILE_SIZE;
+    this.propBoostTimers.set(prop.id, 3.0);
+
+    let label = prop.label ? `✨ ${prop.label}!` : '✨ ACTIVATED!';
+    let color = this.template?.theme.accent_color || '#38bdf8';
+
+    const t = prop.type;
+    if (t.includes('coffee') || t.includes('espresso') || t.includes('cocoa') || t.includes('nectar') || t.includes('tea')) {
+      label = '☕ +1 CAFFEINE BOOST!';
+      color = '#f59e0b';
+    } else if (t.includes('grog') || t.includes('saloon') || t.includes('duckboard_crate') || t.includes('ramen') || t.includes('synth_bar')) {
+      label = '🍻 +1 MORALE REFILL!';
+      color = '#facc15';
+    } else if (t.includes('arcade') || t.includes('ping_pong') || t.includes('piano') || t.includes('gramophone') || t.includes('organ')) {
+      label = '🎵 HIGH SCORE JAM!';
+      color = '#ec4899';
+    } else if (t.includes('campfire') || t.includes('brazier') || t.includes('stove') || t.includes('hot_spring')) {
+      label = '🔥 HEARTH STOKED!';
+      color = '#f97316';
+    } else if (t.includes('server') || t.includes('mainframe') || t.includes('colossus') || t.includes('turbine') || t.includes('gravity')) {
+      label = '⚡ OVERCLOCK 120%!';
+      color = '#00f0ff';
+    } else if (t.includes('treasure') || t.includes('safe') || t.includes('sarcophagus')) {
+      label = '🪙 +100 GOLD BULLION!';
+      color = '#facc15';
+    } else if (t.includes('starmap') || t.includes('orrery') || t.includes('obelisk') || t.includes('world_tree') || t.includes('radar')) {
+      label = '🛰️ TELEMETRY PING!';
+      color = '#34d399';
+    } else if (t.includes('koi') || t.includes('fairy_pond') || t.includes('oasis') || t.includes('kraken') || t.includes('trough')) {
+      label = '💧 SPLASH RIPPLE!';
+      color = '#38bdf8';
+    }
+
+    this.spawnBurst(cx, cy - 4, color, 16);
+    this.spawnPopup(cx, cy - 10, label, color);
+    this.spawnBeacon(prop.col, prop.row, color);
+    return { label, color };
+  }
+
+  /** Commands a character to walk to a specific walkable tile or workstation on the canvas */
+  commandAgentToTile(charId: string, col: number, row: number): boolean {
+    const ch = this.characters.get(charId);
+    if (!ch || !this.template) return false;
+
+    // Check if the clicked tile belongs to a workstation
+    const ws = (this.template.workstations || []).find(
+      (w) =>
+        (col === w.col || col === w.col + 1 || col === w.seat_col) &&
+        (row === w.row || row === w.seat_row),
+    );
+
+    if (ws) {
+      const occ = this.stationOccupancy.get(ws.id);
+      if (!occ || occ === ch.id) {
+        if (ch.assignedStationId && ch.assignedStationId !== ws.id) {
+          this.stationOccupancy.delete(ch.assignedStationId);
+        }
+        this.stationOccupancy.set(ws.id, ch.id);
+        ch.assignedStationId = ws.id;
+      }
+      const path = this.findPath({ col: ch.col, row: ch.row }, { col: ws.seat_col, row: ws.seat_row });
+      ch.path = path;
+      ch.animState = path.length > 0 ? 'walk' : ch.session.status === 'working' ? 'type' : 'idle';
+      this.spawnBeacon(ws.seat_col, ws.seat_row, ws.glow_color || '#38bdf8');
+      this.spawnPopup(
+        (ws.col + 1) * TILE_SIZE,
+        ws.row * TILE_SIZE - 6,
+        `🛠️ ${ws.label || ws.id}`,
+        ws.glow_color || '#38bdf8',
+      );
+      return true;
+    }
+
+    if (this.blockedTiles.has(`${col},${row}`)) return false;
+    const path = this.findPath({ col: ch.col, row: ch.row }, { col, row });
+    if (path.length === 0) return false;
+
+    ch.path = path;
+    ch.animState = 'walk';
+    ch.wanderTimer = 8;
+    this.spawnBeacon(col, row, '#38bdf8');
+    this.spawnPopup(col * TILE_SIZE + 8, row * TILE_SIZE - 4, `🚶 ${ch.session.display_name}`, '#38bdf8');
+    return true;
+  }
+
   update(dt: number) {
     this.globalTime += dt;
     const walkSpeed = 46;
@@ -540,6 +744,135 @@ export class PixelSceneWorld {
       if (this.footsteps[i].age >= this.footsteps[i].maxAge) {
         this.footsteps.splice(i, 1);
       }
+    }
+
+    // Update interactive burst particles
+    for (let i = this.bursts.length - 1; i >= 0; i--) {
+      const b = this.bursts[i];
+      b.age += dt;
+      if (b.age >= b.maxAge) {
+        this.bursts.splice(i, 1);
+        continue;
+      }
+      b.vy += b.gravity * dt;
+      b.x += b.vx * dt;
+      b.y += b.vy * dt;
+    }
+
+    // Update floating pixel text popups
+    for (let i = this.popups.length - 1; i >= 0; i--) {
+      this.popups[i].age += dt;
+      this.popups[i].y -= 11 * dt;
+      if (this.popups[i].age >= this.popups[i].maxAge) {
+        this.popups.splice(i, 1);
+      }
+    }
+
+    // Update tile beacon rings
+    for (let i = this.beacons.length - 1; i >= 0; i--) {
+      this.beacons[i].age += dt;
+      if (this.beacons[i].age >= this.beacons[i].maxAge) {
+        this.beacons.splice(i, 1);
+      }
+    }
+
+    // Update prop boost timers
+    for (const [pid, rem] of this.propBoostTimers.entries()) {
+      if (rem - dt <= 0) {
+        this.propBoostTimers.delete(pid);
+      } else {
+        this.propBoostTimers.set(pid, rem - dt);
+      }
+    }
+
+    // Update social link arcs
+    for (let i = this.socialLinks.length - 1; i >= 0; i--) {
+      this.socialLinks[i].age += dt;
+      if (this.socialLinks[i].age >= this.socialLinks[i].maxAge) {
+        this.socialLinks.splice(i, 1);
+      }
+    }
+
+    // Update multi-agent swarm data packets
+    for (let i = this.swarmPackets.length - 1; i >= 0; i--) {
+      const pkt = this.swarmPackets[i];
+      pkt.progress += pkt.speed * dt;
+      if (pkt.progress >= 1) {
+        this.swarmPackets.splice(i, 1);
+      }
+    }
+
+    // Periodic Lounge Social Encounters between nearby idle agents
+    this.socialCooldown = Math.max(0, this.socialCooldown - dt);
+    if (this.socialCooldown <= 0 && this.characters.size >= 2) {
+      const idleChars = Array.from(this.characters.values()).filter(
+        (c) => c.session.status === 'idle' && c.path.length === 0 && !c.spawnEffect,
+      );
+      for (let i = 0; i < idleChars.length; i++) {
+        for (let j = i + 1; j < idleChars.length; j++) {
+          const a = idleChars[i];
+          const b = idleChars[j];
+          const distTiles = Math.hypot(a.col - b.col, a.row - b.row);
+          if (distTiles >= 1 && distTiles <= 3.2) {
+            // Turn to face each other
+            if (Math.abs(b.col - a.col) >= Math.abs(b.row - a.row)) {
+              a.dir = b.col > a.col ? 'right' : 'left';
+              b.dir = a.col > b.col ? 'right' : 'left';
+            } else {
+              a.dir = b.row > a.row ? 'down' : 'up';
+              b.dir = a.row > b.row ? 'down' : 'up';
+            }
+            const banter = [
+              '🤝 Syncing context!',
+              '💡 Great architecture!',
+              '✨ LGTM ship it!',
+              '☕ Quick debrief!',
+              '🔥 Zero regressions!',
+            ];
+            const phrase = banter[Math.floor(Math.random() * banter.length)];
+            const midX = (a.x + b.x) / 2;
+            const midY = Math.min(a.y, b.y) - 18;
+            this.socialLinks.push({
+              fromId: a.id,
+              toId: b.id,
+              color: this.template?.theme.accent_color || '#38bdf8',
+              age: 0,
+              maxAge: 2.2,
+            });
+            this.spawnPopup(midX, midY, phrase, '#fde047');
+            this.spawnBurst(midX, midY + 6, '#38bdf8', 6);
+            this.socialCooldown = 7 + Math.random() * 6;
+            break;
+          }
+        }
+        if (this.socialCooldown > 0) break;
+      }
+      if (this.socialCooldown <= 0) {
+        this.socialCooldown = 3.5;
+      }
+    }
+
+    // Periodic Multi-Agent Swarm Collaboration Packets between active working agents
+    this.swarmCooldown = Math.max(0, this.swarmCooldown - dt);
+    if (this.swarmCooldown <= 0) {
+      const workingChars = Array.from(this.characters.values()).filter(
+        (c) => c.session.status === 'working' && c.path.length === 0 && !c.spawnEffect,
+      );
+      if (workingChars.length >= 2) {
+        const from = workingChars[Math.floor(Math.random() * workingChars.length)];
+        const others = workingChars.filter((c) => c.id !== from.id);
+        const to = others[Math.floor(Math.random() * others.length)];
+        this.swarmPackets.push({
+          fromX: from.x,
+          fromY: from.y - 10,
+          toX: to.x,
+          toY: to.y - 10,
+          progress: 0,
+          speed: 0.85,
+          color: this.template?.theme.accent_color || '#38bdf8',
+        });
+      }
+      this.swarmCooldown = 2.4 + Math.random() * 2.5;
     }
 
     for (const [id, ch] of this.characters.entries()) {
@@ -709,6 +1042,9 @@ export function renderPixelWorld(
   panY: number,
   selectedId: string | null,
   hoveredId: string | null,
+  ambienceMode: AmbienceMode = 'standard',
+  hoveredPropId: string | null = null,
+  hoveredStationId: string | null = null,
 ): { offsetX: number; offsetY: number } {
   const tpl = world.template;
   if (!tpl) return { offsetX: 0, offsetY: 0 };
@@ -832,6 +1168,16 @@ export function renderPixelWorld(
   for (const prop of tpl.props || []) {
     const cx = (prop.col + (prop.w || 1) / 2) * TILE_SIZE;
     const cy = (prop.row + (prop.h || 1) / 2) * TILE_SIZE;
+    const boost = world.propBoostTimers.get(prop.id) || 0;
+    if (boost > 0) {
+      lights.push({
+        x: cx,
+        y: cy,
+        radius: 40,
+        color: tpl.theme.accent_color || '#38bdf8',
+        intensity: 0.36 + flicker,
+      });
+    }
     const scenePropLight = getScenePropLight(prop, cx, cy, flicker);
     if (scenePropLight) {
       lights.push(scenePropLight);
@@ -855,6 +1201,19 @@ export function renderPixelWorld(
   }
 
   // Render Pixelated Floor Light Pools BEFORE characters/furniture so objects sit inside the glow
+  const lightMul = ambienceMode === 'night' ? 1.65 : ambienceMode === 'dusk' ? 1.25 : 1.0;
+  if (ambienceMode === 'night') {
+    ctx.save();
+    ctx.fillStyle = 'rgba(4, 6, 16, 0.36)';
+    px(0, 0, tpl.grid.cols * TILE_SIZE, tpl.grid.rows * TILE_SIZE);
+    ctx.restore();
+  } else if (ambienceMode === 'dusk') {
+    ctx.save();
+    ctx.fillStyle = 'rgba(124, 45, 18, 0.14)';
+    px(0, 0, tpl.grid.cols * TILE_SIZE, tpl.grid.rows * TILE_SIZE);
+    ctx.restore();
+  }
+
   ctx.save();
   ctx.globalCompositeOperation = 'screen';
   for (const l of lights) {
@@ -862,7 +1221,7 @@ export function renderPixelWorld(
     const steps = 3;
     for (let s = steps; s >= 1; s--) {
       const rad = Math.round((l.radius * s) / steps);
-      const alpha = Math.max(0.02, (l.intensity / steps) * (steps - s + 1) * 0.55);
+      const alpha = Math.min(0.65, Math.max(0.02, (l.intensity * lightMul / steps) * (steps - s + 1) * 0.55));
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(3)})`;
       px(l.x - rad, l.y - Math.round(rad * 0.65), rad * 2, Math.round(rad * 1.3));
     }
@@ -902,7 +1261,7 @@ export function renderPixelWorld(
     ctx.restore();
   }
 
-  // 4. Footstep Dust Puffs on Floor
+  // 4. Footstep Dust Puffs & Expanding Tile Beacons on Floor
   for (const fp of world.footsteps) {
     const p = 1 - fp.age / fp.maxAge;
     ctx.save();
@@ -910,6 +1269,63 @@ export function renderPixelWorld(
     const sz = fp.age < 0.2 ? 2 : 1;
     px(Math.round(fp.x), Math.round(fp.y - fp.age * 3), sz, sz, '#e2e8f0');
     ctx.restore();
+  }
+
+  for (const b of world.beacons) {
+    const prog = b.age / b.maxAge;
+    const bx = b.col * TILE_SIZE + TILE_SIZE / 2;
+    const by = b.row * TILE_SIZE + TILE_SIZE / 2;
+    const r = Math.round(2 + prog * 10);
+    ctx.save();
+    ctx.globalAlpha = (1 - prog) * 0.85;
+    px(bx - r, by - r, r * 2, 1, b.color);
+    px(bx - r, by + r - 1, r * 2, 1, b.color);
+    px(bx - r, by - r, 1, r * 2, b.color);
+    px(bx + r - 1, by - r, 1, r * 2, b.color);
+    ctx.restore();
+  }
+
+  // 4b. Hover Reticle on Interactive Props or Workstations
+  if (hoveredPropId) {
+    const hp = (tpl.props || []).find((p) => p.id === hoveredPropId);
+    if (hp) {
+      const hx = hp.col * TILE_SIZE;
+      const hy = hp.row * TILE_SIZE;
+      const hw = (hp.w || 1) * TILE_SIZE;
+      const hh = (hp.h || 1) * TILE_SIZE;
+      ctx.save();
+      ctx.globalAlpha = 0.75;
+      px(hx - 1, hy - 1, 4, 1, '#38bdf8');
+      px(hx - 1, hy - 1, 1, 4, '#38bdf8');
+      px(hx + hw - 3, hy - 1, 4, 1, '#38bdf8');
+      px(hx + hw, hy - 1, 1, 4, '#38bdf8');
+      px(hx - 1, hy + hh, 4, 1, '#38bdf8');
+      px(hx - 1, hy + hh - 3, 1, 4, '#38bdf8');
+      px(hx + hw - 3, hy + hh, 4, 1, '#38bdf8');
+      px(hx + hw, hy + hh - 3, 1, 4, '#38bdf8');
+      ctx.restore();
+    }
+  }
+  if (hoveredStationId) {
+    const hws = (tpl.workstations || []).find((w) => w.id === hoveredStationId);
+    if (hws) {
+      const hx = hws.col * TILE_SIZE;
+      const hy = hws.row * TILE_SIZE;
+      const hw = 2 * TILE_SIZE;
+      const hh = TILE_SIZE;
+      const col = hws.glow_color || '#38bdf8';
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+      px(hx - 1, hy - 4, 4, 1, col);
+      px(hx - 1, hy - 4, 1, 4, col);
+      px(hx + hw - 3, hy - 4, 4, 1, col);
+      px(hx + hw, hy - 4, 1, 4, col);
+      px(hx - 1, hy + hh, 4, 1, col);
+      px(hx - 1, hy + hh - 3, 1, 4, col);
+      px(hx + hw - 3, hy + hh, 4, 1, col);
+      px(hx + hw, hy + hh - 3, 1, 4, col);
+      ctx.restore();
+    }
   }
 
   // 5. Collect Z-Sorted Drawables (Workstations, Chairs, Props, Companions, Characters)
@@ -1061,6 +1477,68 @@ export function renderPixelWorld(
     px(p.x, p.y, p.size, p.size, getRamp(p.color).spec);
   }
   ctx.restore();
+
+  // 8. Social Encounter Arcs & Multi-Agent Swarm Collaboration Packets
+  ctx.save();
+  for (const link of world.socialLinks) {
+    const a = world.characters.get(link.fromId);
+    const b = world.characters.get(link.toId);
+    if (!a || !b) continue;
+    const fade = 1 - link.age / link.maxAge;
+    ctx.globalAlpha = fade * 0.75;
+    const steps = 7;
+    for (let s = 1; s < steps; s++) {
+      const t = s / steps;
+      const lx = Math.round(a.x + (b.x - a.x) * t);
+      const arc = Math.sin(t * Math.PI) * 7;
+      const ly = Math.round(a.y - 12 + (b.y - a.y) * t - arc);
+      px(lx, ly, 1, 1, s % 2 === 0 ? '#fde047' : link.color);
+    }
+  }
+
+  for (const pkt of world.swarmPackets) {
+    const t = pkt.progress;
+    const arc = Math.sin(t * Math.PI) * 18;
+    const pxX = Math.round(pkt.fromX + (pkt.toX - pkt.fromX) * t);
+    const pxY = Math.round(pkt.fromY + (pkt.toY - pkt.fromY) * t - arc);
+    ctx.globalAlpha = 0.35;
+    px(pxX - 1, pxY - 1, 4, 4, pkt.color);
+    ctx.globalAlpha = 0.95;
+    px(pxX, pxY, 2, 2, '#ffffff');
+  }
+  ctx.restore();
+
+  // 9. Interactive Burst Sparks & Floating Canvas Popups
+  ctx.save();
+  for (const b of world.bursts) {
+    const fade = 1 - b.age / b.maxAge;
+    ctx.globalAlpha = fade;
+    px(Math.round(b.x), Math.round(b.y), b.size, b.size, b.color);
+  }
+  for (const pop of world.popups) {
+    const fade = 1 - Math.pow(pop.age / pop.maxAge, 1.6);
+    ctx.globalAlpha = Math.max(0, fade);
+    const fontSize = Math.max(10, Math.round(3.4 * zoom));
+    ctx.font = `800 ${fontSize}px "JetBrains Mono", monospace`;
+    ctx.textAlign = 'center';
+    const sx = Math.round(offsetX + pop.x * zoom);
+    const sy = Math.round(offsetY + pop.y * zoom);
+    ctx.fillStyle = 'rgba(6, 5, 15, 0.92)';
+    ctx.fillText(pop.text, sx + 1, sy + 1);
+    ctx.fillStyle = pop.color;
+    ctx.fillText(pop.text, sx, sy);
+  }
+  ctx.restore();
+
+  // 10. Optional Retro Arcade CRT Scanline & Phosphor Vignette Shader
+  if (ambienceMode === 'crt') {
+    ctx.save();
+    ctx.fillStyle = 'rgba(4, 6, 12, 0.22)';
+    for (let sy = 0; sy < canvasHeight; sy += 3) {
+      ctx.fillRect(0, sy, canvasWidth, 1);
+    }
+    ctx.restore();
+  }
 
   return { offsetX, offsetY };
 }
