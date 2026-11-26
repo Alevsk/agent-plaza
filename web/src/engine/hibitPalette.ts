@@ -294,7 +294,210 @@ export function drawDitherRect(
   }
 }
 
+// ── Shared Furniture Primitives (used by core and scene-module workstations) ──
+
+// Hi-Bit monitor with bezel, stand, screen gradient, syntax-highlighted code and blinking cursor
+export function drawHiBitMonitor(
+  px: PxFn,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  active: boolean,
+  glow: string,
+  tick: number,
+  bezelHex = '#1e293b',
+) {
+  const bezel = getRamp(bezelHex);
+  const glowRamp = getRamp(glow);
+
+  // Stand neck & base
+  const cx = x + Math.floor(w / 2);
+  px(cx - 2, y + h, 4, 2, bezel.outline);
+  px(cx - 1, y + h, 2, 1, bezel.light);
+  px(cx - 3, y + h + 1, 6, 1, bezel.shadow);
+
+  // Outer Bezel with Sel-Out
+  drawBevelBox(px, x, y, w, h, bezelHex);
+
+  // Screen Canvas
+  const sx = x + 2;
+  const sy = y + 2;
+  const sw = Math.max(2, w - 4);
+  const sh = Math.max(2, h - 4);
+
+  if (active) {
+    px(sx, sy, sw, sh, '#091526');
+    // Subtle top screen reflection
+    px(sx, sy, sw, 1, '#162c46');
+    // Scrolling syntax-highlighted pixel lines
+    const lineCount = Math.max(1, Math.floor(sh / 2));
+    let lastLen = 2;
+    let lastY = sy;
+    for (let ln = 0; ln < lineCount; ln++) {
+      const ly = sy + ln * 2;
+      if (ly >= sy + sh) break;
+      const len = Math.max(2, ((tick + ln * 3) % (sw - 2)) + 2);
+      const col =
+        ln % 3 === 0 ? glowRamp.spec : ln % 3 === 1 ? '#4ade80' : '#f472b6';
+      px(sx + 1, ly, Math.min(sw - 2, len), 1, col);
+      lastLen = Math.min(sw - 2, len);
+      lastY = ly;
+    }
+    // Blinking block cursor at the end of the last line
+    if (tick % 2 === 0 && sx + 2 + lastLen < sx + sw) {
+      px(sx + 2 + lastLen, lastY, 1, 1, '#ffffff');
+    }
+    // Power LED
+    px(x + w - 2, y + h - 1, 1, 1, '#4ade80');
+  } else {
+    px(sx, sy, sw, sh, '#0f172a');
+    px(sx + 1, sy + 1, Math.min(3, sw - 1), 1, '#334155'); // diagonal glass glint
+    // Slow "breathing" standby LED
+    px(x + w - 2, y + h - 1, 1, 1, Math.floor(tick / 4) % 2 === 0 ? '#f59e0b' : '#78350f');
+  }
+}
+
+// 3D Hi-Bit desk base (32x16) with legs, shadow, wood/metal bevel, and surface details
+export function drawHiBitDeskBase(
+  px: PxFn,
+  x: number,
+  y: number,
+  topHex: string,
+  frontHex: string,
+  trimHex?: string,
+) {
+  drawDropShadow(px, x + 1, y + 12, 30, 4);
+  const legRamp = getRamp(frontHex);
+  // Left & Right Legs with sel-out
+  px(x + 2, y + 12, 3, 4, legRamp.outline);
+  px(x + 3, y + 12, 1, 3, legRamp.shadow);
+  px(x + 27, y + 12, 3, 4, legRamp.outline);
+  px(x + 28, y + 12, 1, 3, legRamp.shadow);
+
+  // Desk Front Modesty Panel
+  drawBevelBox(px, x + 1, y + 5, 30, 8, frontHex);
+  // Desk Top Surface Slab
+  drawBevelBox(px, x, y + 2, 32, 5, topHex);
+  if (trimHex) {
+    px(x + 1, y + 6, 30, 1, getRamp(trimHex).spec);
+  }
+}
+
 // ── Cached Offscreen Hi-Bit Tilemap Renderer ────────────────────────────────
+
+export type RectFn = (x: number, y: number, w: number, h: number, color: string) => void;
+
+/** Context passed to scene-module floor painters for each walkable tile. */
+export interface FloorTileCtx {
+  p: RectFn;
+  tx: number;
+  ty: number;
+  ch: string; // '.', 'C' or 'L'
+  c: number;
+  r: number;
+  isAlt: boolean;
+  tileAt: (c: number, r: number) => string;
+  pal: FloorPalette; // palette already chosen for this tile kind
+}
+
+/** Context passed to scene-module wall painters for the visible wall elevation face (rows 5..12). */
+export interface WallFaceCtx {
+  p: RectFn;
+  tx: number;
+  ty: number;
+  c: number;
+  r: number;
+  wallRamp: ColorRamp;
+  trimRamp: ColorRamp;
+  accentRamp: ColorRamp;
+}
+
+/** Optional per-template painters plugged in by scene modules (see engine/scenes). */
+export interface BackdropHooks {
+  floorTile?: (ctx: FloorTileCtx) => void;
+  wallFace?: (ctx: WallFaceCtx) => void;
+}
+
+/** True for tiles that are neither wall nor exterior void. */
+export function isFloorTile(ch: string): boolean {
+  return ch !== 'W' && ch !== 'V';
+}
+
+/**
+ * Paints the static base of an exterior 'V' (void) tile: the world outside the building.
+ * Kept dark and desaturated (Layer 0/1) so the interior and characters always read first.
+ * Animated details (wave glints, twinkling stars, drifting clouds) are drawn per frame by the engine.
+ */
+function drawExteriorBase(p: RectFn, kind: string, tx: number, ty: number, c: number, r: number, background: string) {
+  switch (kind) {
+    case 'ocean': {
+      const sea = getFloorPalette('#12324a', 0.12, 0.16, 0.42);
+      p(tx, ty, 16, 16, (c + r) % 2 === 0 ? sea.base : sea.shadow);
+      // Long horizontal swell bands, offset per row so they read as rolling water
+      const off = (r * 5 + c * 3) % 16;
+      p(tx + (off % 12), ty + 4, 5, 1, sea.highlight);
+      p(tx + ((off + 7) % 12), ty + 11, 4, 1, sea.highlight);
+      p(tx, ty + 15, 16, 1, sea.seam);
+      break;
+    }
+    case 'space': {
+      p(tx, ty, 16, 16, background || '#05060c');
+      // Static deep-field stars (twinkle layer is animated separately)
+      for (let i = 0; i < 3; i++) {
+        const h = pixelHash(c, r, i + 11);
+        if (h < 0.55) {
+          const sx = Math.floor(pixelHash(c, r, i + 21) * 16);
+          const sy = Math.floor(pixelHash(c, r, i + 31) * 16);
+          p(tx + sx, ty + sy, 1, 1, h < 0.12 ? '#64748b' : '#1e293b');
+        }
+      }
+      break;
+    }
+    case 'sky': {
+      const sky = getFloorPalette('#1d3354', 0.15, 0.2, 0.4);
+      p(tx, ty, 16, 16, r % 2 === 0 ? sky.base : sky.shadow);
+      p(tx, ty + 8, 16, 1, sky.highlight);
+      break;
+    }
+    case 'snow': {
+      const snow = getFloorPalette('#4b5a6e', 0.24, 0.29, 0.18);
+      p(tx, ty, 16, 16, snow.base);
+      // Wind-carved sastrugi drifts
+      const off = (c * 7 + r * 3) % 10;
+      p(tx + off, ty + 5, 5, 1, snow.highlight);
+      p(tx + ((off + 5) % 11), ty + 12, 4, 1, snow.shadow);
+      break;
+    }
+    case 'sand': {
+      const sand = getFloorPalette('#5c4425', 0.2, 0.25, 0.34);
+      p(tx, ty, 16, 16, sand.base);
+      // Curved dune ripples
+      const off = (c * 3 + r * 5) % 6;
+      p(tx, ty + 3 + off, 9, 1, sand.highlight);
+      p(tx + 6, ty + 4 + off, 10, 1, sand.highlight);
+      p(tx + 2, ty + 11, 12, 1, sand.shadow);
+      break;
+    }
+    case 'forest': {
+      const grass = getFloorPalette('#1d3320', 0.12, 0.16, 0.3);
+      p(tx, ty, 16, 16, (c + r) % 2 === 0 ? grass.base : grass.shadow);
+      // Dense canopy clumps (dark tree crowns seen from above)
+      if (pixelHash(c, r, 5) < 0.6) {
+        const canopy = getRamp('#14532d');
+        const ox = Math.floor(pixelHash(c, r, 6) * 6);
+        const oy = Math.floor(pixelHash(c, r, 7) * 6);
+        p(tx + ox, ty + oy, 10, 9, canopy.outline);
+        p(tx + ox + 1, ty + oy + 1, 8, 7, canopy.deepShadow);
+        p(tx + ox + 2, ty + oy + 1, 5, 2, canopy.shadow);
+      }
+      break;
+    }
+    default: {
+      p(tx, ty, 16, 16, background || '#080b11');
+    }
+  }
+}
 
 interface CachedBackdrop {
   key: string;
@@ -308,10 +511,14 @@ let cachedBackdrop: CachedBackdrop | null = null;
  * Uses `getFloorPalette` so floor textures stay calm, low-contrast (ΔL <= 3%), and desaturated,
  * ensuring characters and workstations always pop in the foreground.
  */
-export function getOrBuildHiBitBackdrop(tpl: TemplateManifest, tileSize: number): HTMLCanvasElement | null {
+export function getOrBuildHiBitBackdrop(
+  tpl: TemplateManifest,
+  tileSize: number,
+  hooks?: BackdropHooks,
+): HTMLCanvasElement | null {
   if (typeof document === 'undefined') return null;
 
-  const key = `v3:${tpl.id}:${tpl.grid.cols}x${tpl.grid.rows}:${tpl.theme.floor_primary}:${tpl.theme.wall_color}`;
+  const key = `v4:${tpl.id}:${tpl.grid.cols}x${tpl.grid.rows}:${tpl.theme.floor_primary}:${tpl.theme.wall_color}:${tpl.theme.exterior || ''}:${tpl.grid.layout.join('')}`;
   if (cachedBackdrop && cachedBackdrop.key === key) {
     return cachedBackdrop.canvas;
   }
@@ -355,7 +562,18 @@ export function getOrBuildHiBitBackdrop(tpl: TemplateManifest, tileSize: number)
       const tx = c * tileSize;
       const ty = r * tileSize;
       const isAlt = (c + r) % 2 === 0;
+
+      if (ch === 'V') {
+        drawExteriorBase(p, tpl.theme.exterior || '', tx, ty, c, r, tpl.theme.background);
+        continue;
+      }
+
       const pal = ch === 'C' ? bayPal : ch === 'L' ? loungePal : corridorPal;
+
+      if (hooks?.floorTile) {
+        hooks.floorTile({ p, tx, ty, ch, c, r, isAlt, tileAt, pal });
+        continue;
+      }
 
       if (tpl.id === 'cowboys') {
         // Wild West: Muted Espresso-Walnut Wide Planks & Cohesive Woven Frontier Lounge Rug
@@ -468,10 +686,10 @@ export function getOrBuildHiBitBackdrop(tpl: TemplateManifest, tileSize: number)
       if (tileAt(c, r) !== 'W') continue;
       const tx = c * tileSize;
       const ty = r * tileSize;
-      const southIsFloor = tileAt(c, r + 1) !== 'W';
-      const northIsFloor = tileAt(c, r - 1) !== 'W';
-      const eastIsFloor = tileAt(c + 1, r) !== 'W';
-      const westIsFloor = tileAt(c - 1, r) !== 'W';
+      const southIsFloor = isFloorTile(tileAt(c, r + 1));
+      const northIsFloor = isFloorTile(tileAt(c, r - 1));
+      const eastIsFloor = isFloorTile(tileAt(c + 1, r));
+      const westIsFloor = isFloorTile(tileAt(c - 1, r));
 
       p(tx, ty, tileSize, tileSize, wallRamp.deepShadow);
 
@@ -485,7 +703,9 @@ export function getOrBuildHiBitBackdrop(tpl: TemplateManifest, tileSize: number)
         // 2. Wall Elevation Face (rows 5..12)
         p(tx, ty + 5, 16, 8, wallRamp.base);
 
-        if (tpl.id === 'japanese') {
+        if (hooks?.wallFace) {
+          hooks.wallFace({ p, tx, ty, c, r, wallRamp, trimRamp, accentRamp });
+        } else if (tpl.id === 'japanese') {
           p(tx + 1, ty + 5, 14, 7, '#d6d3d1');
           p(tx + 2, ty + 6, 12, 5, '#e7e5e4');
           p(tx, ty + 5, 2, 8, '#5c3a21');
@@ -554,7 +774,7 @@ export function getOrBuildHiBitBackdrop(tpl: TemplateManifest, tileSize: number)
   // PASS 3: Soft Ambient Occlusion (AO) Cast by Walls onto Floors
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (tileAt(c, r) === 'W') continue;
+      if (!isFloorTile(tileAt(c, r))) continue;
       const tx = c * tileSize;
       const ty = r * tileSize;
 

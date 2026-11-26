@@ -96,5 +96,41 @@ elevenlabs text-to-sound-effects convert \
   --duration-seconds 1.2 \
   -o "${SFX_DIR}/work-cyberpunk.mp3"
 
+# Pirates contextual work: ship bell chime, wooden rigging creak & compass click
+elevenlabs text-to-sound-effects convert \
+  --text "retro 8-bit pirate ship brass bell chime, wooden deck rigging creak, nautical compass click" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-pirates.mp3"
+
+# Space contextual work: orbital telemetry console beeps & radar ping
+elevenlabs text-to-sound-effects convert \
+  --text "retro 8-bit sci-fi space station telemetry console beeps, orbital radar ping, futuristic airlock computer chime" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-space.mp3"
+
+# Forest contextual work: elven crystal harp pluck & moonwell water droplet
+elevenlabs text-to-sound-effects convert \
+  --text "retro 8-bit enchanted forest elven crystal harp pluck, magical moonwell water droplet chime, fairy sparkle" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-forest.mp3"
+
+# Egypt contextual work: limestone hieroglyph chisel & papyrus scroll rustle
+elevenlabs text-to-sound-effects convert \
+  --text "retro 8-bit ancient egypt stone chisel tapping hieroglyphs, papyrus scroll rustle, mystical golden temple chime" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-egypt.mp3"
+
+# Steampunk contextual work: brass clockwork gears & copper steam valve puff
+elevenlabs text-to-sound-effects convert \
+  --text "retro 8-bit steampunk brass clockwork gears clicking, gentle copper steam valve puff, mechanical analytical loom clatter" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-steampunk.mp3"
+
+# Arctic contextual work: glacial ice laser scan & aurora synth chime
+elevenlabs text-to-sound-effects convert \
+  --text "retro 8-bit arctic ice crystal laser scan ping, sub-zero sonar pulse, shimmering aurora borealis synth chime" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-arctic.mp3"
+
 echo "==> All sound effects generated successfully in ${SFX_DIR}:"
 ls -lh "${SFX_DIR}"

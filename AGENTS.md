@@ -32,13 +32,19 @@ It combines:
 │           ├── sources/local/          # Local Herdr CLI + ~/.claude, ~/.codex, ~/.local/share/opencode, ~/.gemini parser
 │           ├── sources/remote/         # Remote HTTP snapshot polling adapter
 │           └── templates/fs/           # YAML template manifest loader from ./templates/<id>/template.yaml
-├── templates/                          # Self-contained scene template plugins
+├── templates/                          # Self-contained scene template plugins (12 bundled themes)
 │   ├── office/template.yaml            # Retro Startup HQ
 │   ├── cowboys/template.yaml           # Wild West Saloon & Forge
 │   ├── cyberpunk/template.yaml         # Neon Netrunner Deck
 │   ├── japanese/template.yaml          # Edo Samurai Dojo & Zen Garden
 │   ├── medieval/template.yaml          # Arcane Guild Hall & Archery Yard
-│   └── ww2/template.yaml               # Allied Command Bunker
+│   ├── ww2/template.yaml               # Allied Command Bunker
+│   ├── pirates/template.yaml           # Crimson Galleon & Smuggler's Cove
+│   ├── space/template.yaml             # Aegis-IX Orbital Space Station
+│   ├── forest/template.yaml            # Sylvan World-Tree & Elven Grove
+│   ├── egypt/template.yaml             # Pharaoh's Pyramid & Sun-Disk Temple
+│   ├── steampunk/template.yaml         # Aether-Zeppelin & Clockwork Foundry
+│   └── arctic/template.yaml            # Polar Aurora Outpost & Ice Core Lab
 ├── skills/template-generator/          # Agent skill & scaffold script for new templates
 └── web/                                # React 19 + TypeScript + Tailwind v4 + HTML5 Canvas 2D SPA
     └── src/
@@ -82,6 +88,12 @@ When adding or modifying templates, props, workstations, or characters, you **mu
   - **`japanese`**: `scroll_rack`, `katana_rack`, `shodo_banner`, `dojo_bamboo`, `tea_table`, `bonsai`, `lantern`, `torii`, `tatami_bench`, `koi_pond`, `zen_garden`
   - **`medieval`**: `mana_obelisk`, `grimoire_shelf`, `royal_banner`, `alchemy_table`, `hearth`, `bookshelf`, `banner`, `torch`, `weapon_rack`, `archery_target`, `training_dummy`
   - **`ww2`**: `colossus_rack`, `ordnance_rack`, `bunker_map_board`, `war_map_table`, `ammo_crate`, `sandbags`, `radar_console`, `radio_tower`, `field_cot`, `oil_drum`
+  - **`pirates`**: `pirate_grog_bar`, `pirate_treasure_chest`, `pirate_kraken_tank`, `pirate_cannon_rack`, `pirate_jolly_roger`, `pirate_anchor`, `pirate_ship_bell`, `pirate_palm`
+  - **`space`**: `space_synth_bar`, `space_starmap`, `space_gravity_ring`, `space_eva_pod`, `space_telemetry_wall`, `space_oxygen_scrubber`
+  - **`forest`**: `forest_nectar_bar`, `forest_world_tree`, `forest_fairy_pond`, `forest_crystal_cluster`, `forest_scroll_arch`, `forest_elven_banner`, `forest_glow_shroom`
+  - **`egypt`**: `egypt_sphinx`, `egypt_sarcophagus`, `egypt_oasis_pool`, `egypt_obelisk`, `egypt_scroll_jar`, `egypt_winged_sun`, `egypt_brazier`
+  - **`steampunk`**: `steam_espresso_bar`, `steam_pipe_organ`, `steam_orrery`, `steam_turbine_core`, `steam_automaton`, `steam_pressure_board`
+  - **`arctic`**: `arctic_cocoa_bar`, `arctic_hearth_stove`, `arctic_hot_spring`, `arctic_ice_vault`, `arctic_snowcat_rack`, `arctic_aurora_map`, `arctic_frost_pine`
 - Unknown prop types in `drawSingleProp()` intentionally render nothing rather than falling back to an office prop.
 
 ### Rule 3: Thematic Workstations & Hangout Zones

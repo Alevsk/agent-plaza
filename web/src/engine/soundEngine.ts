@@ -16,6 +16,12 @@ export type SoundName =
   | 'work-japanese'
   | 'work-ww2'
   | 'work-cyberpunk'
+  | 'work-pirates'
+  | 'work-space'
+  | 'work-forest'
+  | 'work-egypt'
+  | 'work-steampunk'
+  | 'work-arctic'
   | 'pet-cat'
   | 'pet-dog'
   | 'pet-robot'
@@ -39,6 +45,12 @@ const SOUND_DEFS: Record<SoundName, SoundDef> = {
   'work-japanese': { file: '/sfx/work-japanese.mp3', volume: 0.35, throttleMs: 350 },
   'work-ww2': { file: '/sfx/work-ww2.mp3', volume: 0.35, throttleMs: 350 },
   'work-cyberpunk': { file: '/sfx/work-cyberpunk.mp3', volume: 0.32, throttleMs: 350 },
+  'work-pirates': { file: '/sfx/work-pirates.mp3', volume: 0.34, throttleMs: 350 },
+  'work-space': { file: '/sfx/work-space.mp3', volume: 0.32, throttleMs: 350 },
+  'work-forest': { file: '/sfx/work-forest.mp3', volume: 0.34, throttleMs: 350 },
+  'work-egypt': { file: '/sfx/work-egypt.mp3', volume: 0.34, throttleMs: 350 },
+  'work-steampunk': { file: '/sfx/work-steampunk.mp3', volume: 0.34, throttleMs: 350 },
+  'work-arctic': { file: '/sfx/work-arctic.mp3', volume: 0.32, throttleMs: 350 },
   'pet-cat': { file: '/sfx/pet-cat.mp3', volume: 0.45, throttleMs: 250 },
   'pet-dog': { file: '/sfx/pet-dog.mp3', volume: 0.45, throttleMs: 250 },
   'pet-robot': { file: '/sfx/pet-robot.mp3', volume: 0.45, throttleMs: 250 },
@@ -164,6 +176,18 @@ class SoundEngine {
         return 'work-ww2';
       case 'cyberpunk':
         return 'work-cyberpunk';
+      case 'pirates':
+        return 'work-pirates';
+      case 'space':
+        return 'work-space';
+      case 'forest':
+        return 'work-forest';
+      case 'egypt':
+        return 'work-egypt';
+      case 'steampunk':
+        return 'work-steampunk';
+      case 'arctic':
+        return 'work-arctic';
       default:
         return 'work-office';
     }

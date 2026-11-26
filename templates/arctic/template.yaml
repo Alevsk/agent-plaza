@@ -1,0 +1,172 @@
+id: arctic
+name: "Polar Aurora Outpost & Ice Core Lab"
+description: "Sub-zero polar expedition station where researchers laser-scan ancient glacial ice cores, track aurora borealis geomagnetic storms, monitor sub-glacial seismographs, and warm up by the geothermal hot spring."
+theme_badge: "❄️ Arctic"
+
+theme:
+  background: "#050b14"
+  wall_color: "#223447"
+  wall_trim: "#ea580c"
+  floor_primary: "#131e2b"
+  floor_secondary: "#182636"
+  floor_accent: "#152331"
+  grid_line: "rgba(56, 189, 248, 0.05)"
+  accent_color: "#38bdf8"
+  secondary_color: "#2dd4bf"
+  spawn_effect: "beam"
+  spawn_color: "#38bdf8"
+  particles: "snow"
+  exterior: "snow"
+  working_verb: "Analyzing polar ice cores & aurora telemetry"
+  idle_verb: "Warming up in the thermal hot-spring lodge"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "glaciology_lab"
+    label: "GLACIAL ICE-CORE & CRYO LAB"
+    color: "#38bdf8"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "aurora_observatory"
+    label: "AURORA MAGNETOMETER & SEISMIC ARRAY"
+    color: "#2dd4bf"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "polar_comms"
+    label: "CRYO-BOTANY & EXPEDITION COMMS"
+    color: "#f97316"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "thermal_lodge"
+    label: "GEOTHERMAL HOT SPRING & COCOA LODGE"
+    color: "#facc15"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Glacial Ice-Core & Cryo Lab
+  - { id: "ar-1",  label: "Vostok Deep Ice-Core Laser Scanner", col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "arctic_ice_core",      glow_color: "#38bdf8" }
+  - { id: "ar-2",  label: "Pleistocene Air-Bubble Spectrometer", col: 5, row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "arctic_ice_core",      glow_color: "#06b6d4" }
+  - { id: "ar-3",  label: "Cryo-Crystal Isotope Microscope",    col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "arctic_weather_comms", glow_color: "#38bdf8" }
+  - { id: "ar-4",  label: "Permafrost Core Stratigraphy Bench", col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "arctic_ice_core",      glow_color: "#2dd4bf" }
+  - { id: "ar-5",  label: "Sub-Glacial Lake Sonar Console",     col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "arctic_seismic_rig",   glow_color: "#38bdf8" }
+  - { id: "ar-6",  label: "Glacier Calving Telemetry Desk",     col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "arctic_weather_comms", glow_color: "#f97316" }
+  # South Aurora Magnetometer & Seismic Array
+  - { id: "ar-7",  label: "Aurora Borealis Magnetometer Dome",  col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "arctic_aurora_scope",  glow_color: "#2dd4bf" }
+  - { id: "ar-8",  label: "Tectonic Ice-Shelf Seismograph",     col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "arctic_seismic_rig",   glow_color: "#f97316" }
+  - { id: "ar-9",  label: "Ionosphere Solar-Wind Analyzer",     col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "arctic_aurora_scope",  glow_color: "#a855f7" }
+  - { id: "ar-10", label: "Geomagnetic Flux Recorder",          col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "arctic_aurora_scope",  glow_color: "#34d399" }
+  - { id: "ar-11", label: "Deep-Trench Hydrophone Plotter",     col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "arctic_seismic_rig",   glow_color: "#ef4444" }
+  - { id: "ar-12", label: "Stratospheric Weather Balloon Rig",  col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "arctic_weather_comms", glow_color: "#38bdf8" }
+  # East Cryo-Botany & Expedition Comms
+  - { id: "ar-13", label: "Sub-Zero Tundra Lichen Incubator",   col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "arctic_cryo_botany",   glow_color: "#4ade80" }
+  - { id: "ar-14", label: "Polar Satellite Uplink Console",     col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "arctic_weather_comms", glow_color: "#f97316" }
+  - { id: "ar-15", label: "Extremophile Microbe Bioreactor",    col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "arctic_cryo_botany",   glow_color: "#2dd4bf" }
+  - { id: "ar-16", label: "Icebreaker Fleet HF Radio Desk",     col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "arctic_weather_comms", glow_color: "#38bdf8" }
+  - { id: "ar-17", label: "Arctic Seed-Vault Cryo Preservation", col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "arctic_cryo_botany",  glow_color: "#22c55e" }
+  - { id: "ar-18", label: "Blizzard Doppler Radar Station",     col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "arctic_aurora_scope",  glow_color: "#38bdf8" }
+
+waypoints:
+  - { id: "wp-cocoa",    col: 16, row: 3, activity: "coffee",      bubble: "☕ Sipping hot marshmallow expedition cocoa" }
+  - { id: "wp-stove",    col: 24, row: 3, activity: "lounge",      bubble: "🔥 Warming mittens by the cast-iron stove" }
+  - { id: "wp-spring-1", col: 18, row: 6, activity: "watercooler", bubble: "♨️ Relaxing by the steaming geothermal spring" }
+  - { id: "wp-spring-2", col: 23, row: 6, activity: "lounge",      bubble: "🌌 Watching the green aurora dance overhead" }
+  - { id: "wp-map",      col: 13, row: 8, activity: "whiteboard",  bubble: "🧭 Checking polar vortex barometer readings" }
+  - { id: "wp-cor-1",    col: 7,  row: 8, activity: "lounge",      bubble: "🐧 Saying hello to the station penguin" }
+  - { id: "wp-cor-2",    col: 19, row: 8, activity: "lounge",      bubble: "❄️ Brushing frost off the thermal parka" }
+
+props:
+  - { id: "prop-cocoa",      type: "arctic_cocoa_bar",    col: 15, row: 2,  w: 4, h: 1, label: "HOT COCOA", animated: true }
+  - { id: "prop-stove",      type: "arctic_hearth_stove", col: 23, row: 2,  w: 2, h: 1, label: "HEARTH", animated: true }
+  - { id: "prop-hot-spring", type: "arctic_hot_spring",   col: 18, row: 4,  w: 4, h: 2, label: "HOT SPRING", animated: true }
+  - { id: "prop-ice-vault",  type: "arctic_ice_vault",    col: 25, row: 11, w: 2, h: 2, label: "ICE CORE VAULT" }
+  - { id: "prop-gear-rack",  type: "arctic_snowcat_rack", col: 25, row: 14, w: 2, h: 2, label: "POLAR GEAR" }
+  - { id: "prop-aurora-map", type: "arctic_aurora_map",   col: 4,  row: 0,  w: 4, h: 1, label: "AURORA FORECAST" }
+  - { id: "prop-pine-1",     type: "arctic_frost_pine",   col: 11, row: 1,  w: 1, h: 1 }
+  - { id: "prop-pine-2",     type: "arctic_frost_pine",   col: 26, row: 1,  w: 1, h: 1 }
+  - { id: "prop-pine-3",     type: "arctic_frost_pine",   col: 1,  row: 16, w: 1, h: 1 }
+
+characters:
+  claude:
+    title: "Expedition Lead Claude"
+    primary: "#ea580c"
+    secondary: "#1e293b"
+    skin: "#fdba74"
+    hair: "#78350f"
+    accessory: "parka"
+    badge_color: "#f97316"
+  agy:
+    title: "Glaciologist Agy"
+    primary: "#0284c7"
+    secondary: "#0f172a"
+    skin: "#fde047"
+    hair: "#1e293b"
+    accessory: "parka"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Aurora Physicist Codex"
+    primary: "#0d9488"
+    secondary: "#134e4a"
+    skin: "#fed7aa"
+    hair: "#1c1917"
+    accessory: "parka"
+    badge_color: "#2dd4bf"
+  grok:
+    title: "Seismologist Grok"
+    primary: "#dc2626"
+    secondary: "#18181b"
+    skin: "#fecdd3"
+    hair: "#1c1917"
+    accessory: "parka"
+    badge_color: "#ef4444"
+  opencode:
+    title: "Cryo-Botanist OpenCode"
+    primary: "#7c3aed"
+    secondary: "#1e1b4b"
+    skin: "#fde68a"
+    hair: "#78350f"
+    accessory: "parka"
+    badge_color: "#a855f7"
+  default:
+    title: "Polar Researcher"
+    primary: "#0284c7"
+    secondary: "#1e293b"
+    skin: "#fed7aa"
+    hair: "#451a03"
+    accessory: "parka"
+    badge_color: "#38bdf8"
+
+companions:
+  - { id: "pet-penguin", name: "Pingu",  type: "penguin", color: "#1e293b", home_col: 17, home_row: 5 }
+  - { id: "pet-husky",   name: "Nanook", type: "dog",     color: "#cbd5e1", home_col: 12, home_row: 8 }

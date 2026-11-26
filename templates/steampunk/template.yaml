@@ -1,0 +1,169 @@
+id: steampunk
+name: "Aether-Zeppelin & Clockwork Foundry"
+description: "Victorian steampunk airship workshop where machinists calibrate brass clockwork escapements, arc cyan Tesla aether coils, program Babbage punch-card looms, and sip steam-brewed espresso."
+theme_badge: "🧪 Steampunk"
+
+theme:
+  background: "#0b0806"
+  wall_color: "#3d2718"
+  wall_trim: "#b45309"
+  floor_primary: "#221a14"
+  floor_secondary: "#281e17"
+  floor_accent: "#1c1510"
+  grid_line: "rgba(245, 158, 11, 0.05)"
+  accent_color: "#f59e0b"
+  secondary_color: "#38bdf8"
+  spawn_effect: "smoke"
+  spawn_color: "#f59e0b"
+  particles: "steam"
+  exterior: "sky"
+  working_verb: "Tinkering in the clockwork airship foundry"
+  idle_verb: "Lounging in the Victorian officer's salon"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "clockwork_foundry"
+    label: "BRASS CLOCKWORK & BABBAGE LOOM BAY"
+    color: "#f59e0b"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "aether_boiler_deck"
+    label: "TESLA AETHER COILS & STEAM BOILERS"
+    color: "#38bdf8"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "zeppelin_bridge"
+    label: "ZEPPELIN HELM & CYANOTYPE DRAFTING"
+    color: "#eab308"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "victorian_salon"
+    label: "OFFICER'S ESPRESSO & ORRERY SALON"
+    color: "#10b981"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Brass Clockwork & Babbage Loom Bay
+  - { id: "st-1",  label: "Brass Escapement Gear Lathe",      col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "steam_clockwork_forge", glow_color: "#f59e0b" }
+  - { id: "st-2",  label: "Babbage Analytical Punch-Loom",    col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "steam_babbage_loom",    glow_color: "#facc15" }
+  - { id: "st-3",  label: "Chronometer Mainspring Bench",     col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "steam_clockwork_forge", glow_color: "#ea580c" }
+  - { id: "st-4",  label: "Ada Lovelace Card Compiler",       col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "steam_babbage_loom",    glow_color: "#38bdf8" }
+  - { id: "st-5",  label: "Automaton Gyro-Heart Calibration", col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "steam_clockwork_forge", glow_color: "#eab308" }
+  - { id: "st-6",  label: "Difference Engine Cylinder Mill",  col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "steam_babbage_loom",    glow_color: "#10b981" }
+  # South Tesla Aether Coils & Steam Boilers
+  - { id: "st-7",  label: "Twin Brass Tesla Aether Coil",     col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "steam_aether_coil",     glow_color: "#38bdf8" }
+  - { id: "st-8",  label: "High-Pressure Copper Steam Boiler", col: 5, row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "steam_boiler_bench",    glow_color: "#ef4444" }
+  - { id: "st-9",  label: "Voltaic Aether Capacitor Bank",    col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "steam_aether_coil",     glow_color: "#06b6d4" }
+  - { id: "st-10", label: "Superheated Condenser Manifold",   col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "steam_boiler_bench",    glow_color: "#f97316" }
+  - { id: "st-11", label: "Arc-Light Dynamo Resonator",       col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "steam_aether_coil",     glow_color: "#818cf8" }
+  - { id: "st-12", label: "Pneumatic Brass Valve Bench",      col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "steam_boiler_bench",    glow_color: "#f59e0b" }
+  # East Zeppelin Helm & Cyanotype Drafting
+  - { id: "st-13", label: "Airship Bridge Helm & Chadburn",   col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "steam_airship_helm",    glow_color: "#facc15" }
+  - { id: "st-14", label: "Cyanotype Airship Blueprint Desk", col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "steam_drafting_desk",   glow_color: "#38bdf8" }
+  - { id: "st-15", label: "Aether-Propeller Pitch Control",   col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "steam_airship_helm",    glow_color: "#f59e0b" }
+  - { id: "st-16", label: "Ornithopter Wing Drafting Table",  col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "steam_drafting_desk",   glow_color: "#22c55e" }
+  - { id: "st-17", label: "Brass Sextant & Barometer Desk",   col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "steam_clockwork_forge", glow_color: "#eab308" }
+  - { id: "st-18", label: "Pneumatic Tube Dispatch Console",  col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "steam_babbage_loom",    glow_color: "#f97316" }
+
+waypoints:
+  - { id: "wp-espresso", col: 16, row: 3, activity: "coffee",      bubble: "☕ Pulling a steam-pressurized espresso" }
+  - { id: "wp-organ",    col: 24, row: 3, activity: "arcade",      bubble: "🎹 Playing a fugue on the steam calliope" }
+  - { id: "wp-orrery-1", col: 18, row: 6, activity: "lounge",      bubble: "⚙️ Watching the brass planetary orrery spin" }
+  - { id: "wp-orrery-2", col: 23, row: 6, activity: "lounge",      bubble: "🧐 Adjusting brass aviator goggles" }
+  - { id: "wp-gauges",   col: 13, row: 8, activity: "whiteboard",  bubble: "🌡️ Checking boiler manifold pressure" }
+  - { id: "wp-deck-1",   col: 7,  row: 8, activity: "lounge",      bubble: "🎈 Cruising above the clouds at 12,000 ft" }
+  - { id: "wp-deck-2",   col: 19, row: 8, activity: "lounge",      bubble: "🔧 Oiling the clockwork differential" }
+
+props:
+  - { id: "prop-espresso",  type: "steam_espresso_bar",   col: 15, row: 2,  w: 4, h: 1, label: "STEAM ESPRESSO", animated: true }
+  - { id: "prop-organ",     type: "steam_pipe_organ",     col: 23, row: 2,  w: 2, h: 1, label: "CALLIOPE", animated: true }
+  - { id: "prop-orrery",    type: "steam_orrery",         col: 19, row: 4,  w: 4, h: 2, label: "BRASS ORRERY", animated: true }
+  - { id: "prop-turbine",   type: "steam_turbine_core",   col: 25, row: 11, w: 2, h: 2, label: "AETHER DYNAMO", animated: true }
+  - { id: "prop-automaton", type: "steam_automaton",      col: 25, row: 14, w: 2, h: 2, label: "AUTOMATON" }
+  - { id: "prop-gauges",    type: "steam_pressure_board", col: 4,  row: 0,  w: 4, h: 1, label: "MANOMETERS" }
+
+characters:
+  claude:
+    title: "Chief Artificer Claude"
+    primary: "#b45309"
+    secondary: "#292524"
+    skin: "#fdba74"
+    hair: "#451a03"
+    accessory: "goggles"
+    badge_color: "#f59e0b"
+  agy:
+    title: "Aether Navigator Agy"
+    primary: "#0284c7"
+    secondary: "#1e293b"
+    skin: "#fde047"
+    hair: "#78350f"
+    accessory: "goggles"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Clockmaker Codex"
+    primary: "#15803d"
+    secondary: "#14532d"
+    skin: "#fed7aa"
+    hair: "#451a03"
+    accessory: "goggles"
+    badge_color: "#10b981"
+  grok:
+    title: "Boiler Engineer Grok"
+    primary: "#b91c1c"
+    secondary: "#1c1917"
+    skin: "#fecdd3"
+    hair: "#18181b"
+    accessory: "goggles"
+    badge_color: "#ef4444"
+  opencode:
+    title: "Loom Programmer OpenCode"
+    primary: "#7c3aed"
+    secondary: "#2e1065"
+    skin: "#fde68a"
+    hair: "#78350f"
+    accessory: "goggles"
+    badge_color: "#a855f7"
+  default:
+    title: "Airship Machinist"
+    primary: "#92400e"
+    secondary: "#292524"
+    skin: "#fed7aa"
+    hair: "#451a03"
+    accessory: "goggles"
+    badge_color: "#f59e0b"
+
+companions:
+  - { id: "pet-cog",  name: "Cogsworth", type: "robot", color: "#f59e0b", home_col: 18, home_row: 5 }
+  - { id: "pet-owl",  name: "Bubo",      type: "owl",   color: "#d97706", home_col: 12, home_row: 8 }

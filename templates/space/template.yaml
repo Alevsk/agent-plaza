@@ -1,0 +1,171 @@
+id: space
+name: "Aegis-IX Orbital Space Station"
+description: "Deep-space orbital research station with zero-G flight consoles, James Webb exoplanet spectrometers, pressurized bio-domes, tokamak fusion cores, and a holographic starmap observatory."
+theme_badge: "🚀 Space"
+
+theme:
+  background: "#04060e"
+  wall_color: "#22304a"
+  wall_trim: "#475f85"
+  floor_primary: "#111827"
+  floor_secondary: "#162033"
+  floor_accent: "#141e30"
+  grid_line: "rgba(56, 189, 248, 0.05)"
+  accent_color: "#38bdf8"
+  secondary_color: "#818cf8"
+  spawn_effect: "beam"
+  spawn_color: "#38bdf8"
+  particles: "stars"
+  exterior: "space"
+  working_verb: "Operating orbital station systems"
+  idle_verb: "Floating in the starmap observation lounge"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "flight_bridge"
+    label: "ORBITAL FLIGHT & ASTROMETRY BRIDGE"
+    color: "#38bdf8"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "fusion_engineering"
+    label: "TOKAMAK FUSION & PROPULSION DECK"
+    color: "#818cf8"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "xeno_biodome"
+    label: "XENOBIOLOGY & HYDROPONIC BIO-DOME"
+    color: "#10b981"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "starmap_cupola"
+    label: "CUPOLA STARMAP & ZERO-G LOUNGE"
+    color: "#c084fc"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Orbital Flight & Astrometry Bridge
+  - { id: "sp-1",  label: "Orbital Flight Command Console", col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "space_flight_console", glow_color: "#38bdf8" }
+  - { id: "sp-2",  label: "Deep-Space Webb Spectrometer",   col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "space_telescope",      glow_color: "#facc15" }
+  - { id: "sp-3",  label: "Holographic Star-Chart Dome",    col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "space_nav_dome",       glow_color: "#818cf8" }
+  - { id: "sp-4",  label: "Docking & Attitude Thruster Rig", col: 2, row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "space_flight_console", glow_color: "#06b6d4" }
+  - { id: "sp-5",  label: "Pulsar Radio Interferometer",    col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "space_telescope",      glow_color: "#a855f7" }
+  - { id: "sp-6",  label: "Lagrange Trajectory Computer",   col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "space_nav_dome",       glow_color: "#38bdf8" }
+  # South Tokamak Fusion & Propulsion Deck
+  - { id: "sp-7",  label: "Tokamak Magnetic Fusion Torus",  col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "space_fusion_core",    glow_color: "#06b6d4" }
+  - { id: "sp-8",  label: "Ion Drive Plasma Injector",      col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "space_fusion_core",    glow_color: "#38bdf8" }
+  - { id: "sp-9",  label: "Life-Support Telemetry Array",   col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "space_flight_console", glow_color: "#22c55e" }
+  - { id: "sp-10", label: "Antimatter Magnetic Trap",       col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "space_fusion_core",    glow_color: "#c084fc" }
+  - { id: "sp-11", label: "Solar Sail Shielding Matrix",    col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "space_nav_dome",       glow_color: "#f59e0b" }
+  - { id: "sp-12", label: "Sub-Space Relay Transceiver",    col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "space_flight_console", glow_color: "#38bdf8" }
+  # East Xenobiology & Hydroponic Bio-Dome
+  - { id: "sp-13", label: "Zero-G Hydroponic Terrarium",    col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "space_hydroponics",    glow_color: "#22c55e" }
+  - { id: "sp-14", label: "Xenobiology Stasis Analyzer",    col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "space_xenobiology",    glow_color: "#10b981" }
+  - { id: "sp-15", label: "Martian Algae Oxygen Incubator", col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "space_hydroponics",    glow_color: "#4ade80" }
+  - { id: "sp-16", label: "Europa Ice-Sample Microscope",   col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "space_xenobiology",    glow_color: "#06b6d4" }
+  - { id: "sp-17", label: "Bioluminescent Spore Dome",      col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "space_hydroponics",    glow_color: "#a855f7" }
+  - { id: "sp-18", label: "Astro-Genetics Sequencer",       col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "space_xenobiology",    glow_color: "#38bdf8" }
+
+waypoints:
+  - { id: "wp-synth",   col: 16, row: 3, activity: "coffee",      bubble: "🧪 Dispensing zero-G espresso pouch" }
+  - { id: "wp-starmap", col: 22, row: 3, activity: "arcade",      bubble: "🪐 Studying exoplanet orbital rings" }
+  - { id: "wp-cupola-1", col: 18, row: 6, activity: "lounge",     bubble: "🌍 Watching sunrise over Earth's limb" }
+  - { id: "wp-cupola-2", col: 24, row: 6, activity: "lounge",     bubble: "✨ Tracking the Andromeda nebula" }
+  - { id: "wp-airlock", col: 13, row: 8, activity: "whiteboard",  bubble: "👨‍🚀 Checking EVA airlock seal pressure" }
+  - { id: "wp-cor-1",   col: 7,  row: 8, activity: "lounge",      bubble: "🛰️ Calibrating gyro stabilizers" }
+  - { id: "wp-cor-2",   col: 19, row: 8, activity: "lounge",      bubble: "📡 Receiving deep-space telemetry" }
+
+props:
+  - { id: "prop-synth-bar",  type: "space_synth_bar",       col: 15, row: 2,  w: 4, h: 1, label: "SYNTH RATIONS", animated: true }
+  - { id: "prop-starmap",    type: "space_starmap",         col: 20, row: 4,  w: 4, h: 2, label: "HOLO STARMAP", animated: true }
+  - { id: "prop-gravity",    type: "space_gravity_ring",    col: 25, row: 11, w: 2, h: 2, label: "GYRO CORE", animated: true }
+  - { id: "prop-eva-pod",    type: "space_eva_pod",         col: 25, row: 14, w: 2, h: 2, label: "EVA SUIT BAY" }
+  - { id: "prop-telemetry",  type: "space_telemetry_wall",  col: 4,  row: 0,  w: 4, h: 1, label: "ORBIT TELEMETRY" }
+  - { id: "prop-scrubber-1", type: "space_oxygen_scrubber", col: 11, row: 1,  w: 1, h: 1 }
+  - { id: "prop-scrubber-2", type: "space_oxygen_scrubber", col: 26, row: 1,  w: 1, h: 1 }
+  - { id: "prop-scrubber-3", type: "space_oxygen_scrubber", col: 1,  row: 16, w: 1, h: 1 }
+
+characters:
+  claude:
+    title: "Commander Claude"
+    primary: "#0284c7"
+    secondary: "#1e293b"
+    skin: "#fdba74"
+    hair: "#78350f"
+    accessory: "astronaut"
+    badge_color: "#38bdf8"
+  agy:
+    title: "Flight Director Agy"
+    primary: "#6366f1"
+    secondary: "#1e1b4b"
+    skin: "#fde047"
+    hair: "#0f172a"
+    accessory: "astronaut"
+    badge_color: "#818cf8"
+  codex:
+    title: "Xenobiologist Codex"
+    primary: "#059669"
+    secondary: "#064e3b"
+    skin: "#fed7aa"
+    hair: "#1c1917"
+    accessory: "astronaut"
+    badge_color: "#10b981"
+  grok:
+    title: "Astrophysicist Grok"
+    primary: "#9333ea"
+    secondary: "#2e1065"
+    skin: "#fecdd3"
+    hair: "#18181b"
+    accessory: "astronaut"
+    badge_color: "#c084fc"
+  opencode:
+    title: "Payload Specialist OpenCode"
+    primary: "#ea580c"
+    secondary: "#1e293b"
+    skin: "#fde68a"
+    hair: "#78350f"
+    accessory: "astronaut"
+    badge_color: "#f97316"
+  default:
+    title: "Orbital Specialist"
+    primary: "#2563eb"
+    secondary: "#1e293b"
+    skin: "#fed7aa"
+    hair: "#0f172a"
+    accessory: "astronaut"
+    badge_color: "#38bdf8"
+
+companions:
+  - { id: "pet-rover", name: "Sojourner", type: "robot", color: "#38bdf8", home_col: 18, home_row: 5 }
+  - { id: "pet-drone", name: "Sputnik",   type: "robot", color: "#c084fc", home_col: 12, home_row: 8 }

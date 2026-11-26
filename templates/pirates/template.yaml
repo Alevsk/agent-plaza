@@ -1,0 +1,175 @@
+id: pirates
+name: "Crimson Galleon & Smuggler's Cove"
+description: "High-seas pirate galleon where agents plot treasure charts, steer the quarterdeck helm, prime 24-pounder cannons, distill spiced rum elixirs, and toast grog by the overflowing treasure chest."
+theme_badge: "🏴‍☠️ Pirates"
+
+theme:
+  background: "#070c14"
+  wall_color: "#3b2313"
+  wall_trim: "#7c4a27"
+  floor_primary: "#24170f"
+  floor_secondary: "#291a11"
+  floor_accent: "#1e130c"
+  grid_line: "rgba(250, 204, 21, 0.05)"
+  accent_color: "#f59e0b"
+  secondary_color: "#ef4444"
+  spawn_effect: "smoke"
+  spawn_color: "#facc15"
+  particles: "sea_spray"
+  exterior: "ocean"
+  working_verb: "Sailing the Crimson Galleon"
+  idle_verb: "Swigging grog on the quarterdeck"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "navigation_cabin"
+    label: "CAPTAIN'S CHART & HELM DECK"
+    color: "#f59e0b"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "gun_deck"
+    label: "BROADSIDE CANNON & POWDER BAY"
+    color: "#ef4444"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "smuggler_hold"
+    label: "SHIPWRIGHT & RUM ALCHEMY HOLD"
+    color: "#10b981"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "grog_tavern"
+    label: "SMUGGLER'S GROG & TREASURE LOUNGE"
+    color: "#eab308"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Captain's Chart & Helm Deck
+  - { id: "pr-1",  label: "Treasure Map & Compass Table",  col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "pirate_chart_table",  glow_color: "#f59e0b" }
+  - { id: "pr-2",  label: "Quarterdeck Mahogany Helm",     col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "pirate_helm",         glow_color: "#eab308" }
+  - { id: "pr-3",  label: "Celestial Sextant & Chronometer", col: 8, row: 2, seat_col: 8,  seat_row: 3,  facing: "up", style: "pirate_chronometer",  glow_color: "#38bdf8" }
+  - { id: "pr-4",  label: "Spanish Main Cartography Desk", col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "pirate_chart_table",  glow_color: "#ef4444" }
+  - { id: "pr-5",  label: "Crow's Nest Lookouts Wheel",    col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "pirate_helm",         glow_color: "#f59e0b" }
+  - { id: "pr-6",  label: "Privateer Letter-of-Marque Desk", col: 8, row: 5, seat_col: 8,  seat_row: 6,  facing: "up", style: "pirate_chronometer",  glow_color: "#22c55e" }
+  # South Broadside Cannon & Powder Bay
+  - { id: "pr-7",  label: "24-Pounder Broadside Cannon",   col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "pirate_cannon_deck",  glow_color: "#ef4444" }
+  - { id: "pr-8",  label: "Starboard Culverin Battery",    col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "pirate_cannon_deck",  glow_color: "#f97316" }
+  - { id: "pr-9",  label: "Gunner's Powder & Fuse Bench",  col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "pirate_carpenter",    glow_color: "#eab308" }
+  - { id: "pr-10", label: "Bow Chaser Swivel Cannon",      col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "pirate_cannon_deck",  glow_color: "#ef4444" }
+  - { id: "pr-11", label: "Chain-Shot Ordnance Carriage",  col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "pirate_cannon_deck",  glow_color: "#f59e0b" }
+  - { id: "pr-12", label: "Flintlock & Cutlass Armory",    col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "pirate_carpenter",    glow_color: "#38bdf8" }
+  # East Shipwright & Rum Alchemy Hold
+  - { id: "pr-13", label: "Copper Spiced-Rum Alembic",     col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "pirate_alchemy_rum",  glow_color: "#10b981" }
+  - { id: "pr-14", label: "Shipwright Hull Model Bench",   col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "pirate_carpenter",    glow_color: "#f59e0b" }
+  - { id: "pr-15", label: "Sea-Glass Elixir Still",        col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "pirate_alchemy_rum",  glow_color: "#a855f7" }
+  - { id: "pr-16", label: "Rigging & Rope Splicing Vise",  col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "pirate_carpenter",    glow_color: "#eab308" }
+  - { id: "pr-17", label: "Plunder Doubloon Assay Table",  col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "pirate_chart_table",  glow_color: "#facc15" }
+  - { id: "pr-18", label: "Kraken Venom Apothecary",       col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "pirate_alchemy_rum",  glow_color: "#06b6d4" }
+
+waypoints:
+  - { id: "wp-grog",     col: 16, row: 3, activity: "coffee",      bubble: "🍺 Pouring a tankard of spiced grog" }
+  - { id: "wp-treasure", col: 23, row: 3, activity: "arcade",      bubble: "🪙 Counting Spanish gold doubloons" }
+  - { id: "wp-chest-1",  col: 18, row: 5, activity: "lounge",      bubble: "🏴‍☠️ Singing a sea shanty!" }
+  - { id: "wp-chest-2",  col: 24, row: 5, activity: "lounge",      bubble: "🦜 Feeding crackers to the macaw" }
+  - { id: "wp-anchor",   col: 21, row: 6, activity: "watercooler", bubble: "⚓ Checking the bow anchor chain" }
+  - { id: "wp-flag",     col: 13, row: 8, activity: "whiteboard",  bubble: "🗺️ Plotting course for Tortuga" }
+  - { id: "wp-deck-1",   col: 7,  row: 8, activity: "lounge",      bubble: "🔭 Scanning the horizon for sails" }
+  - { id: "wp-deck-2",   col: 19, row: 8, activity: "lounge",      bubble: "🌊 Riding the trade-wind swells" }
+
+props:
+  - { id: "prop-grog-bar",   type: "pirate_grog_bar",       col: 15, row: 2,  w: 4, h: 1, label: "GROG TAVERN", animated: true }
+  - { id: "prop-treasure",   type: "pirate_treasure_chest", col: 21, row: 2,  w: 3, h: 1, label: "PLUNDER", animated: true }
+  - { id: "prop-anchor",     type: "pirate_anchor",         col: 16, row: 5,  w: 1, h: 1 }
+  - { id: "prop-treasure-2", type: "pirate_treasure_chest", col: 20, row: 5,  w: 3, h: 1, animated: true }
+  - { id: "prop-kraken",     type: "pirate_kraken_tank",    col: 25, row: 11, w: 2, h: 2, label: "KRAKEN TANK", animated: true }
+  - { id: "prop-armory",     type: "pirate_cannon_rack",    col: 25, row: 14, w: 2, h: 2, label: "CUTLASS RACK" }
+  - { id: "prop-jolly",      type: "pirate_jolly_roger",    col: 4,  row: 0,  w: 4, h: 1, label: "JOLLY ROGER" }
+  - { id: "prop-bell",       type: "pirate_ship_bell",      col: 10, row: 0,  w: 1, h: 1 }
+  - { id: "prop-palm-1",     type: "pirate_palm",           col: 11, row: 1,  w: 1, h: 1 }
+  - { id: "prop-palm-2",     type: "pirate_palm",           col: 26, row: 1,  w: 1, h: 1 }
+  - { id: "prop-palm-3",     type: "pirate_palm",           col: 1,  row: 16, w: 1, h: 1 }
+
+characters:
+  claude:
+    title: "Captain Claude"
+    primary: "#b91c1c"
+    secondary: "#1e1b4b"
+    skin: "#fdba74"
+    hair: "#78350f"
+    accessory: "pirate_hat"
+    badge_color: "#f59e0b"
+  agy:
+    title: "Quartermaster Agy"
+    primary: "#0284c7"
+    secondary: "#1e293b"
+    skin: "#fde047"
+    hair: "#0f172a"
+    accessory: "pirate_hat"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Master Gunner Codex"
+    primary: "#15803d"
+    secondary: "#14532d"
+    skin: "#fed7aa"
+    hair: "#451a03"
+    accessory: "pirate_hat"
+    badge_color: "#10b981"
+  grok:
+    title: "Corsair Grok"
+    primary: "#9333ea"
+    secondary: "#18181b"
+    skin: "#fecdd3"
+    hair: "#1c1917"
+    accessory: "pirate_hat"
+    badge_color: "#a855f7"
+  opencode:
+    title: "Navigator OpenCode"
+    primary: "#d97706"
+    secondary: "#292524"
+    skin: "#fde68a"
+    hair: "#78350f"
+    accessory: "pirate_hat"
+    badge_color: "#facc15"
+  default:
+    title: "Buccaneer Crew"
+    primary: "#991b1b"
+    secondary: "#1e293b"
+    skin: "#fed7aa"
+    hair: "#451a03"
+    accessory: "pirate_hat"
+    badge_color: "#f59e0b"
+
+companions:
+  - { id: "pet-parrot", name: "Captain Flint", type: "parrot", color: "#ef4444", home_col: 18, home_row: 4 }
+  - { id: "pet-cat",    name: "Barnacle",      type: "cat",    color: "#f59e0b", home_col: 12, home_row: 8 }

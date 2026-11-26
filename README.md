@@ -21,7 +21,7 @@ Inspired by [pixel-agents](https://github.com/pixel-agents-hq/pixel-agents) and 
 
 ## 🎨 Theme Showcase
 
-Agent Plaza includes **6 self-contained scene templates** that can be hot-swapped instantly from the UI or via API/config:
+Agent Plaza includes **12 self-contained scene templates** that can be hot-swapped instantly from the UI or via API/config:
 
 | 🌆 **Neon Netrunner Deck (`cyberpunk`)** | ⛩️ **Edo Samurai Dojo (`japanese`)** |
 |:---:|:---:|
@@ -42,13 +42,19 @@ Agent Plaza includes **6 self-contained scene templates** that can be hot-swappe
   - Interactive companion pets (**cats**, **dogs**, and **robots**) roam alongside agents with custom 4-directional procedural pixel sprites and playful idle behaviors.
 - **Retro 8-Bit Sound Effects Suite**:
   - High-quality retro sound effects generated with ElevenLabs for agent work typing, task completion, pet interactions (cats, dogs, robots), theme warp transitions, toasts, and UI clicks, with a master mute/unmute toggle and audio state persistence.
-- **6 Thematic Scene Templates**:
+- **12 Thematic Scene Templates**:
   - 🏢 **Retro Startup HQ (`office`)** — Standing desks, ultrawide monitors, espresso bar, server rack, and beanbag lounge.
   - 🤠 **Wild West Saloon & Forge (`cowboys`)** — Anvil blacksmith forge, horse grooming stall, bounty board, telegraph desk, and campfire corral.
   - 🌆 **Neon Netrunner Deck (`cyberpunk`)** — Neural dive chairs, holographic rigs, Arasaka mainframes, and synth-ramen neon lounge.
   - ⛩️ **Edo Samurai Dojo (`japanese`)** — Shodo calligraphy desks, katana sword-polishing benches, bamboo scroll racks, and raked Zen rock garden with koi pond.
   - 🏰 **Arcane Guild Hall (`medieval`)** — Manuscript illumination desks, bubbling alchemy labs, runic scrying altars, mana obelisks, and archery yard.
   - 🎖️ **Allied Command Bunker (`ww2`)** — Enigma cipher machines, radar oscilloscopes, Morse telegraph stations, and Colossus tube computers.
+  - 🏴‍☠️ **Crimson Galleon & Smuggler's Cove (`pirates`)** — Treasure chart tables, quarterdeck helm wheels, 24-pounder broadside cannons, spiced rum alembics, and overflowing plunder chests.
+  - 🚀 **Aegis-IX Orbital Space Station (`space`)** — Flight command consoles, James Webb exoplanet spectrometers, zero-G hydroponic bio-domes, tokamak fusion cores, and holographic starmaps.
+  - 🌲 **Sylvan World-Tree & Elven Grove (`forest`)** — Starlight moonwells, bioluminescent mushroom looms, druidic runestones, golden bow-harps, and fairy ponds with fireflies.
+  - 🏛️ **Pharaoh's Pyramid & Sun-Disk Temple (`egypt`)** — Royal papyrus scriptoriums, levitating Aten sun-disk altars, lapis-lazuli jewelry forges, Dendera star-disks, and Nile lotus oasis pools.
+  - 🧪 **Aether-Zeppelin & Clockwork Foundry (`steampunk`)** — Brass clockwork escapement lathes, crackling Tesla aether coils, Babbage analytical punch-looms, steam boilers, and planetary orreries.
+  - ❄️ **Polar Aurora Outpost & Ice Core Lab (`arctic`)** — Vostok ice-core laser scanners, aurora borealis magnetometers, sub-glacial seismographs, cryo-botany incubators, and steaming geothermal hot springs.
 - **Smart Camera Director Modes**:
   - ✋ **Free Hand**: Pan and zoom freely across the canvas.
   - 🎯 **Follow Agent**: Smooth spring-damped camera tracking following the active working agent.

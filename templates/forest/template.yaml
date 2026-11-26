@@ -1,0 +1,172 @@
+id: forest
+name: "Sylvan World-Tree & Elven Grove"
+description: "Moonlit elven sanctuary inside the living World-Tree where agents scry starlight moonwells, weave bioluminescent mushroom spores, brew sun-dew nectar, and commune around the fairy pond."
+theme_badge: "🌲 Forest"
+
+theme:
+  background: "#06100b"
+  wall_color: "#2c3e28"
+  wall_trim: "#5c7a48"
+  floor_primary: "#17231b"
+  floor_secondary: "#1c2b21"
+  floor_accent: "#141f18"
+  grid_line: "rgba(52, 211, 153, 0.05)"
+  accent_color: "#34d399"
+  secondary_color: "#facc15"
+  spawn_effect: "portal"
+  spawn_color: "#34d399"
+  particles: "fireflies"
+  exterior: "forest"
+  working_verb: "Channelling sylvan World-Tree lore"
+  idle_verb: "Resting in the moonlit fairy glade"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "moonwell_sanctum"
+    label: "STARLIGHT MOONWELL & SCRYING GROVE"
+    color: "#34d399"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "spore_botany"
+    label: "BIOLUMINESCENT MYCOLOGY & HERBHOLLOW"
+    color: "#22c55e"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "runic_hearth"
+    label: "DRUIDIC RUNESTONES & HARP BOWER"
+    color: "#facc15"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "fairy_glade"
+    label: "WORLD-TREE GLADE & FAIRY POND"
+    color: "#2dd4bf"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North Starlight Moonwell & Scrying Grove
+  - { id: "fr-1",  label: "Silver-Stone Starlight Moonwell", col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "forest_moonwell",         glow_color: "#38bdf8" }
+  - { id: "fr-2",  label: "Elven Leaf-Scroll Scriptorium",   col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "forest_leaf_scriptorium", glow_color: "#34d399" }
+  - { id: "fr-3",  label: "Celestial Dew Scrying Basin",     col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "forest_moonwell",         glow_color: "#2dd4bf" }
+  - { id: "fr-4",  label: "Golden Bow-Harp Resonance Desk",  col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "forest_crystal_harp",     glow_color: "#facc15" }
+  - { id: "fr-5",  label: "Elder Bark Chronicle Lectern",    col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "forest_leaf_scriptorium", glow_color: "#4ade80" }
+  - { id: "fr-6",  label: "Starlight Song-Weaving Harp",     col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "forest_crystal_harp",     glow_color: "#34d399" }
+  # South Bioluminescent Mycology & Herbhollow
+  - { id: "fr-7",  label: "Azure Spore-Silk Mushroom Loom",  col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "forest_mushroom_loom",    glow_color: "#06b6d4" }
+  - { id: "fr-8",  label: "Living-Root Herbalist Mortar",    col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "forest_herbalist",        glow_color: "#22c55e" }
+  - { id: "fr-9",  label: "Fey-Cap Mycelium Network Bench",  col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "forest_mushroom_loom",    glow_color: "#ec4899" }
+  - { id: "fr-10", label: "Sun-Dew Nectar Apothecary",       col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "forest_herbalist",        glow_color: "#facc15" }
+  - { id: "fr-11", label: "Luminous Moss Grafting Table",    col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "forest_mushroom_loom",    glow_color: "#34d399" }
+  - { id: "fr-12", label: "Moon-Orchid Distillation Bench",  col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "forest_herbalist",        glow_color: "#a855f7" }
+  # East Druidic Runestones & Harp Bower
+  - { id: "fr-13", label: "Druidic Ogham Standing Stones",   col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "forest_runestone",        glow_color: "#4ade80" }
+  - { id: "fr-14", label: "Sylvan Ley-Line Pillar Altar",    col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "forest_runestone",        glow_color: "#34d399" }
+  - { id: "fr-15", label: "Heartwood Cartography Table",     col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "forest_leaf_scriptorium", glow_color: "#facc15" }
+  - { id: "fr-16", label: "Emerald Solstice Monolith",       col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "forest_runestone",        glow_color: "#10b981" }
+  - { id: "fr-17", label: "Wind-Chime Harmonic Harp",        col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "forest_crystal_harp",     glow_color: "#38bdf8" }
+  - { id: "fr-18", label: "Astral Canopy Scrying Pool",      col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "forest_moonwell",         glow_color: "#a7f3d0" }
+
+waypoints:
+  - { id: "wp-nectar",  col: 16, row: 3, activity: "coffee",      bubble: "🍯 Sipping golden elderflower nectar" }
+  - { id: "wp-tree",    col: 24, row: 3, activity: "bookshelf",   bubble: "🌳 Listening to the World-Tree whisper" }
+  - { id: "wp-pond-1",  col: 18, row: 6, activity: "lounge",      bubble: "🧚 Watching fireflies dance over the pond" }
+  - { id: "wp-pond-2",  col: 23, row: 6, activity: "lounge",      bubble: "🍃 Meditating by the moonlit lilies" }
+  - { id: "wp-glade-1", col: 13, row: 8, activity: "whiteboard",  bubble: "🌿 Reading ancient sylvan leaf-runes" }
+  - { id: "wp-path-1",  col: 7,  row: 8, activity: "lounge",      bubble: "🦌 Following starlit forest fireflies" }
+  - { id: "wp-path-2",  col: 19, row: 8, activity: "lounge",      bubble: "🎶 Strumming a gentle elven melody" }
+
+props:
+  - { id: "prop-nectar",     type: "forest_nectar_bar",      col: 15, row: 2,  w: 4, h: 1, label: "NECTAR BAR", animated: true }
+  - { id: "prop-world-tree", type: "forest_world_tree",      col: 23, row: 2,  w: 2, h: 2, label: "WORLD TREE", animated: true }
+  - { id: "prop-fairy-pond", type: "forest_fairy_pond",      col: 19, row: 4,  w: 4, h: 2, label: "FAIRY POND", animated: true }
+  - { id: "prop-crystals",   type: "forest_crystal_cluster", col: 25, row: 11, w: 2, h: 2, label: "LEY CRYSTALS", animated: true }
+  - { id: "prop-scrolls",    type: "forest_scroll_arch",     col: 25, row: 14, w: 2, h: 2, label: "ELVEN LORE" }
+  - { id: "prop-banner",     type: "forest_elven_banner",    col: 4,  row: 0,  w: 4, h: 1, label: "SYLVAN GROVE" }
+  - { id: "prop-shroom-1",   type: "forest_glow_shroom",     col: 11, row: 1,  w: 1, h: 1 }
+  - { id: "prop-shroom-2",   type: "forest_glow_shroom",     col: 26, row: 1,  w: 1, h: 1 }
+  - { id: "prop-shroom-3",   type: "forest_glow_shroom",     col: 1,  row: 16, w: 1, h: 1 }
+
+characters:
+  claude:
+    title: "Archdruid Claude"
+    primary: "#15803d"
+    secondary: "#14532d"
+    skin: "#fef3c7"
+    hair: "#fde047"
+    accessory: "elf_ears"
+    badge_color: "#34d399"
+  agy:
+    title: "Star-Seer Agy"
+    primary: "#0d9488"
+    secondary: "#134e4a"
+    skin: "#fde68a"
+    hair: "#e2e8f0"
+    accessory: "elf_ears"
+    badge_color: "#2dd4bf"
+  codex:
+    title: "Lorekeeper Codex"
+    primary: "#65a30d"
+    secondary: "#365314"
+    skin: "#fed7aa"
+    hair: "#a16207"
+    accessory: "elf_ears"
+    badge_color: "#4ade80"
+  grok:
+    title: "Warden Grok"
+    primary: "#047857"
+    secondary: "#064e3b"
+    skin: "#fecdd3"
+    hair: "#d97706"
+    accessory: "elf_ears"
+    badge_color: "#10b981"
+  opencode:
+    title: "Spellweaver OpenCode"
+    primary: "#7c3aed"
+    secondary: "#14532d"
+    skin: "#fef3c7"
+    hair: "#facc15"
+    accessory: "elf_ears"
+    badge_color: "#a855f7"
+  default:
+    title: "Sylvan Ranger"
+    primary: "#16a34a"
+    secondary: "#14532d"
+    skin: "#fef3c7"
+    hair: "#fde047"
+    accessory: "elf_ears"
+    badge_color: "#34d399"
+
+companions:
+  - { id: "pet-owl", name: "Sylph",   type: "owl", color: "#a8a29e", home_col: 18, home_row: 5 }
+  - { id: "pet-cat", name: "Bramble", type: "cat", color: "#34d399", home_col: 12, home_row: 8 }

@@ -119,7 +119,8 @@ type TemplateTheme struct {
 	SecondaryColor string `json:"secondary_color" yaml:"secondary_color"`
 	SpawnEffect    string `json:"spawn_effect" yaml:"spawn_effect"` // "matrix", "portal", "beam", "smoke"
 	SpawnColor     string `json:"spawn_color" yaml:"spawn_color"`
-	Particles      string `json:"particles" yaml:"particles"` // "dust", "neon", "embers", "leaves"
+	Particles      string `json:"particles" yaml:"particles"`             // "dust", "neon", "embers", "leaves", "snow", "fireflies", "stars", "sand", "steam", "sea_spray"
+	Exterior       string `json:"exterior,omitempty" yaml:"exterior,omitempty"` // "ocean", "space", "forest", "sand", "sky", "snow"
 	WorkingVerb    string `json:"working_verb" yaml:"working_verb"`
 	IdleVerb       string `json:"idle_verb" yaml:"idle_verb"`
 }

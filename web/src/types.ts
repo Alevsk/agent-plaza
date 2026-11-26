@@ -76,7 +76,8 @@ export interface TemplateTheme {
   secondary_color: string;
   spawn_effect: 'matrix' | 'beam' | 'portal' | 'smoke' | string;
   spawn_color: string;
-  particles: 'dust' | 'neon' | 'embers' | 'leaves' | string;
+  particles: 'dust' | 'neon' | 'embers' | 'leaves' | 'snow' | 'fireflies' | 'stars' | 'sand' | 'steam' | 'sea_spray' | string;
+  exterior?: 'ocean' | 'space' | 'forest' | 'sand' | 'sky' | 'snow' | string;
   working_verb: string;
   idle_verb: string;
 }

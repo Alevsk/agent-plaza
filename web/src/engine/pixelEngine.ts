@@ -9,11 +9,22 @@ import {
   drawBevelBox,
   drawDitherRect,
   drawDropShadow,
+  drawHiBitDeskBase,
+  drawHiBitMonitor,
   getOrBuildHiBitBackdrop,
   getRamp,
+  pixelHash,
   type PointLight,
   type PxFn,
 } from './hibitPalette';
+import {
+  drawSceneChair,
+  drawSceneProp,
+  drawSceneWorkstation,
+  getSceneBackdropHooks,
+  getScenePropLight,
+  getSceneWorkstationLight,
+} from './scenes';
 
 export const TILE_SIZE = 16;
 
@@ -217,12 +228,15 @@ export class PixelSceneWorld {
     const W = this.template.grid.cols * TILE_SIZE;
     const H = this.template.grid.rows * TILE_SIZE;
     const mode = this.template.theme.particles || 'dust';
-    const count = 34;
+    const count = mode === 'snow' || mode === 'fireflies' || mode === 'stars' ? 44 : 36;
 
     for (let i = 0; i < count; i++) {
       let color = '#fef9c3';
       let vy = -3 - Math.random() * 4;
       let vx = (Math.random() - 0.5) * 4;
+      let size = i % 5 === 0 ? 2 : 1;
+      let alpha = 0.25 + Math.random() * 0.5;
+
       if (mode === 'neon') {
         color = i % 2 === 0 ? '#00f0ff' : '#ff007f';
         vy = 10 + Math.random() * 14;
@@ -234,14 +248,46 @@ export class PixelSceneWorld {
         color = i % 2 === 0 ? '#fbcfe8' : '#f472b6';
         vy = 5 + Math.random() * 5;
         vx = 4 + Math.random() * 4;
+      } else if (mode === 'snow') {
+        color = i % 3 === 0 ? '#ffffff' : '#bae6fd';
+        vy = 7 + Math.random() * 8;
+        vx = 3 + Math.random() * 5;
+        size = i % 4 === 0 ? 2 : 1;
+        alpha = 0.4 + Math.random() * 0.45;
+      } else if (mode === 'fireflies') {
+        color = i % 3 === 0 ? '#fde047' : i % 2 === 0 ? '#4ade80' : '#34d399';
+        vy = (Math.random() - 0.5) * 6;
+        vx = (Math.random() - 0.5) * 6;
+        size = i % 3 === 0 ? 2 : 1;
+        alpha = 0.45 + Math.random() * 0.45;
+      } else if (mode === 'stars') {
+        color = i % 3 === 0 ? '#38bdf8' : i % 2 === 0 ? '#c084fc' : '#ffffff';
+        vy = (Math.random() - 0.5) * 2.5;
+        vx = (Math.random() - 0.5) * 2.5;
+        alpha = 0.35 + Math.random() * 0.5;
+      } else if (mode === 'sand') {
+        color = i % 2 === 0 ? '#fde68a' : '#f59e0b';
+        vy = 1 + Math.random() * 3;
+        vx = 8 + Math.random() * 10;
+        alpha = 0.25 + Math.random() * 0.35;
+      } else if (mode === 'steam') {
+        color = i % 3 === 0 ? '#f59e0b' : '#e2e8f0';
+        vy = -7 - Math.random() * 7;
+        vx = (Math.random() - 0.5) * 5;
+        size = i % 3 === 0 ? 2 : 1;
+      } else if (mode === 'sea_spray') {
+        color = i % 2 === 0 ? '#bae6fd' : '#fef3c7';
+        vy = -2 + Math.random() * 4;
+        vx = 6 + Math.random() * 8;
       }
+
       this.particles.push({
         x: Math.random() * W,
         y: Math.random() * H,
         vx,
         vy,
-        size: i % 5 === 0 ? 2 : 1,
-        alpha: 0.25 + Math.random() * 0.5,
+        size,
+        alpha,
         color,
         phase: Math.random() * Math.PI * 2,
       });
@@ -634,8 +680,13 @@ export class PixelSceneWorld {
     if (this.template) {
       const W = this.template.grid.cols * TILE_SIZE;
       const H = this.template.grid.rows * TILE_SIZE;
+      const pMode = this.template.theme.particles || 'dust';
       for (const p of this.particles) {
-        p.x += p.vx * dt;
+        const sway =
+          pMode === 'fireflies' || pMode === 'snow' || pMode === 'leaves'
+            ? Math.sin(this.globalTime * 2.2 + p.phase) * 5
+            : 0;
+        p.x += (p.vx + sway) * dt;
         p.y += p.vy * dt;
         if (p.y < 0) p.y = H;
         if (p.y > H) p.y = 0;
@@ -682,7 +733,7 @@ export function renderPixelWorld(
   };
 
   // 1. Blit Cached Hi-Bit Architectural Tilemap (Floors, 2.5D Walls, Baseboards, Wall AO Shadows)
-  const backdrop = getOrBuildHiBitBackdrop(tpl, TILE_SIZE);
+  const backdrop = getOrBuildHiBitBackdrop(tpl, TILE_SIZE, getSceneBackdropHooks(tpl.id));
   if (backdrop) {
     ctx.drawImage(
       backdrop,
@@ -695,6 +746,38 @@ export function renderPixelWorld(
       Math.round(backdrop.width * zoom),
       Math.round(backdrop.height * zoom),
     );
+  }
+
+  // 1b. Animated Exterior Void Details ('V' tiles: ocean wave crests, twinkling deep-space stars, drifting clouds)
+  if (tpl.theme.exterior) {
+    const ext = tpl.theme.exterior;
+    const extTick = Math.floor(world.globalTime * 4);
+    for (let r = 0; r < tpl.grid.rows; r++) {
+      const line = tpl.grid.layout[r] || '';
+      for (let c = 0; c < tpl.grid.cols; c++) {
+        if (line[c] !== 'V') continue;
+        const tx = c * TILE_SIZE;
+        const ty = r * TILE_SIZE;
+        if (ext === 'ocean') {
+          const waveShift = (extTick + c * 3 + r * 5) % 12;
+          px(tx + waveShift, ty + 6, 4, 1, '#38bdf8');
+          if ((c + r + extTick) % 5 === 0) {
+            px(tx + ((waveShift + 5) % 13), ty + 12, 3, 1, '#bae6fd');
+          }
+        } else if (ext === 'space') {
+          if (pixelHash(c, r, 41) < 0.45 && (extTick + c + r) % 4 === 0) {
+            const sx = Math.floor(pixelHash(c, r, 42) * 14) + 1;
+            const sy = Math.floor(pixelHash(c, r, 43) * 14) + 1;
+            px(tx + sx, ty + sy, 1, 1, '#ffffff');
+          }
+        } else if (ext === 'sky') {
+          const drift = (extTick + c * 4) % 14;
+          if ((c + r) % 3 === 0) {
+            px(tx + drift, ty + 5, 4, 1, 'rgba(226, 232, 240, 0.25)');
+          }
+        }
+      }
+    }
   }
 
   // 2. Collect Dynamic Emissive Point Lights (Hyper Light Drifter / Dungeon of the Endless lighting)
@@ -712,6 +795,12 @@ export function renderPixelWorld(
 
     const wx = (ws.col + 1) * TILE_SIZE;
     const wy = (ws.row + 0.5) * TILE_SIZE;
+
+    const sceneLight = getSceneWorkstationLight(ws, wx, wy, isWorking, flicker);
+    if (sceneLight) {
+      lights.push(sceneLight);
+      continue;
+    }
 
     if (ws.style === 'cowboy_blacksmith' || ws.style === 'medieval_blacksmith' || ws.style === 'dojo_katana_forge') {
       lights.push({
@@ -743,6 +832,11 @@ export function renderPixelWorld(
   for (const prop of tpl.props || []) {
     const cx = (prop.col + (prop.w || 1) / 2) * TILE_SIZE;
     const cy = (prop.row + (prop.h || 1) / 2) * TILE_SIZE;
+    const scenePropLight = getScenePropLight(prop, cx, cy, flicker);
+    if (scenePropLight) {
+      lights.push(scenePropLight);
+      continue;
+    }
     if (prop.type === 'campfire') {
       lights.push({ x: cx, y: cy, radius: 42, color: '#f97316', intensity: 0.34 + flicker });
     } else if (prop.type === 'holo_table' || prop.type === 'cryo_tank' || prop.type === 'holo_pod' || prop.type === 'cyber_mainframe') {
@@ -939,6 +1033,22 @@ export function renderPixelWorld(
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${(l.intensity * 0.28).toFixed(3)})`;
     px(l.x - coreRad, l.y - Math.round(coreRad * 0.7), coreRad * 2, Math.round(coreRad * 1.4));
   }
+
+  // Thematic Atmospheric Light Overlays (Aurora Borealis ribbons, Sylvan Sunbeams, Golden Solar Rays)
+  if (tpl.id === 'arctic') {
+    const wave = Math.sin(world.globalTime * 1.6) * 8;
+    ctx.fillStyle = 'rgba(45, 212, 191, 0.045)';
+    px(16, 12 + Math.round(wave), tpl.grid.cols * TILE_SIZE - 32, 22);
+    ctx.fillStyle = 'rgba(168, 85, 247, 0.035)';
+    px(24, 28 - Math.round(wave * 0.7), tpl.grid.cols * TILE_SIZE - 48, 18);
+  } else if (tpl.id === 'forest' || tpl.id === 'egypt') {
+    const beamColor = tpl.id === 'forest' ? 'rgba(167, 243, 208, 0.04)' : 'rgba(253, 224, 71, 0.04)';
+    ctx.fillStyle = beamColor;
+    for (let b = 0; b < 3; b++) {
+      const bx = 56 + b * 128 + Math.round(Math.sin(world.globalTime + b) * 4);
+      px(bx, 0, 22, tpl.grid.rows * TILE_SIZE);
+    }
+  }
   ctx.restore();
 
   // 7. Ambient Particles with Hi-Bit Dual-Pixel Halo
@@ -970,6 +1080,9 @@ type DrawImgFn = (
 ) => void;
 
 function drawChair(px: PxFn, x: number, y: number, accent: string, style = 'desk_pc') {
+  if (drawSceneChair(px, x, y, accent, style)) {
+    return;
+  }
   const accRamp = getRamp(accent || '#38bdf8');
 
   // 1. Standing / Craft Floor Mats (Theme-Adapted — no generic office mat!)
@@ -1061,85 +1174,6 @@ function drawChair(px: PxFn, x: number, y: number, accent: string, style = 'desk
   px(x + 13, y + 7, 1, 3, '#1e293b');
 }
 
-// Helper for drawing a Hi-Bit monitor with bezel, stand, screen gradient, and syntax-highlighted code
-function drawHiBitMonitor(
-  px: PxFn,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  active: boolean,
-  glow: string,
-  tick: number,
-  bezelHex = '#1e293b',
-) {
-  const bezel = getRamp(bezelHex);
-  const glowRamp = getRamp(glow);
-
-  // Stand neck & base
-  const cx = x + Math.floor(w / 2);
-  px(cx - 2, y + h, 4, 2, bezel.outline);
-  px(cx - 1, y + h, 2, 1, bezel.light);
-  px(cx - 3, y + h + 1, 6, 1, bezel.shadow);
-
-  // Outer Bezel with Sel-Out
-  drawBevelBox(px, x, y, w, h, bezelHex);
-
-  // Screen Canvas
-  const sx = x + 2;
-  const sy = y + 2;
-  const sw = Math.max(2, w - 4);
-  const sh = Math.max(2, h - 4);
-
-  if (active) {
-    px(sx, sy, sw, sh, '#091526');
-    // Subtle top screen reflection
-    px(sx, sy, sw, 1, '#162c46');
-    // Scrolling syntax-highlighted pixel lines
-    const lineCount = Math.max(1, Math.floor(sh / 2));
-    for (let ln = 0; ln < lineCount; ln++) {
-      const ly = sy + ln * 2;
-      if (ly >= sy + sh) break;
-      const len = Math.max(2, ((tick + ln * 3) % (sw - 2)) + 2);
-      const col =
-        ln % 3 === 0 ? glowRamp.spec : ln % 3 === 1 ? '#4ade80' : '#f472b6';
-      px(sx + 1, ly, Math.min(sw - 2, len), 1, col);
-    }
-    // Power LED
-    px(x + w - 2, y + h - 1, 1, 1, '#4ade80');
-  } else {
-    px(sx, sy, sw, sh, '#0f172a');
-    px(sx + 1, sy + 1, Math.min(3, sw - 1), 1, '#334155'); // diagonal glass glint
-    px(x + w - 2, y + h - 1, 1, 1, '#f59e0b'); // standby amber LED
-  }
-}
-
-// Helper for drawing a 3D Hi-Bit Desk Base (32x16) with legs, shadow, wood/metal bevel, and surface details
-function drawHiBitDeskBase(
-  px: PxFn,
-  x: number,
-  y: number,
-  topHex: string,
-  frontHex: string,
-  trimHex?: string,
-) {
-  drawDropShadow(px, x + 1, y + 12, 30, 4);
-  const legRamp = getRamp(frontHex);
-  // Left & Right Legs with sel-out
-  px(x + 2, y + 12, 3, 4, legRamp.outline);
-  px(x + 3, y + 12, 1, 3, legRamp.shadow);
-  px(x + 27, y + 12, 3, 4, legRamp.outline);
-  px(x + 28, y + 12, 1, 3, legRamp.shadow);
-
-  // Desk Front Modesty Panel
-  drawBevelBox(px, x + 1, y + 5, 30, 8, frontHex);
-  // Desk Top Surface Slab
-  drawBevelBox(px, x, y + 2, 32, 5, topHex);
-  if (trimHex) {
-    px(x + 1, y + 6, 30, 1, getRamp(trimHex).spec);
-  }
-}
-
 function drawWorkstation(
   px: PxFn,
   drawImg: DrawImgFn,
@@ -1156,6 +1190,10 @@ function drawWorkstation(
   if (spriteImg) {
     drawDropShadow(px, x + 1, y + 12, 30, 4);
     drawImg(spriteImg, x, y - 4, 32, 20);
+    return;
+  }
+
+  if (drawSceneWorkstation(px, ws, active, time, tick)) {
     return;
   }
 
@@ -1693,6 +1731,10 @@ function drawProp(
     return;
   }
 
+  if (drawSceneProp(px, prop, time, tick)) {
+    return;
+  }
+
   switch (prop.type) {
     case 'ping_pong': {
       drawDropShadow(px, x + 3, y + h - 4, w - 6, 4);
@@ -2174,6 +2216,50 @@ function drawCompanion(
 
   if (spriteImg) {
     drawImg(spriteImg, x, y - bob, 12, 12);
+  } else if (pet.type === 'parrot') {
+    // Hi-Bit Pirate Scarlet Macaw with Flapping Wings & Golden Beak
+    const flap = Math.floor(time * 9) % 2;
+    drawBevelBox(px, x + 2, y + 3 - bob, 8, 6, pet.color || '#ef4444');
+    px(x + 1, y + 4 - bob - flap, 2, 4, '#2563eb'); // blue wingtip L
+    px(x + 9, y + 4 - bob - flap, 2, 4, '#facc15'); // gold wingtip R
+    drawBevelBox(px, x + 3, y - bob, 6, 4, pet.color || '#ef4444');
+    if (pet.dir !== 'up') {
+      px(x + 4, y + 1 - bob, 1, 1, '#090d16');
+      px(x + 7, y + 1 - bob, 1, 1, '#090d16');
+      px(x + 5, y + 2 - bob, 2, 2, '#facc15'); // curved golden beak
+    }
+    px(x + 5, y + 9 - bob, 2, 3, '#2563eb'); // long macaw tail feather
+  } else if (pet.type === 'owl') {
+    // Hi-Bit Mystical Owl with Tufted Ears & Glowing Amber Eyes
+    const flap = isMoving ? pet.frame : 0;
+    drawBevelBox(px, x + 2, y + 3 - bob, 8, 6, pet.color || '#a8a29e');
+    px(x + 4, y + 5 - bob, 4, 3, '#f5f5f4'); // speckled breast
+    drawBevelBox(px, x + 2, y - bob, 8, 4, pet.color || '#a8a29e');
+    px(x + 2, y - 1 - bob, 2, 1, ramp.outline); // ear tufts
+    px(x + 8, y - 1 - bob, 2, 1, ramp.outline);
+    if (pet.dir !== 'up') {
+      px(x + 3, y + 1 - bob, 2, 2, '#facc15');
+      px(x + 7, y + 1 - bob, 2, 2, '#facc15');
+      px(x + 4, y + 1 - bob, 1, 1, '#090d16');
+      px(x + 7, y + 1 - bob, 1, 1, '#090d16');
+      px(x + 5, y + 2 - bob, 2, 1, '#f97316');
+    }
+    px(x + 1, y + 4 - bob - flap, 1, 4, ramp.shadow);
+    px(x + 10, y + 4 - bob - flap, 1, 4, ramp.shadow);
+  } else if (pet.type === 'penguin') {
+    // Hi-Bit Emperor Penguin with Tuxedo Belly & Orange Flippers
+    drawBevelBox(px, x + 2, y + 2 - bob, 8, 8, '#1e293b');
+    if (pet.dir !== 'up') {
+      px(x + 4, y + 4 - bob, 4, 5, '#f8fafc');
+      px(x + 4, y + 4 - bob, 4, 1, '#fde047'); // golden emperor neckband
+      px(x + 4, y + 2 - bob, 1, 1, '#ffffff');
+      px(x + 7, y + 2 - bob, 1, 1, '#ffffff');
+      px(x + 5, y + 3 - bob, 2, 1, '#f97316'); // beak
+    }
+    const stepL = isMoving && pet.frame === 0 ? 1 : 0;
+    const stepR = isMoving && pet.frame === 1 ? 1 : 0;
+    px(x + 3, y + 10 - stepL, 2, 1, '#f97316');
+    px(x + 7, y + 10 - stepR, 2, 1, '#f97316');
   } else if (pet.type === 'robot') {
     // Hi-Bit Cybernetic Drone / Robot Pet with 4 directional sprites
     drawBevelBox(px, x + 1, y + 2 - bob, 10, 7, pet.color);
@@ -2569,6 +2655,70 @@ function drawCharacterSprite(
       drawBevelBox(px, bx + 2, by - 3, 12, 4, '#3f6212');
       px(bx + 7, by - 2, 2, 1, '#facc15');
       break;
+    case 'pirate_hat':
+      // Captain's Tricorne Hat with Gold Trim & Crimson Plume
+      drawBevelBox(px, bx, by - 2, 16, 3, '#1e1b4b');
+      drawBevelBox(px, bx + 3, by - 5, 10, 3, '#312e81');
+      px(bx + 3, by - 2, 10, 1, '#facc15');
+      px(bx + 12, by - 6, 3, 3, '#ef4444'); // crimson plume
+      break;
+    case 'astronaut':
+      // Domed EVA Space Helmet with Gold/Cyan Reflective Visor
+      drawBevelBox(px, bx + 1, by - 2, 14, 8, '#f8fafc');
+      if (ch.dir !== 'up') {
+        px(bx + 3, by, 10, 4, '#0284c7');
+        px(bx + 4, by + 1, 4, 2, '#38bdf8');
+        px(bx + 5, by + 1, 2, 1, '#ffffff');
+      }
+      break;
+    case 'elf_ears':
+      // Pointed Sylvan Elven Ears & Golden Woodland Circlet
+      px(bx + 1, by + 2, 2, 2, skin.light);
+      px(bx + 13, by + 2, 2, 2, skin.base);
+      px(bx + 3, by, 10, 1, '#facc15');
+      px(bx + 7, by - 1, 2, 2, '#34d399'); // emerald crown gem
+      break;
+    case 'pharaoh':
+      // Royal Blue & Gold Striped Nemes Headdress with Golden Uraeus Cobra
+      drawBevelBox(px, bx + 1, by - 3, 14, 5, '#1e3a8a');
+      px(bx + 2, by - 2, 12, 1, '#facc15');
+      px(bx + 2, by, 12, 1, '#facc15');
+      px(bx + 1, by + 1, 2, 5, '#facc15'); // left lappet
+      px(bx + 13, by + 1, 2, 5, '#facc15'); // right lappet
+      px(bx + 7, by - 4, 2, 3, '#fef08a'); // cobra crest
+      break;
+    case 'goggles':
+      // Victorian Brass Aviator Goggles & Top-Hat Crown
+      drawBevelBox(px, bx + 2, by - 5, 12, 5, '#451a03');
+      px(bx + 3, by - 2, 10, 2, '#d97706');
+      px(bx + 4, by - 2, 3, 2, '#38bdf8'); // left lens
+      px(bx + 9, by - 2, 3, 2, '#38bdf8'); // right lens
+      break;
+    case 'parka':
+      // Fur-Trimmed Thermal Polar Expedition Hood
+      drawBevelBox(px, bx + 1, by - 3, 14, 4, style.primary || '#ea580c');
+      px(bx + 2, by - 1, 12, 1, '#f8fafc'); // white fur trim
+      px(bx + 1, by, 2, 6, '#e2e8f0');
+      px(bx + 13, by, 2, 6, '#e2e8f0');
+      break;
+  }
+
+  // 6. EXPRESSIVE FLOATING PIXEL EMOTES (Working Sparks / Idle Musical Notes)
+  const emoteCycle = Math.floor(time * 2 + ch.hueOffset) % 7;
+  if (ch.animState === 'type' && emoteCycle < 3) {
+    const ey = by - 8 - (Math.floor(time * 6) % 2);
+    const ex = bx + 12;
+    // Crisp Hi-Bit Lightning / Idea Spark Pixel Icon
+    px(ex, ey, 2, 1, '#fef08a');
+    px(ex - 1, ey + 1, 3, 1, '#facc15');
+    px(ex, ey + 2, 2, 1, '#f97316');
+  } else if (ch.animState === 'idle' && emoteCycle === 0) {
+    const ey = by - 7 - (Math.floor(time * 4) % 2);
+    const ex = bx + 13;
+    // Floating Pixel Music Note / Lounge Sparkle
+    px(ex, ey, 3, 1, '#38bdf8');
+    px(ex, ey, 1, 3, '#38bdf8');
+    px(ex + 2, ey, 1, 3, '#38bdf8');
   }
 }
 

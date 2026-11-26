@@ -1,0 +1,172 @@
+id: egypt
+name: "Pharaoh's Pyramid & Sun-Disk Temple"
+description: "Golden limestone pyramid sanctuary where royal scribes illuminate Nile papyrus scrolls, channel the levitating Aten sun-disk, craft lapis-lazuli collars, chart constellations, and rest beside the lotus oasis."
+theme_badge: "🏛️ Egypt"
+
+theme:
+  background: "#0d0905"
+  wall_color: "#4d351b"
+  wall_trim: "#9a6b32"
+  floor_primary: "#241b12"
+  floor_secondary: "#2a2016"
+  floor_accent: "#1e160f"
+  grid_line: "rgba(250, 204, 21, 0.05)"
+  accent_color: "#facc15"
+  secondary_color: "#38bdf8"
+  spawn_effect: "beam"
+  spawn_color: "#facc15"
+  particles: "sand"
+  exterior: "sand"
+  working_verb: "Inscribing sacred pyramid hieroglyphs"
+  idle_verb: "Cooling off by the sacred Nile oasis"
+
+grid:
+  cols: 28
+  rows: 18
+  tile_size: 16
+  layout:
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCCWWLLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "WCCCCCCCCCCC..LLLLLLLLLLLLLW"
+    - "W..........................W"
+    - "W..........................W"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCC..CCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WCCCCCCCCCCCWWCCCCCCCCCCCCCW"
+    - "WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
+
+zones:
+  - id: "house_of_life"
+    label: "HOUSE OF LIFE PAPYRUS SCRIPTORIUM"
+    color: "#facc15"
+    col: 1
+    row: 1
+    w: 11
+    h: 7
+  - id: "sun_sanctuary"
+    label: "ATEN SUN-DISK & ASTRONOMY ALTAR"
+    color: "#f59e0b"
+    col: 1
+    row: 10
+    w: 11
+    h: 7
+  - id: "royal_treasury"
+    label: "LAPIS JEWELRY & CANOPIC ALCHEMY"
+    color: "#38bdf8"
+    col: 14
+    row: 10
+    w: 13
+    h: 7
+  - id: "lotus_oasis"
+    label: "SACRED NILE OASIS & SPHINX COURT"
+    color: "#22c55e"
+    col: 14
+    row: 1
+    w: 13
+    h: 7
+
+workstations:
+  # North House of Life Papyrus Scriptorium
+  - { id: "eg-1",  label: "Royal Papyrus & Reed-Brush Desk",  col: 2,  row: 2,  seat_col: 2,  seat_row: 3,  facing: "up", style: "egypt_papyrus_desk",    glow_color: "#facc15" }
+  - { id: "eg-2",  label: "Rosetta Cartouche Stele Chisel",   col: 5,  row: 2,  seat_col: 5,  seat_row: 3,  facing: "up", style: "egypt_hieroglyph_wall", glow_color: "#38bdf8" }
+  - { id: "eg-3",  label: "Book of Thoth Illumination Table", col: 8,  row: 2,  seat_col: 8,  seat_row: 3,  facing: "up", style: "egypt_papyrus_desk",    glow_color: "#f59e0b" }
+  - { id: "eg-4",  label: "Karnak Obelisk Relief Bench",      col: 2,  row: 5,  seat_col: 2,  seat_row: 6,  facing: "up", style: "egypt_hieroglyph_wall", glow_color: "#eab308" }
+  - { id: "eg-5",  label: "Nile Flood Nilometer Ledger",      col: 5,  row: 5,  seat_col: 5,  seat_row: 6,  facing: "up", style: "egypt_papyrus_desk",    glow_color: "#06b6d4" }
+  - { id: "eg-6",  label: "Sacred Ankh Glyph Scriptorium",    col: 8,  row: 5,  seat_col: 8,  seat_row: 6,  facing: "up", style: "egypt_hieroglyph_wall", glow_color: "#facc15" }
+  # South Aten Sun-Disk & Astronomy Altar
+  - { id: "eg-7",  label: "Levitating Aten Sun-Disk Altar",   col: 2,  row: 11, seat_col: 2,  seat_row: 12, facing: "up", style: "egypt_sun_altar",       glow_color: "#facc15" }
+  - { id: "eg-8",  label: "Dendera Zodiac Star-Disk Table",   col: 5,  row: 11, seat_col: 5,  seat_row: 12, facing: "up", style: "egypt_astronomer",      glow_color: "#38bdf8" }
+  - { id: "eg-9",  label: "Ra Solar Barque Shrine",           col: 8,  row: 11, seat_col: 8,  seat_row: 12, facing: "up", style: "egypt_sun_altar",       glow_color: "#f59e0b" }
+  - { id: "eg-10", label: "Sirius Heliacal Merkhet Sight",    col: 2,  row: 14, seat_col: 2,  seat_row: 15, facing: "up", style: "egypt_astronomer",      glow_color: "#818cf8" }
+  - { id: "eg-11", label: "Horizon of Giza Alignment Altar",  col: 5,  row: 14, seat_col: 5,  seat_row: 15, facing: "up", style: "egypt_sun_altar",       glow_color: "#facc15" }
+  - { id: "eg-12", label: "Celestial Water-Clock Clepsydra",  col: 8,  row: 14, seat_col: 8,  seat_row: 15, facing: "up", style: "egypt_astronomer",      glow_color: "#06b6d4" }
+  # East Lapis Jewelry & Canopic Alchemy
+  - { id: "eg-13", label: "Lapis-Lazuli & Gold Collar Forge", col: 16, row: 11, seat_col: 16, seat_row: 12, facing: "up", style: "egypt_jeweler",         glow_color: "#38bdf8" }
+  - { id: "eg-14", label: "Alabaster Canopic Alchemy Bench",  col: 19, row: 11, seat_col: 19, seat_row: 12, facing: "up", style: "egypt_canopic_bench",   glow_color: "#22c55e" }
+  - { id: "eg-15", label: "Winged Scarab Electrum Goldsmith", col: 22, row: 11, seat_col: 22, seat_row: 12, facing: "up", style: "egypt_jeweler",         glow_color: "#facc15" }
+  - { id: "eg-16", label: "Kyphi Sacred Incense Distiller",   col: 16, row: 14, seat_col: 16, seat_row: 15, facing: "up", style: "egypt_canopic_bench",   glow_color: "#f59e0b" }
+  - { id: "eg-17", label: "Carnelian Eye-of-Horus Inlay",     col: 19, row: 14, seat_col: 19, seat_row: 15, facing: "up", style: "egypt_jeweler",         glow_color: "#ef4444" }
+  - { id: "eg-18", label: "Blue Lotus Elixir Apothecary",     col: 22, row: 14, seat_col: 22, seat_row: 15, facing: "up", style: "egypt_canopic_bench",   glow_color: "#06b6d4" }
+
+waypoints:
+  - { id: "wp-sphinx",  col: 16, row: 3, activity: "lounge",      bubble: "🦁 Contemplating the riddle of the Sphinx" }
+  - { id: "wp-sarc",    col: 24, row: 3, activity: "bookshelf",   bubble: "⚱️ Inspecting royal gold cartouches" }
+  - { id: "wp-oasis-1", col: 18, row: 6, activity: "watercooler", bubble: "🪷 Dipping fingers in the cool Nile oasis" }
+  - { id: "wp-oasis-2", col: 23, row: 6, activity: "lounge",      bubble: "🌴 Resting under the temple date palms" }
+  - { id: "wp-sun",     col: 13, row: 8, activity: "whiteboard",  bubble: "☀️ Praising the golden Aten sun-disk" }
+  - { id: "wp-hall-1",  col: 7,  row: 8, activity: "lounge",      bubble: "📜 Deciphering Old Kingdom reliefs" }
+  - { id: "wp-hall-2",  col: 19, row: 8, activity: "lounge",      bubble: "🐈 Petting the sacred temple Mau cat" }
+
+props:
+  - { id: "prop-sphinx",      type: "egypt_sphinx",      col: 15, row: 2,  w: 3, h: 1, label: "GUARDIAN SPHINX" }
+  - { id: "prop-sarcophagus", type: "egypt_sarcophagus", col: 23, row: 2,  w: 2, h: 2, label: "ROYAL TOMB" }
+  - { id: "prop-oasis",       type: "egypt_oasis_pool",  col: 18, row: 4,  w: 4, h: 2, label: "LOTUS OASIS", animated: true }
+  - { id: "prop-obelisk",     type: "egypt_obelisk",     col: 25, row: 11, w: 2, h: 2, label: "SUN OBELISK", animated: true }
+  - { id: "prop-scroll-jars", type: "egypt_scroll_jar",  col: 25, row: 14, w: 2, h: 2, label: "PAPYRUS ARCHIVE" }
+  - { id: "prop-winged-sun",  type: "egypt_winged_sun",  col: 4,  row: 0,  w: 4, h: 1, label: "WINGED HORUS" }
+  - { id: "prop-brazier-1",   type: "egypt_brazier",     col: 11, row: 1,  w: 1, h: 1, animated: true }
+  - { id: "prop-brazier-2",   type: "egypt_brazier",     col: 26, row: 1,  w: 1, h: 1, animated: true }
+  - { id: "prop-brazier-3",   type: "egypt_brazier",     col: 1,  row: 16, w: 1, h: 1, animated: true }
+
+characters:
+  claude:
+    title: "Pharaoh Claude"
+    primary: "#eab308"
+    secondary: "#1e3a8a"
+    skin: "#d97706"
+    hair: "#1c1917"
+    accessory: "pharaoh"
+    badge_color: "#facc15"
+  agy:
+    title: "High Priest Agy"
+    primary: "#0284c7"
+    secondary: "#ca8a04"
+    skin: "#fdba74"
+    hair: "#0f172a"
+    accessory: "pharaoh"
+    badge_color: "#38bdf8"
+  codex:
+    title: "Royal Architect Codex"
+    primary: "#0d9488"
+    secondary: "#1e3a8a"
+    skin: "#fed7aa"
+    hair: "#1c1917"
+    accessory: "pharaoh"
+    badge_color: "#2dd4bf"
+  grok:
+    title: "Vizier Grok"
+    primary: "#dc2626"
+    secondary: "#451a03"
+    skin: "#fdba74"
+    hair: "#18181b"
+    accessory: "pharaoh"
+    badge_color: "#ef4444"
+  opencode:
+    title: "Astronomer OpenCode"
+    primary: "#7c3aed"
+    secondary: "#ca8a04"
+    skin: "#fde68a"
+    hair: "#1c1917"
+    accessory: "pharaoh"
+    badge_color: "#a855f7"
+  default:
+    title: "Royal Scribe"
+    primary: "#ca8a04"
+    secondary: "#1e3a8a"
+    skin: "#fdba74"
+    hair: "#1c1917"
+    accessory: "pharaoh"
+    badge_color: "#facc15"
+
+companions:
+  - { id: "pet-bastet", name: "Bastet", type: "cat", color: "#facc15", home_col: 17, home_row: 5 }
+  - { id: "pet-anubis", name: "Anubis", type: "dog", color: "#1e293b", home_col: 12, home_row: 8 }
