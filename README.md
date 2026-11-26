@@ -21,7 +21,7 @@ Inspired by [pixel-agents](https://github.com/pixel-agents-hq/pixel-agents) and 
 
 ## 🎨 Theme Showcase
 
-Agent Plaza includes **12 self-contained scene templates** that can be hot-swapped instantly from the UI or via API/config:
+Agent Plaza includes **13 self-contained scene templates** that can be hot-swapped instantly from the UI or via API/config:
 
 | 🌆 **Neon Netrunner Deck (`cyberpunk`)** | ⛩️ **Edo Samurai Dojo (`japanese`)** |
 |:---:|:---:|
@@ -42,12 +42,13 @@ Agent Plaza includes **12 self-contained scene templates** that can be hot-swapp
   - Interactive companion pets (**cats**, **dogs**, and **robots**) roam alongside agents with custom 4-directional procedural pixel sprites and playful idle behaviors.
 - **Retro 8-Bit Sound Effects Suite**:
   - High-quality retro sound effects generated with ElevenLabs for agent work typing, task completion, pet interactions (cats, dogs, robots), theme warp transitions, toasts, and UI clicks, with a master mute/unmute toggle and audio state persistence.
-- **12 Thematic Scene Templates**:
+- **13 Thematic Scene Templates**:
   - 🏢 **Retro Startup HQ (`office`)** — Standing desks, ultrawide monitors, espresso bar, server rack, and beanbag lounge.
   - 🤠 **Wild West Saloon & Forge (`cowboys`)** — Anvil blacksmith forge, horse grooming stall, bounty board, telegraph desk, and campfire corral.
   - 🌆 **Neon Netrunner Deck (`cyberpunk`)** — Neural dive chairs, holographic rigs, Arasaka mainframes, and synth-ramen neon lounge.
   - ⛩️ **Edo Samurai Dojo (`japanese`)** — Shodo calligraphy desks, katana sword-polishing benches, bamboo scroll racks, and raked Zen rock garden with koi pond.
   - 🏰 **Arcane Guild Hall (`medieval`)** — Manuscript illumination desks, bubbling alchemy labs, runic scrying altars, mana obelisks, and archery yard.
+  - 🪖 **Western Front Trench & Dugout HQ (`ww1`)** — Wooden duckboard trenches, sandbagged fire-step box periscopes, water-cooled Vickers machine-gun posts, crank field telephones, Cher Ami carrier pigeon lofts, Sopwith Camel recon photo benches, coke braziers, brass-horn gramophones, and Flanders poppies.
   - 🎖️ **Allied Command Bunker (`ww2`)** — Enigma cipher machines, radar oscilloscopes, Morse telegraph stations, and Colossus tube computers.
   - 🏴‍☠️ **Crimson Galleon & Smuggler's Cove (`pirates`)** — Treasure chart tables, quarterdeck helm wheels, 24-pounder broadside cannons, spiced rum alembics, and overflowing plunder chests.
   - 🚀 **Aegis-IX Orbital Space Station (`space`)** — Flight command consoles, James Webb exoplanet spectrometers, zero-G hydroponic bio-domes, tokamak fusion cores, and holographic starmaps.

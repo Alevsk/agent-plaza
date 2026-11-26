@@ -2216,6 +2216,21 @@ function drawCompanion(
 
   if (spriteImg) {
     drawImg(spriteImg, x, y - bob, 12, 12);
+  } else if (pet.type === 'pigeon') {
+    // Hi-Bit WW1 Carrier Pigeon ("Cher Ami") with Iridescent Green Neckband & Message Capsule
+    const flap = Math.floor(time * 9) % 2;
+    drawBevelBox(px, x + 2, y + 3 - bob, 8, 6, pet.color || '#94a3b8');
+    px(x + 1, y + 4 - bob - flap, 2, 4, '#cbd5e1'); // wing L
+    px(x + 9, y + 4 - bob - flap, 2, 4, '#cbd5e1'); // wing R
+    drawBevelBox(px, x + 3, y - bob, 6, 4, pet.color || '#94a3b8');
+    px(x + 4, y + 3 - bob, 4, 1, '#10b981'); // iridescent emerald neck ring
+    if (pet.dir !== 'up') {
+      px(x + 4, y + 1 - bob, 1, 1, '#090d16');
+      px(x + 7, y + 1 - bob, 1, 1, '#090d16');
+      px(x + 5, y + 2 - bob, 2, 1, '#facc15'); // beak
+    }
+    px(x + 4, y + 9 - bob, 1, 2, '#f97316'); // left leg
+    px(x + 7, y + 9 - bob, 2, 2, '#facc15'); // right leg with brass message capsule
   } else if (pet.type === 'parrot') {
     // Hi-Bit Pirate Scarlet Macaw with Flapping Wings & Golden Beak
     const flap = Math.floor(time * 9) % 2;
@@ -2654,6 +2669,12 @@ function drawCharacterSprite(
     case 'helmet':
       drawBevelBox(px, bx + 2, by - 3, 12, 4, '#3f6212');
       px(bx + 7, by - 2, 2, 1, '#facc15');
+      break;
+    case 'brodie_helmet':
+      // WW1 Wide-Brimmed Steel Brodie "Tin Hat" Helmet
+      drawBevelBox(px, bx, by - 1, 16, 2, '#57534e');
+      drawBevelBox(px, bx + 3, by - 4, 10, 3, '#78716c');
+      px(bx + 5, by - 4, 4, 1, '#a8a29e'); // steel dome glint
       break;
     case 'pirate_hat':
       // Captain's Tricorne Hat with Gold Trim & Crimson Plume

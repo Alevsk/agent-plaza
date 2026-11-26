@@ -32,12 +32,13 @@ It combines:
 │           ├── sources/local/          # Local Herdr CLI + ~/.claude, ~/.codex, ~/.local/share/opencode, ~/.gemini parser
 │           ├── sources/remote/         # Remote HTTP snapshot polling adapter
 │           └── templates/fs/           # YAML template manifest loader from ./templates/<id>/template.yaml
-├── templates/                          # Self-contained scene template plugins (12 bundled themes)
+├── templates/                          # Self-contained scene template plugins (13 bundled themes)
 │   ├── office/template.yaml            # Retro Startup HQ
 │   ├── cowboys/template.yaml           # Wild West Saloon & Forge
 │   ├── cyberpunk/template.yaml         # Neon Netrunner Deck
 │   ├── japanese/template.yaml          # Edo Samurai Dojo & Zen Garden
 │   ├── medieval/template.yaml          # Arcane Guild Hall & Archery Yard
+│   ├── ww1/template.yaml               # Western Front Trench & Dugout HQ
 │   ├── ww2/template.yaml               # Allied Command Bunker
 │   ├── pirates/template.yaml           # Crimson Galleon & Smuggler's Cove
 │   ├── space/template.yaml             # Aegis-IX Orbital Space Station
@@ -87,6 +88,7 @@ When adding or modifying templates, props, workstations, or characters, you **mu
   - **`cyberpunk`**: `cyber_mainframe`, `cyber_screen`, `neon_vending`, `holo_pillar`, `server_pod`, `synth_bar`, `arcade`
   - **`japanese`**: `scroll_rack`, `katana_rack`, `shodo_banner`, `dojo_bamboo`, `tea_table`, `bonsai`, `lantern`, `torii`, `tatami_bench`, `koi_pond`, `zen_garden`
   - **`medieval`**: `mana_obelisk`, `grimoire_shelf`, `royal_banner`, `alchemy_table`, `hearth`, `bookshelf`, `banner`, `torch`, `weapon_rack`, `archery_target`, `training_dummy`
+  - **`ww1`**: `ww1_duckboard_crate`, `ww1_gramophone`, `ww1_brazier_stove`, `ww1_sandbag_parapet`, `ww1_mortar_rack`, `ww1_barbed_wire`, `ww1_trench_clock`, `ww1_poppy_planter`
   - **`ww2`**: `colossus_rack`, `ordnance_rack`, `bunker_map_board`, `war_map_table`, `ammo_crate`, `sandbags`, `radar_console`, `radio_tower`, `field_cot`, `oil_drum`
   - **`pirates`**: `pirate_grog_bar`, `pirate_treasure_chest`, `pirate_kraken_tank`, `pirate_cannon_rack`, `pirate_jolly_roger`, `pirate_anchor`, `pirate_ship_bell`, `pirate_palm`
   - **`space`**: `space_synth_bar`, `space_starmap`, `space_gravity_ring`, `space_eva_pod`, `space_telemetry_wall`, `space_oxygen_scrubber`

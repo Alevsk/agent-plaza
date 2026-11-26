@@ -14,6 +14,7 @@ export type SoundName =
   | 'work-cowboys'
   | 'work-medieval'
   | 'work-japanese'
+  | 'work-ww1'
   | 'work-ww2'
   | 'work-cyberpunk'
   | 'work-pirates'
@@ -43,6 +44,7 @@ const SOUND_DEFS: Record<SoundName, SoundDef> = {
   'work-cowboys': { file: '/sfx/work-cowboys.mp3', volume: 0.35, throttleMs: 350 },
   'work-medieval': { file: '/sfx/work-medieval.mp3', volume: 0.35, throttleMs: 350 },
   'work-japanese': { file: '/sfx/work-japanese.mp3', volume: 0.35, throttleMs: 350 },
+  'work-ww1': { file: '/sfx/work-ww1.mp3', volume: 0.34, throttleMs: 350 },
   'work-ww2': { file: '/sfx/work-ww2.mp3', volume: 0.35, throttleMs: 350 },
   'work-cyberpunk': { file: '/sfx/work-cyberpunk.mp3', volume: 0.32, throttleMs: 350 },
   'work-pirates': { file: '/sfx/work-pirates.mp3', volume: 0.34, throttleMs: 350 },
@@ -172,6 +174,8 @@ class SoundEngine {
         return 'work-medieval';
       case 'japanese':
         return 'work-japanese';
+      case 'ww1':
+        return 'work-ww1';
       case 'ww2':
         return 'work-ww2';
       case 'cyberpunk':

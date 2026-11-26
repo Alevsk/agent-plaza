@@ -84,6 +84,12 @@ elevenlabs text-to-sound-effects convert \
   --duration-seconds 1.2 \
   -o "${SFX_DIR}/work-japanese.mp3"
 
+# WW1 contextual work: crank field telephone ring, trench whistle & telegraph ticks
+elevenlabs text-to-sound-effects convert \
+  --text "retro 8-bit WW1 crank field telephone magneto bell ring, brass trench whistle chirp, vintage telegraph morse clicks" \
+  --duration-seconds 1.2 \
+  -o "${SFX_DIR}/work-ww1.mp3"
+
 # WW2 contextual work: military teletype morse code & radio cipher
 elevenlabs text-to-sound-effects convert \
   --text "vintage military telegraph morse code key clicking, mechanical teletype typewriter clatter, WWII bunker radio cipher" \

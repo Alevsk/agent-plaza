@@ -7,6 +7,7 @@ import { piratesScene } from './piratesScene';
 import { spaceScene } from './spaceScene';
 import { steampunkScene } from './steampunkScene';
 import type { SceneModule } from './types';
+import { ww1Scene } from './ww1Scene';
 
 export const SCENE_MODULES: SceneModule[] = [
   piratesScene,
@@ -15,6 +16,7 @@ export const SCENE_MODULES: SceneModule[] = [
   egyptScene,
   steampunkScene,
   arcticScene,
+  ww1Scene,
 ];
 
 const SCENE_MAP = new Map<string, SceneModule>(SCENE_MODULES.map((m) => [m.id, m]));
